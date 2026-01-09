@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+       fontFamily: {
+        stranger: ['"StrangerThings"', 'serif'],
+      },
       colors: {
         primary: "#E50914",       
         dark: "#0B0B0B",          
