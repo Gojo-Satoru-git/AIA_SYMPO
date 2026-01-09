@@ -4,6 +4,7 @@ const Header = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
   const scrollTo = (ref) => {
     ref.current.scrollIntoView({ behavior: 'smooth' });
   };
+
   const tabItems = [
     { id: 1, name: 'Home' },
     { id: 2, name: 'About' },
@@ -11,7 +12,9 @@ const Header = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
     { id: 5, name: 'FAQs' },
     { id: 4, name: 'Contact us' },
   ];
+
   const [clickedTab, setClickedTab] = useState(1);
+
   useEffect(() => {
     switch (clickedTab) {
       case 1:
@@ -34,18 +37,35 @@ const Header = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
 
   return (
     <nav className="fixed top-0 left-0 w-full flex justify-center p-4 z-50 animate-fade-in-down">
-      <div className="bg-primary flex gap-10 px-6 py-3 rounded-full w-fit">
-        {tabItems.map((item) => {
-          return (
-            <div
-              key={item.id}
-              className="hover:underline transition duration-75 hover:scale-110 cursor-pointer"
-              onClick={() => setClickedTab(item.id)}
-            >
-              <p>{item.name}</p>
-            </div>
-          );
-        })}
+      <div
+        className="
+          bg-black/60 backdrop-blur-md
+          border border-primary
+          flex gap-10 px-8 py-3 rounded-full w-fit
+          shadow-stGlow
+        "
+      >
+        {tabItems.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => setClickedTab(item.id)}
+            className="
+                relative cursor-pointer
+                text-primary uppercase tracking-widest text-sm
+                transition-all duration-300 ease-out
+                hover:text-white hover:-translate-y-1
+
+                after:absolute after:left-0 after:-bottom-1
+                after:h-[2px] after:w-0
+                after:bg-primary
+                after:shadow-stGlowStrong
+                after:transition-all after:duration-300
+                hover:after:w-full
+                "
+          >
+            {item.name}
+          </div>
+        ))}
       </div>
     </nav>
   );
