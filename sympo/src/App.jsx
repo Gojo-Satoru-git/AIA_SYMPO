@@ -5,7 +5,6 @@ import About from './screens/About';
 import Events from './screens/Events';
 import FAQs from './screens/Faqs';
 import Contact from './screens/Contacts';
-import BackgroundVideo from './components/BackgroudVideo';
 import NavMenubar from './components/NavMenuBar';
 
 const App = () => {
@@ -24,9 +23,9 @@ const App = () => {
         ContactRef={ContactRef}
       />
       <div ref={HomeRef}>
-        <BackgroundVideo>
+        
           <Home />
-        </BackgroundVideo>
+ 
       </div>
       <div ref={AboutRef}>
         <About />

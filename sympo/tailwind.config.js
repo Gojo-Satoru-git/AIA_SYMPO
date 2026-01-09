@@ -18,6 +18,15 @@ export default {
       },
 
       keyframes: {
+        flicker: {
+          '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '1' },
+          '20%, 22%, 24%, 55%': { opacity: '0.4' },
+        },
+        zoom: {
+          "0%": { transform: "scale(1.6)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        
         fadeInDown: {
           "0%": {
             opacity: "0",
@@ -27,16 +36,14 @@ export default {
             opacity: "1",
             transform: "translateY(0)",
           },
-        },
-        flicker: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.85" },
-        },
+        },                                        
       },
 
       animation: {
         "fade-in-down": "fadeInDown 0.8s ease-in-out",
-        flicker: "flicker 2.5s infinite",
+        flicker: "flicker 2s infinite",
+       
+        zoom: "zoom 2.5s ease-out forwards",
       },
     },
   },
