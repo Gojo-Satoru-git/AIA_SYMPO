@@ -1,4 +1,4 @@
-import { useRef, useReducer } from 'react';
+import { useRef } from 'react';
 import './App.css';
 import Home from './screens/Home';
 import About from './screens/About';
