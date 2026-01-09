@@ -14,5 +14,5 @@ const BackgroundVideo = ({ children, heightClass = 'min-h-[60vh]' }) => {
     </div>
   );
 };
-
+ 
 export default BackgroundVideo;
