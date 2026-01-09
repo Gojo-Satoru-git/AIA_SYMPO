@@ -1,12 +1,12 @@
 import { useRef, useReducer } from 'react';
 import './App.css';
-import Header from './components/Header';
 import Home from './screens/Home';
 import About from './screens/About';
 import Events from './screens/Events';
 import FAQs from './screens/Faqs';
 import Contact from './screens/Contacts';
 import BackgroundVideo from './components/BackgroudVideo';
+import NavMenubar from './components/NavMenuBar';
 
 const App = () => {
   const HomeRef = useRef(null);
@@ -16,7 +16,7 @@ const App = () => {
   const ContactRef = useRef(null);
   return (
     <div>
-      <Header
+      <NavMenubar
         HomeRef={HomeRef}
         AboutRef={AboutRef}
         EventsRef={EventsRef}

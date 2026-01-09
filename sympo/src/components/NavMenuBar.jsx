@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const Header = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
+const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
   const scrollTo = (ref) => {
     ref.current.scrollIntoView({ behavior: 'smooth' });
   };
@@ -71,4 +71,4 @@ const Header = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
   );
 };
 
-export default Header;
+export default NavMenubar;
