@@ -5,6 +5,7 @@ export default {
     extend: {
        fontFamily: {
         stranger: ['"StrangerThings"', 'serif'],
+        strange: ['"StrangerRegular"', 'serif'],
       },
       colors: {
         primary: "#E50914",       
@@ -22,10 +23,17 @@ export default {
           '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '1' },
           '20%, 22%, 24%, 55%': { opacity: '0.4' },
         },
-        zoom: {
-          "0%": { transform: "scale(1.6)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
-        },
+      
+          zoomIn: {
+    "0%": {
+      transform: "scale(5)",
+      opacity: "0",
+    },
+    "100%": {
+      transform: "scale(1)",
+      opacity: "1",
+    },
+  },
         
         fadeInDown: {
           "0%": {
@@ -43,9 +51,10 @@ export default {
         "fade-in-down": "fadeInDown 0.8s ease-in-out",
         flicker: "flicker 2s infinite",
        
-        zoom: "zoom 2.5s ease-out forwards",
+        zoom: "zoomIn 1.8s ease-out forwards",
       },
     },
   },
   plugins: [],
 };
+
