@@ -55,13 +55,14 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef }) => {
                 transition-all duration-300 ease-out
                 hover:text-white hover:-translate-y-1
 
-                after:absolute after:left-0 after:-bottom-1
+                after:absolute after:-bottom-0.5
+                after:left-1/2 after:-translate-x-1/2
                 after:h-[2px] after:w-0
                 after:bg-primary
                 after:shadow-stGlowStrong
-                after:transition-all after:duration-300
+                after:transition-all after:duration-300 after:delay-150
                 hover:after:w-full
-                "
+              "
           >
             {item.name}
           </div>
