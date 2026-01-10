@@ -10,6 +10,7 @@ const RegistrationCard = ({ position, name, phone }) => {
   return (
     <Card
       className="
+       animated-border
         glow-red
         transition-transform duration-300
         hover:scale-105
