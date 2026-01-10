@@ -5,9 +5,10 @@ import RegistrationCard from "../components/RegContactCard";
 
 const Contacts = () => {
   return (
+    <div className="bg-black">
     <Container
       maxWidth="lg"
-      className="bg-black mt-12 px-4 sm:px-6"
+      className=" mt-12 px-4 sm:px-6"
     >
       {/* ================= EVENT COORDINATORS ================= */}
       <Typography
@@ -23,6 +24,7 @@ const Contacts = () => {
       sm: "1.8rem",   // 📱 tablet
       md: "2.2rem",   // 💻 desktop
     },
+    padding:"0.5rem"
   }}
 >
   EVENT COORDINATORS
@@ -31,22 +33,22 @@ const Contacts = () => {
 
       {/* Responsive Scroll Container */}
       <div
-        className="
+       className="
     flex gap-6
     overflow-x-auto
     pb-6
     scroll-smooth
     hide-scrollbar
 
-    px-4 md:px-0
+    px-4 sm:px-6 md:px-0
+    py-2
 
     justify-start
     md:justify-start
-
-    snap-x
-    md:snap-none
   "
-  style={{ WebkitOverflowScrolling: "touch" }}
+  style={{
+    WebkitOverflowScrolling: "touch",
+  }}
       >
         <ContactCard
           eventName="Paper Presentation"
@@ -109,6 +111,7 @@ const Contacts = () => {
     text-red-600 text-center
     font-bold tracking-widest
     mb-6
+    
   "
   sx={{
     fontSize: {
@@ -116,6 +119,7 @@ const Contacts = () => {
       sm: "1.8rem",   // 📱 tablet
       md: "2.2rem",   // 💻 desktop
     },
+    padding:"0.5rem"
   }}
 >
   REGISTRATION ENQUIRIES
@@ -132,7 +136,8 @@ const Contacts = () => {
     hide-scrollbar
 
     px-4
-    md:px-0
+    md:px-4
+    py-2.5
 
     justify-start
     md:justify-center
@@ -160,6 +165,7 @@ const Contacts = () => {
         />
       </div>
     </Container>
+    </div>
   );
 };
 

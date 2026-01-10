@@ -10,19 +10,21 @@ const ContactCard = ({ eventName, coordinators }) => {
   return (
     <Card
       className="
+      animated-border
         glow-red
         transition-transform duration-300
         hover:scale-105
         flex-shrink-0
         snap-center
+        mx-2.5
       "
       sx={{
         backgroundColor: "#0b0b0b",
         borderRadius: "16px",
         width: {
-          xs: 260,   // 📱 mobile
-          sm: 300,   // 📱 tablet
-          md: 320,   // 💻 desktop
+          xs: 250,   // 📱 mobile
+          sm: 270,   // 📱 tablet
+          md: 290,   // 💻 desktop
         },
         minHeight: 260,
         display: "flex",
