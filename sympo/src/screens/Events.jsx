@@ -98,7 +98,7 @@ const Events = () => {
         </div>
         <button
           onClick={() => scroll('right')}
-          className=" absolute -right-4  lg:-right-12 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+          className="hidden md:block absolute -right-4  lg:-right-12 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
         >
           <span className="mb-1">›</span>
         </button>
