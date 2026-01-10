@@ -52,15 +52,32 @@ const Home = () => {
           )}
         </p>
           
-        <h1
-          className="relative text-6xl md:text-8xl font-bold uppercase text-red-600 tracking-wider
-                     after:content-[attr(data-text)] after:absolute after:top-0 after:left-0
-                     after:text-red-600 after:blur-lg
-                     animate-zoom animate-flicker"
-          data-text="Symposium"
-        >
-          Symposium
-        </h1>
+       <h1
+  className="
+    relative
+    text-6xl md:text-8xl text-red-950
+    font-bold uppercase
+    tracking-widest
+    animate-zoom animate-flicker
+  "
+  style={{
+      // ⛔ no fill at all
+      background: "linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+
+    textShadow: `
+      0 0 6px rgba(150,3,0,0.9),
+      0 0 12px rgba(120,9,20,0.7),
+      0 0 20px rgba(220,9,20,0.5)
+    `,
+    WebkitTextStroke: "3px #F5F5F5",      
+    filter: "drop-shadow(0 0 6px rgba(229,9,20,0.9))",
+  }}
+>
+  Symposium
+</h1>
+
 
         <div
           className="h-1  bg-red-600 mt-4 transition-all duration-1000"

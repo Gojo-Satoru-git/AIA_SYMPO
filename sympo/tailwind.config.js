@@ -16,6 +16,7 @@ export default {
       boxShadow: {
         stGlow: "0 0 20px rgba(229,9,20,0.6)",
         stGlowStrong: "0 0 30px rgba(229,9,20,0.9)",
+        
       },
 
       keyframes: {
