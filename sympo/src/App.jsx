@@ -7,6 +7,7 @@ import Events from './screens/Events';
 import FAQs from './screens/Faqs';
 import Contact from './screens/Contacts';
 import NavMenubar from './components/NavMenuBar';
+import Register from './screens/Register';
 
 const App = () => {
   const HomeRef = useRef(null);
@@ -14,19 +15,19 @@ const App = () => {
   const EventsRef = useRef(null);
   const FAQsRef = useRef(null);
   const ContactRef = useRef(null);
+  const RegisterRef = useRef(null);
   return (
-    <div className='bg-black'>
+    <div className="bg-black">
       <NavMenubar
         HomeRef={HomeRef}
         AboutRef={AboutRef}
         EventsRef={EventsRef}
         FAQsRef={FAQsRef}
         ContactRef={ContactRef}
+        RegisterRef={RegisterRef}
       />
       <div ref={HomeRef}>
-        
-          <Home />
- 
+        <Home />
       </div>
       <div ref={AboutRef}>
         <About />
@@ -36,6 +37,9 @@ const App = () => {
       </div>
       <div ref={FAQsRef}>
         <FAQs />
+      </div>
+      <div ref={RegisterRef}>
+        <Register />
       </div>
       <div ref={ContactRef}>
         <Contact />

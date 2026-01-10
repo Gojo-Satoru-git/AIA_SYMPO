@@ -55,13 +55,14 @@ const FAQs = () => {
                 {/* Question*/}
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="
+                  className={`
                     relative w-full text-left
                     px-6 py-5
                     text-primary uppercase tracking-widest text-sm
                     transition-all duration-300
                     hover:text-white
-                  "
+                    ${index === openIndex && 'text-white'}
+                  `}
                 >
                   {item.q}
                   <span
