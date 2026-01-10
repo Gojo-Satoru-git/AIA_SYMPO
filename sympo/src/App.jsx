@@ -15,7 +15,7 @@ const App = () => {
   const FAQsRef = useRef(null);
   const ContactRef = useRef(null);
   return (
-    <div>
+    <div className='bg-black'>
       <NavMenubar
         HomeRef={HomeRef}
         AboutRef={AboutRef}
