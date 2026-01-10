@@ -23,6 +23,10 @@ export default {
           '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '1' },
           '20%, 22%, 24%, 55%': { opacity: '0.4' },
         },
+        flip: {
+          '0%': { transform: 'rotateZ(45deg)' },
+          '100%': { transform: 'rotateZ(0deg)' },
+        },
         popup: {
           '0%': { transform: 'scale(1)', opacity: '0' },
           '100%': { transform: 'scale(1.25)', opacity: '1' },
@@ -55,6 +59,7 @@ export default {
         flicker: 'flicker 2s infinite',
         popup: 'popup 0.5s ease-out forwards',
         zoom: 'zoomIn 1.8s ease-out forwards',
+        flip: 'flip 0.5s ease-out forwards',
       },
     },
   },
