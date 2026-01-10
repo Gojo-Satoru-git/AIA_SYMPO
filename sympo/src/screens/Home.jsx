@@ -61,7 +61,7 @@ const Home = () => {
     animate-zoom animate-flicker
   "
   style={{
-      // ⛔ no fill at all
+  
       background: "linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
