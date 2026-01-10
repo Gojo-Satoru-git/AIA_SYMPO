@@ -61,8 +61,8 @@ const Events = () => {
   const display =
     Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
   return (
-    <div className="flex flex-col items-center p-10 bg-black">
-      <div className="flex flex-grow justify-center items-start gap-4">
+    <div className="flex flex-col items-center p-10 bg-black min-h-screen">
+      <div className="flex flex-grow justify-center items-start gap-4 mt-32">
         {display.map((events) => (
           <Eventcard
             key={events.id}
