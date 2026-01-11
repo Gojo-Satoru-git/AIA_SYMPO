@@ -29,6 +29,12 @@ const Contacts = () => {
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+  useEffect(() => {
+  if (scrollRef.current) {
+    scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+  }
+}, [Selected]);
+
 
 
   const handleScroll = () => {
@@ -67,33 +73,40 @@ const Contacts = () => {
         >
           EVENT COORDINATORS
         </Typography>
-        <div className="flex justify-center items-center py-10 text-primary">
-          <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
-            <li
-              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+       <div
+  className="flex justify-center items-center py-10 text-primary"
+>
+  <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
+
+    <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
         ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('All')}
-            >
-              All
-            </li>
-
-            <li
-              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
-        ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('Technical')}
-            >
-              Technical
-            </li>
-
-            <li
-              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+      onClick={() => SetSelected('All')}
+    >
+      All
+    </button>
+           <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
         ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('Non-Technical')}
-            >
-              Non-Technical
-            </li>
-          </ul>
-        </div>
+      onClick={() => SetSelected('Non-Technical')}
+    >
+      Non-Technical
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+        ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
+      onClick={() => SetSelected('Technical')}
+    >
+      Technical
+    </button>
+
+ 
+
+  </ul>
+</div>
 
         <div className="relative">
 
