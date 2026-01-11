@@ -5,7 +5,7 @@ function Eventcard({ title, desc, img, date, time, index, category }) {
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
 
-  const image = '/backside.jpeg';
+  const image = './assets/backside.jpeg';
 
   React.useEffect(() => {
     setHasAppeared(false);

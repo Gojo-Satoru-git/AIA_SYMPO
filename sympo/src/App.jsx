@@ -7,6 +7,7 @@ import FAQs from './screens/Faqs';
 import Contact from './screens/Contacts';
 import NavMenubar from './components/NavMenuBar';
 import Register from './screens/Register';
+import Footer from './components/footer';
 
 const App = () => {
   const HomeRef = useRef(null);
@@ -34,15 +35,17 @@ const App = () => {
       <div ref={EventsRef}>
         <Events />
       </div>
-      <div ref={FAQsRef}>
-        <FAQs />
-      </div>
       <div ref={RegisterRef}>
         <Register />
       </div>
+      <div ref={FAQsRef}>
+        <FAQs />
+      </div>
+
       <div ref={ContactRef}>
         <Contact />
       </div>
+      <Footer />
     </div>
   );
 };
