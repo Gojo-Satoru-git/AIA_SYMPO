@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
-import { containerClasses } from '@mui/material';
 const Events = () => {
   const scrollRef = useRef(null);
   const [Selected, SetSelected] = useState('All');
@@ -192,6 +191,14 @@ const Events = () => {
       description: 'This is workshop 1',
       date: '2026-02-21',
       time: '11:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Dipakumar',
+        phone1: '7639933600',
+        name2: 'Ramkumar',
+        phone2: '8825538554',
+      },
     },
     {
       title: 'Workshop2',
@@ -200,6 +207,14 @@ const Events = () => {
       description: 'This is workshop 2',
       date: '2026-02-21',
       time: '11:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Kamalnath',
+        phone1: '9150580147',
+        name2: 'Albin Joseph',
+        phone2: '9566322365',
+      },
     },
   ];
   let detail;
@@ -209,7 +224,6 @@ const Events = () => {
         ? Workshops.find((w) => w.id === cardclicked.id)
         : eventext.find((e) => e.id === cardclicked.id);
   }
-  console.log('detail', detail);
   const display =
     Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
   return (
