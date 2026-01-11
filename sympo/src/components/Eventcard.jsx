@@ -17,7 +17,7 @@ function Eventcard({
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
 
-  const image = category === 'workshop' ? '/backside2.jpeg' : '/backside.png';
+  const image = category === 'workshop' ? './assets/backside2.jpeg' : './assets/backside.jpeg';
 
   React.useEffect(() => {
     setHasAppeared(false);

@@ -6,23 +6,35 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { useEffect, useRef, useState } from "react";
+const events = [{ eventName: "Hackathon",category: "technical", coordinators: [{ name: "Sandeep", phone: "9884793806" }, { name: "Rahul ", phone: "9159812736" },], }, { eventName: "workshop2",category: "technical", coordinators: [{ name: "Kamalnath", phone: "9150580147" }, { name: "Albin Joseph ", phone: "9566322365" },], }, { eventName: "Workshop1",category: "technical", coordinators: [{ name: "Dipakumar", phone: "7639933600" }, { name: "Ramkumar", phone: "8825538554" },], }, { eventName: "Poster Presentation",category: "technical", coordinators: [{ name: "Poorna Prakash ", phone: " 8838730894" }, { name: "Madhubala ", phone: "9345778968 " },], }, { eventName: "Ninja Coding",category: "technical", coordinators: [{ name: "Mekesh", phone: " 9952598472 " }, { name: "Rasheen fahmi", phone: "7867896416" },], }, { eventName: "Call of Query",category: "technical", coordinators: [{ name: "Surya", phone: "8148124727" }, { name: "Jayasree", phone: "8072064228" },], }, { eventName: "Coding with AI",category: "technical", coordinators: [{ name: "SriLakshmi", phone: "9566208249" }, { name: "Rakshitha", phone: "8610209696" },], }, { eventName: "Tournament of Strategies",category: "technical", coordinators: [{ name: "Chandru", phone: "7667634519" }, { name: "Mirsha", phone: "9940358967" },], }, { eventName: "TREASURE HUNT",category: "non-technical", coordinators: [{ name: "Jhanavi", phone: "9384654366" }, { name: "Jessica", phone: "6385033919" },], }, { eventName: "CONNEXTIONS",category: "non-technical", coordinators: [{ name: "Karthikeyan", phone: "8825535520" }, { name: "Ithikash", phone: "9786398639" },], }, { eventName: "FANDOM QUIZ",category: "non-technical", coordinators: [{ name: "Pragadeeshwaran", phone: "8903098801" }, { name: "Ganesh", phone: "7339532544" },], }, { eventName: "IPL AUCTION",category: "non-technical", coordinators: [{ name: "Abinash", phone: "6383467363" }, { name: "Joel", phone: "6381165383" },], }, { eventName: "ADZAP",category: "non-technical", coordinators: [{ name: "Sudhahar", phone: "9363595133" }, { name: "PrithiviRaj", phone: "9042781374" },], }];
+
+
 
 const Contacts = () => {
   const scrollRef = useRef(null);
   const scrollTimeout = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [Selected, SetSelected] = useState("All");
 
-useEffect(() => {
-  const checkMobile = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
 
-  checkMobile();
-  window.addEventListener("resize", checkMobile);
 
-  return () => window.removeEventListener("resize", checkMobile);
-}, []);
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  useEffect(() => {
+  if (scrollRef.current) {
+    scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+  }
+}, [Selected]);
+
 
 
   const handleScroll = () => {
@@ -41,6 +53,13 @@ useEffect(() => {
   const scrollRight = () => {
     scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
   };
+  const filteredEvents =
+    Selected === "All"
+      ? events
+      : events.filter(
+        (event) =>
+          event.category?.toLowerCase() === Selected.toLowerCase()
+      );
 
   return (
     <div className="bg-black">
@@ -54,6 +73,40 @@ useEffect(() => {
         >
           EVENT COORDINATORS
         </Typography>
+       <div
+  className="flex justify-center items-center py-10 text-primary"
+>
+  <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
+
+    <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+        ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
+      onClick={() => SetSelected('All')}
+    >
+      All
+    </button>
+           <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+        ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
+      onClick={() => SetSelected('Non-Technical')}
+    >
+      Non-Technical
+    </button>
+    <button
+      type="button"
+      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
+        ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
+      onClick={() => SetSelected('Technical')}
+    >
+      Technical
+    </button>
+
+ 
+
+  </ul>
+</div>
 
         <div className="relative">
 
@@ -92,16 +145,14 @@ useEffect(() => {
               scrollBehavior: "auto", // 🔥 critical for mobile
             }}
           >
-            {Array.from({ length: 7 }).map((_, i) => (
+            {filteredEvents.map((event, index) => (
               <ContactCard
-                key={i}
-                eventName="Ideathon"
-                coordinators={[
-                  { name: "Anita P", phone: "9876501234" },
-                  { name: "Karthik M", phone: "9123405678" },
-                ]}
+                key={index}
+                eventName={event.eventName}
+                coordinators={event.coordinators}
               />
             ))}
+
           </div>
 
           {/* RIGHT ARROW (DESKTOP ONLY) */}

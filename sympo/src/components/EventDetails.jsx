@@ -13,7 +13,7 @@ function EventDetails({ card, onClose }) {
           className="w-72 h-64 object-cover  rounded-md shadow-stGlow"
         />
         <h2 className="text-3xl font-bold text-primary text-center">{card.title}</h2>
-        <p className="text-primary text-lg text-center ">{card.description}</p> 
+        <p className="text-primary text-lg text-center ">{card.description}</p>
         <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
           {/* Team Size */}
           <div className="text-center">
