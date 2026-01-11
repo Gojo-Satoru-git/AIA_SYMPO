@@ -35,6 +35,14 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+.no-anim .glow-red {
+  animation: none !important;
+}
+
+.no-anim .animated-border::before {
+  animation: none !important;
+  filter: none;
+}
 /* ================= Animated Red Border ================= */
 .animated-border {
   position: relative;
@@ -80,4 +88,17 @@
     background-position: 300% 50%;
   }
 }
+/* 🔥 Reduce load on mobile */
+@media (max-width: 768px) {
+  .glow-red {
+    animation-duration: 10s;
+  }
 
+  .animated-border::before {
+    animation-duration: 14s;
+  }
+
+  .perspective {
+    perspective: none;
+  }
+}
