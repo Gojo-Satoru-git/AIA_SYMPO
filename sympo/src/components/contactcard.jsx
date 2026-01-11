@@ -13,7 +13,7 @@ const ContactCard = ({ eventName, coordinators }) => {
       animated-border
         glow-red
         transition-transform duration-300
-        hover:scale-105
+        hover:md:scale-105
         flex-shrink-0
         snap-center
         mx-2.5

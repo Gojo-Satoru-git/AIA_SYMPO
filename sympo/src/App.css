@@ -26,7 +26,7 @@
 }
 
 .glow-red {
-  animation: redGlow 2.5s infinite ease-in-out;
+  animation: redGlow 5s infinite ease-in-out;
 }
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -60,7 +60,7 @@
   );
 
   background-size: 300% 300%;
-  animation: borderRun 4s linear infinite;
+  animation: borderRun 8s linear infinite;
   
 
   -webkit-mask:
