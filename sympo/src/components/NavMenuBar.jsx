@@ -8,10 +8,13 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
   const [jitterTransform, setJitterTransform] = useState('translate(0, 0)');
   const shakeArmedRef = useRef(true);
 
-  const scrollTo = (ref) => {
-    ref?.current?.scrollIntoView({ behavior: 'smooth' });
-    setIsOpen(false);
-  };
+ const scrollTo = (ref) => {
+  ref?.current?.scrollIntoView({ behavior: 'smooth' });
+  setIsOpen(false);
+};
+
+
+
 
   useEffect(() => {
     const handleMouseMove = (e) => {
