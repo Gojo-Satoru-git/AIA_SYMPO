@@ -157,7 +157,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
           z-50 md:hidden
 
           transform transition-all duration-300 ease-out
-          ${isOpen ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-20 scale-95'}
+          ${isOpen ? 'opacity-100 translate-x-0 scale-100 pointer-events-auto visible' : 'opacity-0 translate-x-20 scale-95 pointer-events-none invisible'}
         `}
       >
         <div className="flex flex-col gap-6 p-8">

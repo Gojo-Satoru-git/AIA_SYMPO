@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
 const Events = () => {
-  const scrollRef = useRef(null);
+  const scrollRef2 = useRef(null);
   const [Selected, SetSelected] = useState('All');
 
   const [clicked, setClicked] = React.useState(false);
@@ -13,7 +13,7 @@ const Events = () => {
   });
 
   const scroll = (directions) => {
-    const { current } = scrollRef;
+    const { current } = scrollRef2;
     if (current) {
       const scrollAmount = directions === 'left' ? -320 : 320;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
@@ -218,6 +218,11 @@ const Events = () => {
     },
   ];
   let detail;
+  useEffect(() => {
+    if (scrollRef2.current) {
+      scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, [Selected]);
   if (cardclicked !== null) {
     detail =
       cardclicked.category === 'workshop'
@@ -267,7 +272,7 @@ const Events = () => {
             <span className="mb-auto">‹</span>
           </button>
           <div
-            ref={scrollRef}
+            ref={scrollRef2}
             className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
           >
             {display.map((events, index) => (
