@@ -102,3 +102,34 @@
     perspective: none;
   }
 }
+/* ===== Horizontal Scroll Gradient Hint ===== */
+.scroll-hint {
+  position: relative;
+}
+
+.scroll-hint::before,
+.scroll-hint::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 32px;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.scroll-hint::before {
+  left: 0;
+  background: linear-gradient(to right, #000, transparent);
+}
+
+.scroll-hint::after {
+  right: 0;
+  background: linear-gradient(to left, #000, transparent);
+}
+
+
+
+
+
+
