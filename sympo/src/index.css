@@ -16,6 +16,18 @@
 * {
   font-family: 'StrangerThings';
 }
+@layer base {
+  html, body {
+    @apply bg-black text-white;
+    margin: 0;
+    padding: 0;
+  }
+}
+html, body {
+  overscroll-behavior: none;
+}
+
+
 .perspective {
   perspective: 1000px;
 }
