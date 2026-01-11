@@ -1,11 +1,23 @@
 import React from 'react';
 
-function Eventcard({ title, desc, img, date, time, index, category }) {
+function Eventcard({
+  title,
+  desc,
+  img,
+  id,
+  date,
+  time,
+  index,
+  category,
+  setClicked,
+  clicked,
+  setCardclicked,
+}) {
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
 
-  const image = '/backside.jpeg';
+  const image = category === 'workshop' ? '/backside2.jpeg' : '/backside.png';
 
   React.useEffect(() => {
     setHasAppeared(false);
@@ -41,16 +53,26 @@ function Eventcard({ title, desc, img, date, time, index, category }) {
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
+  const sizeClasses =
+    category === 'workshop'
+      ? 'w-[60vw] sm:w-96 h-96' // Larger for workshops
+      : 'w-[70vw] sm:w-72 h-80';
 
   return (
-    <div ref={cardRef} className="perspective w-[70vw] sm:w-72 h-96 m-2 sm:m-4">
+    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
       <div
         className={`relative w-full h-full transition-transform duration-1000 preserve-3d ${
           Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'
         }`}
       >
         {/* FRONT FACE (Needs backface-hidden to swap correctly) */}
-        <div className="absolute inset-0 w-full h-full backface-hidden p-4 rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center">
+        <div
+          onClick={() => {
+            setClicked(!clicked);
+            setCardclicked({ id: id, category: category });
+          }}
+          className="absolute inset-0 w-full h-full backface-hidden p-4 rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
+        >
           <h1 className="text-primary text-center p-2 font-bold text-xl uppercase tracking-widest">
             {title}
           </h1>
@@ -59,7 +81,7 @@ function Eventcard({ title, desc, img, date, time, index, category }) {
             alt={title}
             className="w-full h-40 object-cover rounded-md mx-auto border border-primary/20"
           />
-          <p className="text-primary text-center p-2 mt-2">
+          <p className="text-primary text-center p-2 mt-2 text-sm">
             {date} · {time}
           </p>
           <p className="text-primary text-center p-5 text-sm italic leading-tight">{desc}</p>

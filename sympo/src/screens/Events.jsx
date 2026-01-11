@@ -1,8 +1,17 @@
 import React, { useState, useRef } from 'react';
 import Eventcard from '../components/Eventcard';
+import EventDetails from '../components/EventDetails';
+import { containerClasses } from '@mui/material';
 const Events = () => {
   const scrollRef = useRef(null);
   const [Selected, SetSelected] = useState('All');
+
+  const [clicked, setClicked] = React.useState(false);
+
+  const [cardclicked, setCardclicked] = React.useState({
+    id: null,
+    category: null,
+  });
 
   const scroll = (directions) => {
     const { current } = scrollRef;
@@ -13,120 +22,293 @@ const Events = () => {
   };
   const eventext = [
     {
-      title: 'Event1',
+      title: 'IPL Auction',
+      id: '6',
+      image: '/eventB.png',
+      description: 'This is event B',
+      category: 'Non-Technical',
+      teamSize: '6',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Abinash',
+        phone1: '6383467363',
+        name2: 'Joel',
+        phone2: '6381165383',
+      },
+    },
+    {
+      title: 'Call Of Query',
+      id: '3',
+      image: '/event3.png',
+      description: 'This is event 3',
+      teamSize: '4',
+      category: 'Technical',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Surya',
+        phone1: '8148124727',
+        name2: 'Jayasree',
+        phone2: '8072064228',
+      },
+    },
+    {
+      title: 'Connextions',
+      id: '8',
+      image: '/eventC.png',
+      teamSize: '6',
+      description: 'This is event C',
+      category: 'Non-Technical',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Itikash',
+        phone1: '9786398639',
+        name2: 'Karthikeyan',
+        phone2: '8825535520',
+      },
+    },
+    {
+      title: 'Tournament of strategies',
       id: '1',
       image: '/event1.png',
       description: 'This is event 1',
       category: 'Technical',
       date: '2026-02-21',
+      teamSize: '3',
       time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Chandru',
+        phone1: '7667634519',
+        name2: 'Mirsha',
+        phone2: '9940358967',
+      },
     },
     {
-      title: 'Event2',
-      id: '2',
-      image: '/event2.png',
-      description: 'This is event 2',
-      category: 'Technical',
-      date: '2026-02-21',
-      time: '10:00 AM',
-    },
-    {
-      title: 'Event3',
-      id: '3',
-      image: '/event3.png',
-      description: 'This is event 3',
-      category: 'Technical',
-      date: '2026-02-21',
-      time: '10:00 AM',
-    },
-    {
-      title: 'EventA',
-      id: '4',
-      image: '/eventA.png',
-      description: 'This is event A',
-      category: 'Non-Technical',
-      date: '2026-02-21',
-      time: '10:00 AM',
-    },
-    {
-      title: 'EventB',
-      id: '5',
-      image: '/eventB.png',
-      description: 'This is event B',
-      category: 'Non-Technical',
-      date: '2026-02-21',
-      time: '10:00 AM',
-    },
-    {
-      title: 'EventC',
-      id: '6',
+      title: 'Treasure Hunt',
+      id: '9',
       image: '/eventC.png',
+      teamSize: '7',
       description: 'This is event C',
       category: 'Non-Technical',
       date: '2026-02-21',
       time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Jhanavi',
+        phone1: '9384654366',
+        name2: 'Nivetha',
+        phone2: '9840077658',
+      },
+    },
+    {
+      title: 'Ninja Coding',
+      id: '4',
+      image: '/event3.png',
+      description: 'This is event 3',
+      teamSize: '4',
+      category: 'Technical',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Mekesh',
+        phone1: '9952598472',
+        name2: 'Rasheen Fahmi',
+        phone2: '7867896416',
+      },
+    },
+    {
+      title: 'ADZAP',
+      id: '5',
+      image: '/eventA.png',
+      description: 'This is event A',
+      category: 'Non-Technical',
+      teamSize: '5',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Sudhahar',
+        phone1: '9363595133',
+        name2: 'Karthik Raja',
+        phone2: '9361139648',
+      },
+    },
+    {
+      title: 'coding with AI',
+      id: '2',
+      image: '/event2.png',
+      description: 'This is event 2',
+      category: 'Technical',
+      teamSize: '4',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'SriLakshmi',
+        phone1: '9566208249',
+        name2: 'Rakshitha',
+        phone2: '8610209696',
+      },
+    },
+    {
+      title: 'Fandom Quiz',
+      id: '7',
+      image: '/eventC.png',
+      teamSize: '6',
+      description: 'This is event C',
+      category: 'Non-Technical',
+      date: '2026-02-21',
+      time: '10:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Pragadheeshwaran',
+        phone1: '8903098801',
+        name2: 'Ganesh',
+        phone2: '7339532544',
+      },
     },
   ];
+  const Workshops = [
+    {
+      title: 'Workshop1',
+      id: '1',
+      image: '/workshop1.png',
+      description: 'This is workshop 1',
+      date: '2026-02-21',
+      time: '11:00 AM',
+    },
+    {
+      title: 'Workshop2',
+      id: '2',
+      image: '/workshop2.png',
+      description: 'This is workshop 2',
+      date: '2026-02-21',
+      time: '11:00 AM',
+    },
+  ];
+  let detail;
+  if (cardclicked !== null) {
+    detail =
+      cardclicked.category === 'workshop'
+        ? Workshops.find((w) => w.id === cardclicked.id)
+        : eventext.find((e) => e.id === cardclicked.id);
+  }
+  console.log('detail', detail);
   const display =
     Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
   return (
-    <div className="flex flex-col items-center p-10 bg-black min-h-screen">
-      <div className="relative w-full max-w-7xl flex items-center group">
-        <button
-          onClick={() => scroll('left')}
-          className="hidden md:block absolute -left-4 lg:-left-12 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
-        >
-          <span className="mb-1">‹</span>
-        </button>
-        <div
-          ref={scrollRef}
-          className="flex justify-start items-start gap-4 mt-40 md:mt-42 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x snap-mandatory px-4"
-        >
-          {display.map((events, index) => (
-            <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
-              <Eventcard
-                title={events.title}
-                desc={events.description}
-                img={events.image}
-                date={events.date}
-                time={events.time}
-                category={events.category}
-                index={index}
-              />
-            </div>
-          ))}
+    <>
+      {clicked && (
+        <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
+          <EventDetails card={detail} onClose={() => setClicked(false)} />
         </div>
-        <button
-          onClick={() => scroll('right')}
-          className="hidden md:block absolute -right-4  lg:-right-12 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+      )}
+      <div className={`flex flex-col p-10 sm:justify-start bg-black min-h-screen`}>
+        <div
+          className={`flex  justify-center items-center py-10 text-primary mt-10 md:mt-10 sm:mt-10 `}
         >
-          <span className="mb-1">›</span>
-        </button>
-      </div>
+          <ul className="flex flex-shrink-0 lg:justify-center gap-5 md:gap-8 text-primary">
+            <li
+              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
+              onClick={() => SetSelected('All')}
+            >
+              All
+            </li>
+            <li
+              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
+              onClick={() => SetSelected('Technical')}
+            >
+              Technical
+            </li>
+            <li
+              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
+              onClick={() => SetSelected('Non-Technical')}
+            >
+              Non-Technical
+            </li>
+          </ul>
+        </div>
 
-      <div className="flex  justify-center items-center py-10 text-primary">
-        <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
-          <li
-            className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
-            onClick={() => SetSelected('All')}
+        <div className="relative w-full max-w-8xl flex items-center group">
+          <button
+            onClick={() => scroll('left')}
+            className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
           >
-            All
-          </li>
-          <li
-            className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
-            onClick={() => SetSelected('Technical')}
+            <span className="mb-auto">‹</span>
+          </button>
+          <div
+            ref={scrollRef}
+            className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
           >
-            Technical
-          </li>
-          <li
-            className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
-            onClick={() => SetSelected('Non-Technical')}
+            {display.map((events, index) => (
+              <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
+                <Eventcard
+                  title={events.title}
+                  desc={events.description}
+                  img={events.image}
+                  date={events.date}
+                  time={events.time}
+                  category={events.category}
+                  index={index}
+                  id={events.id}
+                  clicked={clicked}
+                  setClicked={setClicked}
+                  setCardclicked={setCardclicked}
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => scroll('right')}
+            className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
           >
-            Non-Technical
-          </li>
-        </ul>
+            <span className="mb-auto">›</span>
+          </button>
+        </div>
+        <div className="relative text-primary mt-0">
+          <h2 className="p-2 rounded-full border-solid flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
+            Workshops
+          </h2>
+          <div className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4">
+            {Workshops.map((workshop, index) => (
+              <div
+                key={`${Selected}-${workshop.id}`}
+                className="flex justify-center mt-8 sm:mt-5 snap-center"
+              >
+                <Eventcard
+                  title={workshop.title}
+                  desc={workshop.description}
+                  index={index}
+                  category="workshop"
+                  date={workshop.date}
+                  time={workshop.time}
+                  id={workshop.id}
+                  clicked={clicked}
+                  setClicked={setClicked}
+                  setCardclicked={setCardclicked}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 export default Events;
