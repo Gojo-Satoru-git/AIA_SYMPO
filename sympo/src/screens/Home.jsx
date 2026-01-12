@@ -8,6 +8,8 @@ const Home = () => {
   const [typedText, setTypedText] = useState("");
   const [charIndex, setCharIndex] = useState(0);
   const [showLogos, setShowLogos] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+
 
   
   useEffect(() => {
@@ -42,6 +44,17 @@ const Home = () => {
     }
   }, [charIndex]);
 
+  useEffect(() => {
+  if (charIndex === dateText.length) {
+    const timer = setTimeout(() => {
+      setShowLogos(true);
+      setShowDescription(true); // 👈 added
+    }, 500);
+    return () => clearTimeout(timer);
+  }
+}, [charIndex]);
+
+
   return (
     <section className="relative flex flex-col justify-center items-center bg-black min-h-screen overflow-hidden px-4 sm:px-6 md:px-10">
 
@@ -53,7 +66,7 @@ const Home = () => {
         `}
       >
         <img
-          src="/AU.png"
+          src="/AIA.png"
           alt="AIA Logo"
           className="h-10 sm:h-12 md:h-16 object-contain"
         />
@@ -64,7 +77,7 @@ const Home = () => {
 
     <div
   className={`absolute z-40 transition-all duration-1000 ease-out
-    top-[130px] md:top-[130px]
+    top-[110px] md:top-[110px]
     left-1/2 transform -translate-x-1/2
     md:left-auto md:right-8 md:translate-x-0
     ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}
@@ -92,7 +105,7 @@ const Home = () => {
     />
   
     <img
-      src="/MIT.png"
+      src="/AIA.png"
       alt="Logo 4"
       className="h-16 sm:h-16 md:h-20 object-contain w-full md:w-auto"
     />
@@ -101,10 +114,10 @@ const Home = () => {
 
 
      
-      <div className="mt-[10px] md:mt-5 flex flex-col items-center justify-center text-center w-full max-w-5xl">
+      <div className="mt-[24px] md:mt-5 lg:mt-24 flex flex-col items-center justify-center text-center w-full max-w-5xl">
 
    
-        <p className="font-strange mb-6 lg:mt-5 text-xs sm:text-sm md:text-xl tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.4em] text-white opacity-80 min-h-[1.5rem] sm:min-h-[2rem] break-words">
+        <p className="font-strange mb-2 sm:mt-24 lg:mt-32 text-xs sm:text-lg md:text-xl tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.4em] text-white opacity-80 min-h-[1.5rem] sm:min-h-[2rem] break-words">
           {typedText}
           {startTyping && charIndex < dateText.length && (
             <span className="animate-pulse">|</span>
@@ -114,7 +127,7 @@ const Home = () => {
  
         <div className="inline-block">
           <h1
-            className="relative text-4xl sm:mt-5 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom animate-flicker"
+            className="relative text-4xl sm:mt-5 lg:mt-0 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom animate-flicker"
             style={{
               background: "linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)",
               WebkitBackgroundClip: "text",
@@ -130,13 +143,97 @@ const Home = () => {
             Symposium
           </h1>
 
-      
+            
           <div
             className={`h-[3px] sm:h-1 bg-red-600 mt-4 origin-center transition-transform duration-1000
               ${showLine ? "scale-x-100 delay-500 shadow-[0_0_10px_rgba(229,9,20,0.8),0_0_20px_rgba(229,9,20,0.6)]" : "scale-x-0"}
             `}
           />
         </div>
+              <p
+        className={`
+          mt-6 text-center text-white/80
+          text-sm sm:text-base md:text-lg lg:text-2xl
+          max-w-3xl transition-all duration-1000 ease-out
+          ${showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}
+        `}
+      >
+        Intercollegiate tech symposium, hosted by MIT's Department of Artificial Intelligence and Data Science.
+      </p>
+
+      {/* Month */}
+<p
+  className={`
+    mt-8 text-center text-red-600
+    text-xs sm:text-2xl md:text-base lg:text-4xl
+    tracking-[0.3em] uppercase
+    transition-all duration-1000 ease-out delay-150
+    ${showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}
+  `}
+>
+  February
+</p>
+
+{/* Dates */}
+<p
+  className={`
+    mt-1 text-center text-white 
+    text-sm sm:text-2xl md:text-lg lg:text-4xl font-semibold
+    tracking-widest
+    transition-all duration-1000 ease-out delay-300
+    ${showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}
+  `}
+>
+  21 &amp; 22
+</p>
+<div className="h-6 sm:h-10" />
+<div 
+  onClick={() => {
+    document.getElementById("Events")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+  className={`
+    sm:mt-6 lg:mt-0
+    cursor-pointer select-none
+    transition-all duration-700 ease-out
+    ${showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
+  `}
+>
+  <div
+    className="
+      flex items-center gap-4
+      px-3 py-2 sm:px-6 sm:py-4
+
+      border-2 border-red-600
+      rounded-xl
+      shadow-[0_0_16px_rgba(229,9,20,0.8)]
+      hover:shadow-[0_0_28px_rgba(229,9,20,1)]
+      transition-all duration-300
+      animate-pulse
+    "
+  >
+
+    <span className="text-red-600 text-2xl animate-bounce">↓</span>
+
+  
+    <span
+      className="
+       text-red-600
+    uppercase
+    tracking-[0.10em] sm:tracking-[0.35em] 
+    text-[10px] sm:text-sm md:text-base lg:text-lg
+    font-semibold
+    hover:text-white transition-colors duration-300
+    text-center
+      "
+    >
+      Enter the HellFire
+    </span>
+  </div>
+</div>
+
+
       </div>
     </section>
   );
