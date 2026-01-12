@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 const dateText = "FEBRUARY   21 ,   2026   ·   MIT ,   CHENNAI";
 
@@ -11,7 +11,7 @@ const Home = () => {
   const [showLogos, setShowLogos] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
-
+  const navigate =  useNavigate();
 
   
   useEffect(() => {
@@ -60,7 +60,33 @@ const Home = () => {
   return (
     <section className="relative flex flex-col justify-center items-center bg-black min-h-screen overflow-hidden px-4 sm:px-6 md:px-10">
 
+   
+<div
+  className={`
+    fixed top-10 right-6 z-50 hidden md:block
     
+  ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}`}
+>
+  <button
+    onClick={() => navigate("/signin")}
+    className="
+      px-5 py-2
+      border border-red-600
+      bg-red-600 
+      rounded-full
+      text-white
+      uppercase tracking-widest text-xs sm:text-sm
+      font-semibold
+      shadow-[0_0_12px_rgba(229,9,20,0.8)]
+      hover:bg-white hover:text-black
+      hover:shadow-[0_0_20px_rgba(229,9,20,1)]
+      transition-all duration-300
+    "
+  >
+    Sign In
+  </button>
+</div>
+
       <div
         className={`hidden md:flex absolute top-8 left-6 flex items-center gap-3 z-40
           transition-all duration-1000 ease-out
