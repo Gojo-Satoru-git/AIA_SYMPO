@@ -6,7 +6,19 @@ const Events = () => {
   const [Selected, SetSelected] = useState('All');
 
   const [clicked, setClicked] = React.useState(false);
+  const [cart, setCart] = React.useState([]);
 
+  const AddtoCart = (event) => {
+    const already = cart.some((item) => item.id == event.id);
+    if (!already) {
+      setCart([...cart, event]);
+      alert(`${event.title} Item added to Cart`);
+    } else {
+      alert('Item already in Cart');
+    }
+  };
+
+  console.log(cart);
   const [cardclicked, setCardclicked] = React.useState({
     id: null,
     category: null,
@@ -24,6 +36,7 @@ const Events = () => {
       title: 'IPL Auction',
       id: '6',
       image: '/eventB.png',
+      backside: './assets/Hopper.png',
       description: 'This is event B',
       category: 'Non-Technical',
       teamSize: '6',
@@ -42,6 +55,7 @@ const Events = () => {
       title: 'Call Of Query',
       id: '3',
       image: '/event3.png',
+      backside: './assets/Eleven.png',
       description: 'This is event 3',
       teamSize: '4',
       category: 'Technical',
@@ -60,6 +74,7 @@ const Events = () => {
       title: 'Connextions',
       id: '8',
       image: '/eventC.png',
+      backside: './assets/steve.jpeg',
       teamSize: '6',
       description: 'This is event C',
       category: 'Non-Technical',
@@ -78,6 +93,7 @@ const Events = () => {
       title: 'Tournament of strategies',
       id: '1',
       image: '/event1.png',
+      backside: './assets/mike.png',
       description: 'This is event 1',
       category: 'Technical',
       date: '2026-02-21',
@@ -96,6 +112,7 @@ const Events = () => {
       title: 'Treasure Hunt',
       id: '9',
       image: '/eventC.png',
+      backside: './assets/will.png',
       teamSize: '7',
       description: 'This is event C',
       category: 'Non-Technical',
@@ -114,6 +131,7 @@ const Events = () => {
       title: 'Ninja Coding',
       id: '4',
       image: '/event3.png',
+      backside: './assets/Dustin.png',
       description: 'This is event 3',
       teamSize: '4',
       category: 'Technical',
@@ -132,6 +150,7 @@ const Events = () => {
       title: 'ADZAP',
       id: '5',
       image: '/eventA.png',
+      backside: './assets/Max.png',
       description: 'This is event A',
       category: 'Non-Technical',
       teamSize: '5',
@@ -150,6 +169,7 @@ const Events = () => {
       title: 'coding with AI',
       id: '2',
       image: '/event2.png',
+      backside: './assets/vecna.jpeg',
       description: 'This is event 2',
       category: 'Technical',
       teamSize: '4',
@@ -168,6 +188,7 @@ const Events = () => {
       title: 'Fandom Quiz',
       id: '7',
       image: '/eventC.png',
+      backside: './assets/Nancy.png',
       teamSize: '6',
       description: 'This is event C',
       category: 'Non-Technical',
@@ -186,8 +207,9 @@ const Events = () => {
   const Workshops = [
     {
       title: 'Workshop1',
-      id: '1',
+      id: '10',
       image: '/workshop1.png',
+      backside: './assets/Hopper.png',
       description: 'This is workshop 1',
       date: '2026-02-21',
       time: '11:00 AM',
@@ -202,8 +224,9 @@ const Events = () => {
     },
     {
       title: 'Workshop2',
-      id: '2',
+      id: '11',
       image: '/workshop2.png',
+      backside: './assets/Hopper.png',
       description: 'This is workshop 2',
       date: '2026-02-21',
       time: '11:00 AM',
@@ -235,7 +258,7 @@ const Events = () => {
     <>
       {clicked && (
         <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
-          <EventDetails card={detail} onClose={() => setClicked(false)} />
+          <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={AddtoCart} />
         </div>
       )}
       <div className={`flex flex-col p-10 sm:justify-start bg-black min-h-screen`}>
@@ -286,16 +309,18 @@ const Events = () => {
                   category={events.category}
                   index={index}
                   id={events.id}
-                  clicked={clicked}
-                  setClicked={setClicked}
-                  setCardclicked={setCardclicked}
+                  onClick={() => {
+                    setClicked(!clicked);
+                    setCardclicked({ id: events.id, category: events.category });
+                  }}
+                  backside={events.backside}
                 />
               </div>
             ))}
           </div>
           <button
             onClick={() => scroll('right')}
-            className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+            className=" absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
           >
             <span className="mb-auto">›</span>
           </button>
@@ -318,9 +343,11 @@ const Events = () => {
                   date={workshop.date}
                   time={workshop.time}
                   id={workshop.id}
-                  clicked={clicked}
-                  setClicked={setClicked}
-                  setCardclicked={setCardclicked}
+                  onClick={() => {
+                    setClicked(!clicked);
+                    setCardclicked({ id: workshop.id, category: 'workshop' });
+                  }}
+                  backside={workshop.backside}
                 />
               </div>
             ))}

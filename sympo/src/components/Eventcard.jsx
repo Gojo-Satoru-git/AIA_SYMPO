@@ -1,23 +1,10 @@
 import React from 'react';
 
-function Eventcard({
-  title,
-  desc,
-  img,
-  id,
-  date,
-  time,
-  index,
-  category,
-  setClicked,
-  clicked,
-  setCardclicked,
-}) {
+function Eventcard({ title, desc, img, id, date, time, index, category, backside, onClick }) {
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
 
-  const image = category === 'workshop' ? './assets/backside2.jpeg' : './assets/backside.jpeg';
 
   React.useEffect(() => {
     setHasAppeared(false);
@@ -67,10 +54,7 @@ function Eventcard({
       >
         {/* FRONT FACE (Needs backface-hidden to swap correctly) */}
         <div
-          onClick={() => {
-            setClicked(!clicked);
-            setCardclicked({ id: id, category: category });
-          }}
+          onClick={onClick}
           className="absolute inset-0 w-full h-full backface-hidden p-4 rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
         >
           <h1 className="text-primary text-center p-2 font-bold text-xl uppercase tracking-widest">
@@ -89,7 +73,7 @@ function Eventcard({
 
         {/* BACK FACE (Pre-rotated to face away) */}
         <div className="absolute inset-0 w-full h-full backface-hidden bg-primary rounded-md flex items-center justify-center [transform:rotateY(180deg)]">
-          <img src={image} className="w-full h-full overflow-hidden m-4"></img>
+          <img src={backside} className="w-full h-full overflow-hidden m-4"></img>
         </div>
       </div>
     </div>

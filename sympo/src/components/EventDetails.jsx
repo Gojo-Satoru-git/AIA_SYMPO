@@ -1,6 +1,6 @@
 import React from 'react';
 
-function EventDetails({ card, onClose }) {
+function EventDetails({ card, onClose, AddtoCart }) {
   return (
     <>
       <button onClick={onClose} className="absolute top-2 right-4 text-primary text-xl font-bold">
@@ -50,8 +50,10 @@ function EventDetails({ card, onClose }) {
             </div>
           </div>
         </div>
-        <button className="bg-primary text-black rounded-full p-2 shadow-stGlow">
-          {' '}
+        <button
+          className="bg-primary text-black rounded-full p-2 shadow-stGlow"
+          onClick={() => AddtoCart(card)}
+        >
           Add to cart
         </button>
         <p className="text-primary text-lg italic">Rules : {card.rules}</p>
