@@ -36,7 +36,7 @@ const navigate = useNavigate();
   Back
 </Button>
 
-
+        <Typography variant="h4"  className="text-red-600 text-center font-bold tracking-widest mb-6 p-2">Symposium'26</Typography>
           {/* TITLE */}
           <Typography
             variant="h5"
