@@ -62,8 +62,9 @@ const Contacts = () => {
       );
 
   return (
-    <div className="bg-black">
-      <Container maxWidth="lg" className="mt-12 px-4 sm:px-6">
+    <div id="contacts" className="bg-black  pt-[15px] -mt-[100px]">
+      <Container maxWidth="lg" className="mt-12 px-4 sm:px-6" >
+    <div className="py-10">
 
         {/* ================= EVENT COORDINATORS ================= */}
         <Typography
@@ -73,47 +74,48 @@ const Contacts = () => {
         >
           EVENT COORDINATORS
         </Typography>
-       <div
-  className="flex justify-center items-center py-10 text-primary"
+        <Typography
+  className="text-gray-400 text-center mb-4"
+  sx={{
+    fontSize: "0.85rem",
+    display: { xs: "block", md: "none" }, // 👈 mobile only
+  }}
 >
-  <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
+  Swipe left or right to view coordinators →
+</Typography>
 
-    <button
-      type="button"
-      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
-        ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
-      onClick={() => SetSelected('All')}
-    >
-      All
-    </button>
-           <button
-      type="button"
-      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
-        ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
-      onClick={() => SetSelected('Non-Technical')}
-    >
-      Non-Technical
-    </button>
-    <button
-      type="button"
-      className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer
-        ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
-      onClick={() => SetSelected('Technical')}
-    >
-      Technical
-    </button>
+       {/* ================= FILTER BUTTONS (FIXED) ================= */}
+ <div className="flex  justify-center items-center py-10 text-primary">
+        <ul className="flex flex-wrap justify-center gap-5 md:gap-8 text-primary">
+          <li
+            className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
+            onClick={() => SetSelected('All')}
+          >
+            All
+          </li>
+          <li
+            className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
+            onClick={() => SetSelected('Technical')}
+          >
+            Technical
+          </li>
+          <li
+            className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
+            onClick={() => SetSelected('Non-Technical')}
+          >
+            Non-Technical
+          </li>
+        </ul>
+      </div>
 
- 
 
-  </ul>
-</div>
-
-        <div className="relative">
+        <div className="relative scroll-hint">
 
           {/* LEFT ARROW (DESKTOP ONLY) */}
           <IconButton
             onClick={scrollLeft}
             sx={{
+              m:0.5,
               display: { xs: "none", md: "flex" },
               position: "absolute",
               left: -24,
@@ -132,6 +134,7 @@ const Contacts = () => {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
+         
             className={`
               flex gap-6
               overflow-x-auto
@@ -142,7 +145,8 @@ const Contacts = () => {
             `}
             style={{
               WebkitOverflowScrolling: "touch",
-              scrollBehavior: "auto", // 🔥 critical for mobile
+              
+               
             }}
           >
             {filteredEvents.map((event, index) => (
@@ -182,13 +186,25 @@ const Contacts = () => {
         >
           REGISTRATION ENQUIRIES
         </Typography>
+        <Typography
+  className="text-gray-400 text-center mb-6 "
+  sx={{
+    fontSize: "0.85rem",
 
+    display: { xs: "block", md: "none" },
+  }}
+>
+  Swipe left or right to view registration contacts →
+</Typography>
+        <div className="relative scroll-hint">
         <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
           <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
           <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
           <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
         </div>
-
+       </div>
+        
+      </div>
       </Container>
     </div>
   );
