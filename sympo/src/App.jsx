@@ -32,7 +32,7 @@ const MainPage = () => {
 
       <div ref={HomeRef}><Home /></div>
       <div ref={AboutRef}><About /></div>
-      <div ref={EventsRef}><Events /></div>
+      <div ref={EventsRef} id="Events"><Events /></div>
       <div ref={RegisterRef}><Register /></div>
       <div ref={FAQsRef}><FAQs /></div>
       <div ref={ContactRef}><Contact /></div>
