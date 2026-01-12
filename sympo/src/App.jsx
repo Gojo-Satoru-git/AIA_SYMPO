@@ -33,7 +33,7 @@ const App = () => {
       <div ref={AboutRef} >
         <About />
       </div>
-      <div ref={EventsRef} >
+      <div ref={EventsRef} id="Events" >
         <Events />
       </div>
       <div ref={RegisterRef} >
