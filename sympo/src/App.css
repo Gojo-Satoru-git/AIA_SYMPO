@@ -129,6 +129,20 @@
 }
 
 
+/* Enable scroll snapping properly */
+@media (max-width: 768px) {
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+}
+
+/* Hide gradient hint on desktop */
+
+
+/* Prevent scroll chaining */
+.scroll-hint > div {
+  overscroll-behavior-x: contain;
+}
 
 
 
