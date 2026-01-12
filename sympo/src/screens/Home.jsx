@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+
 const dateText = "FEBRUARY   21 ,   2026   ·   MIT ,   CHENNAI";
 
 const Home = () => {
@@ -8,6 +9,7 @@ const Home = () => {
   const [typedText, setTypedText] = useState("");
   const [charIndex, setCharIndex] = useState(0);
   const [showLogos, setShowLogos] = useState(false);
+
 
   
   useEffect(() => {
@@ -45,7 +47,7 @@ const Home = () => {
   return (
     <section className="relative flex flex-col justify-center items-center bg-black min-h-screen overflow-hidden px-4 sm:px-6 md:px-10">
 
-     
+    
       <div
         className={`hidden md:flex absolute top-8 left-6 flex items-center gap-3 z-40
           transition-all duration-1000 ease-out
@@ -60,7 +62,8 @@ const Home = () => {
         <span className="text-white font-bold tracking-[0.3em] ml-2 text-sm sm:text-base md:text-xl lg:text-3xl uppercase">
           AIA
         </span>
-      </div>
+     </div>
+      
 
     <div
   className={`absolute z-40 transition-all duration-1000 ease-out
