@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import './App.css';
 import Home from './screens/Home';
 import About from './screens/About';
@@ -16,6 +16,7 @@ const App = () => {
   const FAQsRef = useRef(null);
   const ContactRef = useRef(null);
   const RegisterRef = useRef(null);
+
   return (
     <div className="bg-black">
       <NavMenubar
@@ -26,23 +27,23 @@ const App = () => {
         ContactRef={ContactRef}
         RegisterRef={RegisterRef}
       />
-      <div ref={HomeRef}>
+      <div ref={HomeRef} >
         <Home />
       </div>
-      <div ref={AboutRef}>
+      <div ref={AboutRef} >
         <About />
       </div>
-      <div ref={EventsRef}>
+      <div ref={EventsRef} id="Events" >
         <Events />
       </div>
-      <div ref={RegisterRef}>
+      <div ref={RegisterRef} >
         <Register />
       </div>
-      <div ref={FAQsRef}>
+      <div ref={FAQsRef} >
         <FAQs />
       </div>
 
-      <div ref={ContactRef}>
+      <div ref={ContactRef} >
         <Contact />
       </div>
       <Footer />
