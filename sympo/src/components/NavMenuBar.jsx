@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -7,6 +9,9 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [jitterTransform, setJitterTransform] = useState('translate(0, 0)');
   const shakeArmedRef = useRef(true);
+
+  const navigate = useNavigate();
+
 
  const scrollTo = (ref) => {
   ref?.current?.scrollIntoView({ behavior: 'smooth' });
@@ -135,12 +140,43 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       </nav>
 
       {/* mobile */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 flex justify-between items-center md:hidden">
-        <span className="text-primary uppercase tracking-widest">SYMPOSIUM</span>
-        <button onClick={() => setIsOpen(true)} className="text-primary text-2xl">
-          ☰
-        </button>
-      </nav>
+    {/* mobile */}
+<nav className="fixed top-0 left-0 w-full z-50 p-4 flex items-center justify-between md:hidden">
+  
+  {/* LEFT: Menu + Symposium */}
+  <div className="flex items-center gap-3">
+    <button
+      onClick={() => setIsOpen(true)}
+      className="text-primary text-2xl"
+    >
+      ☰
+    </button>
+
+    <span className="text-primary uppercase tracking-widest">
+      SYMPOSIUM
+    </span>
+  </div>
+
+  {/* RIGHT: Sign In */}
+  <button
+    onClick={() => navigate("/signin")}
+    className="
+      px-4 py-1.5
+      text-[11px]
+      uppercase tracking-widest
+      font-semibold
+      rounded-full
+      bg-primary text-white
+      shadow-stGlow
+      transition-all duration-300
+      hover:scale-105
+    "
+  >
+    Sign In
+  </button>
+
+</nav>
+
 
       {isOpen && (
         <div
