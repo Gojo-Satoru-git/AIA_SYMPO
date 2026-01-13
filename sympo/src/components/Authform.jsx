@@ -38,16 +38,42 @@ const menuPaperStyle = {
 /* ================= INPUT STYLE ================= */
 
 const inputStyle = {
-  input: { color: "white" },
-  label: { color: "#aaa" },
+  input: {
+    color: "white",
+  },
+
+  label: {
+    color: "#b0b0b0",
+    fontWeight: 500,
+  },
+
+  "& label.Mui-focused": {
+    color: "#e50914", // 🔥 red instead of blue
+  },
+
+  "& label .MuiFormLabel-asterisk": {
+    color: "#e50914", // 🔥 required *
+  },
+
   "& .MuiOutlinedInput-root": {
     backgroundColor: "#0b0b0b",
     borderRadius: "12px",
-    "& fieldset": { borderColor: "#444" },
-    "&:hover fieldset": { borderColor: "#e50914" },
-    "&.Mui-focused fieldset": { borderColor: "#e50914" },
+
+    "& fieldset": {
+      borderColor: "#444",
+    },
+
+    "&:hover fieldset": {
+      borderColor: "#e50914",
+    },
+
+    "&.Mui-focused fieldset": {
+      borderColor: "#e50914",
+      boxShadow: "0 0 8px rgba(229,9,20,0.6)",
+    },
   },
 };
+
 
 /* ================= COMPONENT ================= */
 
