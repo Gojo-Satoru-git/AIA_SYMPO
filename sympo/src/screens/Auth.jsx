@@ -4,6 +4,8 @@ import AuthForm from "../components/Authform";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
+import { useAuth } from "../context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const Auth = ({ mode: initialMode }) => {
   const [mode, setMode] = useState(initialMode || "signin"); // signin | signup
