@@ -19,10 +19,18 @@ export default {
       },
 
       keyframes: {
+        glitchOnce: {
+          '0%': { transform: 'translate(0)' },
+          '20%': { transform: 'translate(-2px, 2px)' },
+          '40%': { transform: 'translate(2px, -2px)' },
+          '60%': { transform: 'translate(-1px, 1px)' },
+          '80%': { transform: 'translate(1px, -1px)' },
+          '100%': { transform: 'translate(0)' },
+        },
         'slide-down': {
-        '0%': { transform: 'translateY(-100%)', opacity: '0' },
-        '100%': { transform: 'translateY(0)', opacity: '1' },
-      },
+          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
         flicker: {
           '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': { opacity: '1' },
           '20%, 22%, 24%, 55%': { opacity: '0.4' },
@@ -59,18 +67,19 @@ export default {
       },
 
       animation: {
-        "fade-in-down": "fadeInDown 0.8s ease-in-out",
-        flicker: "flicker 2s infinite",
-       'slide-down': 'slide-down 1s ease-out forwards',
-        zoom: "zoomIn 1.8s ease-out forwards",
+        'fade-in-down': 'fadeInDown 0.8s ease-in-out',
+        flicker: 'flicker 2s infinite',
+        'slide-down': 'slide-down 1s ease-out forwards',
+        zoom: 'zoomIn 1.8s ease-out forwards',
+        glitchOnce: 'glitchOnce 0.4s steps(2) 1',
       },
-         transitionDelay: {
-      100: '100ms',
-      200: '200ms',
-      300: '300ms',
-      400: '400ms',
-      500: '500ms',
-    },
+      transitionDelay: {
+        100: '100ms',
+        200: '200ms',
+        300: '300ms',
+        400: '400ms',
+        500: '500ms',
+      },
     },
   },
   plugins: [],
