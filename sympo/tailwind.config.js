@@ -19,6 +19,22 @@ export default {
       },
 
       keyframes: {
+        toastIn: {
+          '0%': { transform: 'translateX(120%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        toastOut: {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(120%)', opacity: '0' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(40px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideOutLeft: {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(-40px)', opacity: '0' },
+        },
         glitchOnce: {
           '0%': { transform: 'translate(0)' },
           '20%': { transform: 'translate(-2px, 2px)' },
@@ -67,11 +83,15 @@ export default {
       },
 
       animation: {
+        toastIn: 'toastIn 0.35s ease-out',
+        toastOut: 'toastOut 0.35s ease-in',
         'fade-in-down': 'fadeInDown 0.8s ease-in-out',
         flicker: 'flicker 2s infinite',
         'slide-down': 'slide-down 1s ease-out forwards',
         zoom: 'zoomIn 1.8s ease-out forwards',
         glitchOnce: 'glitchOnce 0.4s steps(2) 1',
+        slideInRight: 'slideInRight 0.35s ease-out',
+        slideOutLeft: 'slideOutLeft 0.35s ease-in forwards',
       },
       transitionDelay: {
         100: '100ms',

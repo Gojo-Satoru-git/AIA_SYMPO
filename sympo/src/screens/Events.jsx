@@ -1,24 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
+import useCart from '../context/useCart';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-
+  const { addToCart } = useCart();
   const [clicked, setClicked] = React.useState(false);
-  const [cart, setCart] = React.useState([]);
 
-  const AddtoCart = (event) => {
-    const already = cart.some((item) => item.id == event.id);
-    if (!already) {
-      setCart([...cart, event]);
-      alert(`${event.title} Item added to Cart`);
-    } else {
-      alert('Item already in Cart');
-    }
-  };
-
-  console.log(cart);
   const [cardclicked, setCardclicked] = React.useState({
     id: null,
     category: null,
@@ -30,6 +19,15 @@ const Events = () => {
       const scrollAmount = directions === 'left' ? -320 : 320;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
+  };
+  const handleCart = (item, type) => {
+    const price = Number(item.fees);
+    addToCart({
+      id: item.id,
+      title: item.title,
+      price: Number.isFinite(price) ? price : 0,
+      type,
+    });
   };
   const eventext = [
     {
@@ -258,7 +256,7 @@ const Events = () => {
     <>
       {clicked && (
         <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
-          <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={AddtoCart} />
+          <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={handleCart} />
         </div>
       )}
       <div className={`flex flex-col p-10 sm:justify-start bg-black min-h-screen`}>

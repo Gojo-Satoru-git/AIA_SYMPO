@@ -1,6 +1,7 @@
 import React from 'react';
-
+import useToast from '../context/useToast';
 function EventDetails({ card, onClose, AddtoCart }) {
+  const { showToast } = useToast();
   return (
     <>
       <button onClick={onClose} className="absolute top-2 right-4 text-primary text-xl font-bold">
@@ -51,8 +52,11 @@ function EventDetails({ card, onClose, AddtoCart }) {
           </div>
         </div>
         <button
-          className="bg-primary text-black rounded-full p-2 shadow-stGlow"
-          onClick={() => AddtoCart(card)}
+          className="bg-primary text-black rounded-full px-4 py-2 shadow-stGlow"
+          onClick={() => {
+            AddtoCart(card, card.category ? 'event' : 'workshop');
+            showToast(`${card.title} added check the registration`, 'add');
+          }}
         >
           Add to cart
         </button>
