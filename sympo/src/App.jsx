@@ -53,6 +53,7 @@ const App = () => {
         <Route path="/signin" element={<Auth mode="signin" />} />
         <Route path="/signup" element={<Auth mode="signup" />} />
       </Routes>
+      
    
   );
 };

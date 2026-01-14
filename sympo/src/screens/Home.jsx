@@ -60,7 +60,7 @@ const Home = () => {
   return (
     <section className="relative flex flex-col justify-center items-center bg-black min-h-screen overflow-hidden px-4 sm:px-6 md:px-10">
       <div
-        className={`hidden md:flex absolute top-8 left-6 flex items-center gap-3 z-40
+        className={`hidden lg:flex absolute top-8 left-6 flex items-center gap-3 z-40
           transition-all duration-1000 ease-out
           ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}
         `}
@@ -76,16 +76,23 @@ const Home = () => {
      </div>
       
 
-    <div
+ <div
   className={`absolute z-40 transition-all duration-1000 ease-out
-    top-[110px] md:top-[110px]
+    top-[70px] sm:top-[120px] md:top-[110px]
     left-1/2 transform -translate-x-1/2
     md:left-auto md:right-8 md:translate-x-0
     ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}
     w-full max-w-lg
+    px-4
   `}
 >
-  <div className="flex flex-wrap justify-center gap-4 md:flex-nowrap md:justify-end">
+
+<div
+  className="flex flex-wrap justify-center gap-2
+             scale-[0.8] sm:scale-100
+             md:flex-nowrap md:justify-end"
+>
+
     
     <img
       src="/AU.png"
@@ -115,10 +122,10 @@ const Home = () => {
 
 
      
-      <div className="mt-[24px] md:mt-5 lg:mt-24 flex flex-col items-center justify-center text-center w-full max-w-5xl">
+      <div className="mt-[44px] md:mt-16 sm:mt-12  lg:mt-24 flex flex-col items-center justify-center text-center w-full max-w-5xl">
 
    
-        <p className="font-strange mb-2 sm:mt-24 lg:mt-32 text-xs sm:text-lg md:text-xl tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.4em] text-white opacity-80 min-h-[1.5rem] sm:min-h-[2rem] break-words">
+        <p className="font-strange mb-2 sm:mt-24 md:mt-28 lg:mt-32 text-xs sm:text-lg md:text-xl tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.4em] text-white opacity-80 min-h-[1.5rem] sm:min-h-[2rem] break-words">
           {typedText}
           {startTyping && charIndex < dateText.length && (
             <span className="animate-pulse">|</span>
@@ -128,7 +135,7 @@ const Home = () => {
  
         <div className="inline-block">
           <h1
-            className="relative text-4xl sm:mt-5 lg:mt-0 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom animate-flicker"
+            className="relative text-4xl sm:mt-5 lg:mt-0 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom "
             style={{
               background: "linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)",
               WebkitBackgroundClip: "text",
