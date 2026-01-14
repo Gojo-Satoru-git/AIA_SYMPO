@@ -95,7 +95,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
 
   return (
     <>
-      <nav className="fixed top-5 left-0 w-full justify-center p-4 z-50 animate-fade-in-down hidden md:flex">
+      <nav className="fixed top-5 left-0 w-full justify-center p-4 z-50 animate-fade-in-down hidden lg:flex">
         <div
           className="
             bg-black/60 backdrop-blur-md
@@ -180,7 +180,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       </nav>
 
       {/* mobile */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 flex justify-between items-center md:hidden">
+      <nav className="fixed top-0 left-0 w-full z-50 p-4 flex justify-between items-center lg:hidden">
         <div className="flex items-center gap-3">
           <button onClick={() => setIsOpen(true)} className="text-primary text-2xl">
             ☰

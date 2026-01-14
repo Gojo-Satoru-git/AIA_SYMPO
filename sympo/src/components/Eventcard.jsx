@@ -1,10 +1,9 @@
 import React from 'react';
 
-function Eventcard({ title, desc, img, id, date, time, index, category, backside, onClick }) {
+function Eventcard({ title, desc, img, date, time, index, category, backside, onClick }) {
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
-
 
   React.useEffect(() => {
     setHasAppeared(false);
@@ -42,11 +41,11 @@ function Eventcard({ title, desc, img, id, date, time, index, category, backside
   }, [hasAppeared, index]);
   const sizeClasses =
     category === 'workshop'
-      ? 'w-[60vw] sm:w-96 h-96' // Larger for workshops
+      ? 'w-[70vw] sm:w-80 h-96' // Larger for workshops
       : 'w-[70vw] sm:w-72 h-80';
 
   return (
-    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
+    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses}  m-2 sm:m-1`}>
       <div
         className={`relative w-full h-full transition-transform duration-1000 preserve-3d ${
           Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'

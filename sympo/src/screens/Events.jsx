@@ -318,13 +318,14 @@ const Events = () => {
           </div>
           <button
             onClick={() => scroll('right')}
-            className=" absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+            className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
           >
             <span className="mb-auto">›</span>
           </button>
         </div>
+        <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">→</span>
         <div className="relative text-primary mt-0">
-          <h2 className="p-2 rounded-full border-solid flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
+          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
             Workshops
           </h2>
           <div className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4">
@@ -350,6 +351,9 @@ const Events = () => {
               </div>
             ))}
           </div>
+          <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
+            →
+          </span>
         </div>
       </div>
     </>

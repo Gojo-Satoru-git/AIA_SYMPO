@@ -19,19 +19,13 @@ const menuItemStyle = {
   padding: "12px 18px",
   borderRadius: "8px",
   margin: "4px 6px",
-
   "&:hover": {
     backgroundColor: "rgba(229,9,20,0.15)",
   },
-
   "&.Mui-selected": {
-    backgroundColor: "rgba(229,9,20,0.9)",
-    color:"white",  
-    fontWeight: 600,
-  },
-
-  "&.Mui-selected:hover": {
     backgroundColor: "#e50914",
+    color: "white",
+    fontWeight: 600,
   },
 };
 
@@ -39,13 +33,49 @@ const menuPaperStyle = {
   backgroundColor: "#0b0b0b",
   borderRadius: "14px",
   border: "1px solid #2a2a2a",
-  marginTop: "6px",
-  boxShadow: `
-    0 0 12px rgba(229,9,20,0.35),
-    inset 0 0 8px rgba(255,255,255,0.03)
-  `,
 };
 
+/* ================= INPUT STYLE ================= */
+
+const inputStyle = {
+  input: {
+    color: "white",
+  },
+
+  label: {
+    color: "#b0b0b0",
+    fontWeight: 500,
+  },
+
+  "& label.Mui-focused": {
+    color: "#e50914", // 🔥 red instead of blue
+  },
+
+  "& label .MuiFormLabel-asterisk": {
+    color: "#e50914", // 🔥 required *
+  },
+
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#0b0b0b",
+    borderRadius: "12px",
+
+    "& fieldset": {
+      borderColor: "#444",
+    },
+
+    "&:hover fieldset": {
+      borderColor: "#e50914",
+    },
+
+    "&.Mui-focused fieldset": {
+      borderColor: "#e50914",
+      boxShadow: "0 0 8px rgba(229,9,20,0.6)",
+    },
+  },
+};
+
+
+/* ================= COMPONENT ================= */
 
 const AuthForm = ({ mode }) => {
   
@@ -119,25 +149,15 @@ const AuthForm = ({ mode }) => {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
       {/* ================= SIGN UP ================= */}
       {mode === "signup" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
           {/* FULL NAME */}
-          <div className=" grid grid-col-1 sm:col-span-2">
-          <TextField
-            name="name"
-            label="Full Name"
-            required
-            sx={inputStyle}
-          />
+          <div className="grid grid-cols-1 sm:col-span-2">
+            <TextField name="name" label="Full Name" required sx={inputStyle} />
           </div>
 
-          {/* YEAR */}
-         
-
-          {/* INSTITUTE NAME — FULL WIDTH */}
+          {/* INSTITUTE */}
           <div className="sm:col-span-2">
             <TextField
               name="institute"
@@ -156,38 +176,42 @@ const AuthForm = ({ mode }) => {
             required
             sx={inputStyle}
           />
-           <TextField
-  select
-  name="year"
-  label="Year of Study"
-  required
-  defaultValue=""
-  sx={{
-    ...inputStyle,
-     "& .MuiSelect-select": {
-      color: "white",        // ✅ FIXES invisible text
-    },
-    "& .MuiSelect-icon": {
-      color: "#e50914", 
-    },
-  }}
-  SelectProps={{
-    MenuProps: {
-      PaperProps: {
-        sx: menuPaperStyle,
-      },
-    },
-  }}
->
-  <MenuItem value="1" sx={menuItemStyle}>1st Year</MenuItem>
-  <MenuItem value="2" sx={menuItemStyle}>2nd Year</MenuItem>
-  <MenuItem value="3" sx={menuItemStyle}>3rd Year</MenuItem>
-  <MenuItem value="4" sx={menuItemStyle}>4th Year</MenuItem>
-  <MenuItem value="" disabled>Select Year</MenuItem>
-</TextField>
+           
 
+          {/* YEAR */}
+          <TextField
+            select
+            name="year"
+            label="Year of Study"
+            required
+            sx={{
+              ...inputStyle,
+              "& .MuiSelect-select": { color: "white" },
+              "& .MuiSelect-icon": { color: "#e50914" },
+            }}
+            SelectProps={{
+              MenuProps: {
+                PaperProps: {
+                  sx: menuPaperStyle,
+                },
+              },
+            }}
+          >
+            <MenuItem value="1" sx={menuItemStyle}>
+              1st Year
+            </MenuItem>
+            <MenuItem value="2" sx={menuItemStyle}>
+              2nd Year
+            </MenuItem>
+            <MenuItem value="3" sx={menuItemStyle}>
+              3rd Year
+            </MenuItem>
+            <MenuItem value="4" sx={menuItemStyle}>
+              4th Year
+            </MenuItem>
+          </TextField>
 
-          {/* EMAIL — FULL WIDTH */}
+          {/* EMAIL */}
           <div className="sm:col-span-2">
             <TextField
               name="email"
@@ -212,7 +236,7 @@ const AuthForm = ({ mode }) => {
         />
       )}
 
-      {/* ================= PASSWORDS ================= */}
+      {/* PASSWORD */}
       <TextField
         name="password"
         label="Password"
@@ -221,6 +245,7 @@ const AuthForm = ({ mode }) => {
         sx={inputStyle}
       />
 
+      {/* CONFIRM PASSWORD */}
       {mode === "signup" && (
         <TextField
           name="confirmPassword"
@@ -290,18 +315,6 @@ const AuthForm = ({ mode }) => {
 
     </form>
   );
-};
-
-const inputStyle = {
-  input: { color: "white" },
-  label: { color: "#aaa" },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#0b0b0b",
-    borderRadius: "12px",
-    "& fieldset": { borderColor: "#444" },
-    "&:hover fieldset": { borderColor: "#e50914" },
-    "&.Mui-focused fieldset": { borderColor: "#e50914" },
-  },
 };
 
 export default AuthForm;
