@@ -1,15 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useRef } from "react";
-import BackgroundEffect from "./components/Bgeffect";
-import Home from "./screens/Home";
-import About from "./screens/About";
-import Events from "./screens/Events";
-import FAQs from "./screens/Faqs";
-import Contact from "./screens/Contacts";
-import Register from "./screens/Register";
-import Footer from "./components/footer";
-import NavMenubar from "./components/NavMenuBar";
-import Auth from "./screens/Auth";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useRef } from 'react';
+import BackgroundEffect from './components/Bgeffect';
+import Home from './screens/Home';
+import About from './screens/About';
+import Events from './screens/Events';
+import FAQs from './screens/Faqs';
+import Contact from './screens/Contacts';
+import Register from './screens/Register';
+import Footer from './components/footer';
+import NavMenubar from './components/NavMenuBar';
+import Auth from './screens/Auth';
+import AppShell from './components/AppShell';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -56,20 +57,19 @@ const MainPage = () => {
 
 const App = () => {
   return (
-   <>
-      <BackgroundEffect />
-      <Routes>
-        {/* Scroll-based landing page */}
-        <Route path="/" element={<MainPage />} />
+    <AppShell>
+      <>
+        <BackgroundEffect />
+        <Routes>
+          {/* Scroll-based landing page */}
+          <Route path="/" element={<MainPage />} />
 
-        {/* Auth pages */}
-        <Route path="/signin" element={<Auth mode="signin" />} />
-        <Route path="/signup" element={<Auth mode="signup" />} />
-      </Routes>
-      
-
+          {/* Auth pages */}
+          <Route path="/signin" element={<Auth mode="signin" />} />
+          <Route path="/signup" element={<Auth mode="signup" />} />
+        </Routes>
       </>
-   
+    </AppShell>
   );
 };
 

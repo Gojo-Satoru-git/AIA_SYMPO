@@ -8,7 +8,7 @@ const Registration = () => {
   const [removingId, setRemovingId] = useState(null);
 
   return (
-    <section className="min-h-screen bg-black text-white px-6 py-24">
+    <section className="min-h-screen bg-transparent text-white px-6 py-24">
       <div className="max-w-4xl mx-auto flex flex-col gap-12">
         <div className="text-center">
           <h2 className="text-primary text-3xl md:text-4xl tracking-widest uppercase mb-2">
