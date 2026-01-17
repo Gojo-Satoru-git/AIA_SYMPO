@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useRef } from "react";
-
+import BackgroundEffect from "./components/Bgeffect";
 import Home from "./screens/Home";
 import About from "./screens/About";
 import Events from "./screens/Events";
@@ -20,7 +20,7 @@ const MainPage = () => {
   const RegisterRef = useRef(null);
 
   return (
-    <div className="bg-black">
+    <div className="relative z-10 bg-transparent">
       <NavMenubar
         HomeRef={HomeRef}
         AboutRef={AboutRef}
@@ -44,7 +44,8 @@ const MainPage = () => {
 
 const App = () => {
   return (
-   
+   <>
+      <BackgroundEffect />
       <Routes>
         {/* Scroll-based landing page */}
         <Route path="/" element={<MainPage />} />
@@ -54,6 +55,8 @@ const App = () => {
         <Route path="/signup" element={<Auth mode="signup" />} />
       </Routes>
       
+
+      </>
    
   );
 };

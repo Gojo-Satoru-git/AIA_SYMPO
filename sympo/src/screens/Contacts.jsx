@@ -62,7 +62,7 @@ const Contacts = () => {
       );
 
   return (
-    <div id="contacts" className="bg-black  pt-[15px] -mt-[100px]">
+    <div id="contacts" className="  pt-[15px] -mt-[100px]">
       <Container maxWidth="lg" className="mt-12 px-4 sm:px-6" >
     <div className="py-10">
 

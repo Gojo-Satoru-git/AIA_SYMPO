@@ -1,6 +1,6 @@
 const About = () => {
   return (
-    <section className="min-h-screen bg-black flex items-center px-6">
+    <section className="min-h-screen  flex items-center px-6">
       <div className="max-w-5xl mx-auto text-center">
         <h2
           className="

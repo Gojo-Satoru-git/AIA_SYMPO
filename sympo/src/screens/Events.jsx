@@ -257,11 +257,11 @@ const Events = () => {
   return (
     <>
       {clicked && (
-        <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
+        <div className="fixed top-0 left-0 z-50 w-full h-full  backdrop-blur-sm">
           <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={AddtoCart} />
         </div>
       )}
-      <div className={`flex flex-col p-10 sm:justify-start bg-black min-h-screen`}>
+      <div className={`flex flex-col p-10 sm:justify-start  min-h-screen`}>
         <div
           className={`flex  justify-center items-center py-10 text-primary mt-10 md:mt-10 sm:mt-10 `}
         >

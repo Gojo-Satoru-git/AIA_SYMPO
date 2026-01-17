@@ -18,11 +18,12 @@ const Auth = ({ mode: initialMode }) => {
   }, [initialMode]);
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-2 sm:px-4">
+    <div className="min-h-screen  flex items-center justify-center px-2 sm:px-4">
       <Container
         maxWidth="sm"
         sx={{
           px: { xs: 1, sm: 2 },
+          zIndex:1,
         }}
       >
         <Box
