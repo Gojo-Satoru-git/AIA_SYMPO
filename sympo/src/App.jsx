@@ -11,6 +11,8 @@ import Footer from './components/footer';
 import NavMenubar from './components/NavMenuBar';
 import Auth from './screens/Auth';
 import AppShell from './components/AppShell';
+import Eventprovider from './context/Eventprovider';
+import WorkshoProvider from './context/WorkshoProvider';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -38,7 +40,11 @@ const MainPage = () => {
         <About />
       </div>
       <div ref={EventsRef} id="Events">
-        <Events />
+        <Eventprovider>
+          <WorkshoProvider>
+            <Events />
+          </WorkshoProvider>
+        </Eventprovider>
       </div>
       <div ref={RegisterRef}>
         <Register />
