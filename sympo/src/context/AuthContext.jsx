@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase.js";
 
 const AuthContext = createContext(null);
 
@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log("Auth State Changed:", user ? "Logged In" : "Logged Out");
       setUser(firebaseUser);
       setLoading(false);
     });
