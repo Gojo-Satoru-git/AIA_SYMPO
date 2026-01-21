@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useRef } from 'react';
-
+import BackgroundEffect from './components/Bgeffect';
 import Home from './screens/Home';
 import About from './screens/About';
 import Events from './screens/Events';
@@ -11,6 +11,8 @@ import Footer from './components/footer';
 import NavMenubar from './components/NavMenuBar';
 import Auth from './screens/Auth';
 import AppShell from './components/AppShell';
+import Eventprovider from './context/Eventprovider';
+import WorkshoProvider from './context/WorkshoProvider';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -21,7 +23,7 @@ const MainPage = () => {
   const RegisterRef = useRef(null);
 
   return (
-    <div className="bg-black">
+    <div className="relative z-10 bg-transparent">
       <NavMenubar
         HomeRef={HomeRef}
         AboutRef={AboutRef}
@@ -38,7 +40,11 @@ const MainPage = () => {
         <About />
       </div>
       <div ref={EventsRef} id="Events">
-        <Events />
+        <Eventprovider>
+          <WorkshoProvider>
+            <Events />
+          </WorkshoProvider>
+        </Eventprovider>
       </div>
       <div ref={RegisterRef}>
         <Register />
@@ -58,14 +64,17 @@ const MainPage = () => {
 const App = () => {
   return (
     <AppShell>
-      <Routes>
-        {/* Scroll-based landing page */}
-        <Route path="/" element={<MainPage />} />
+      <>
+        <BackgroundEffect />
+        <Routes>
+          {/* Scroll-based landing page */}
+          <Route path="/" element={<MainPage />} />
 
-        {/* Auth pages */}
-        <Route path="/signin" element={<Auth mode="signin" />} />
-        <Route path="/signup" element={<Auth mode="signup" />} />
-      </Routes>
+          {/* Auth pages */}
+          <Route path="/signin" element={<Auth mode="signin" />} />
+          <Route path="/signup" element={<Auth mode="signup" />} />
+        </Routes>
+      </>
     </AppShell>
   );
 };

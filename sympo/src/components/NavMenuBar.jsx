@@ -180,8 +180,8 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       </nav>
 
       {/* mobile */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 flex justify-between items-center lg:hidden">
-        <div className="flex items-center gap-3">
+      <nav className="fixed top-0 left-0 w-full z-50 p-4  flex justify-between items-center lg:hidden">
+        <div className="flex items-center gap-3 ">
           <button onClick={() => setIsOpen(true)} className="text-primary text-2xl">
             ☰
           </button>
@@ -218,7 +218,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
 
       <aside
         className={`
-          fixed right-4 top-20
+          fixed left-4 top-20
           w-64
           bg-black/80 backdrop-blur-md
           border border-primary
@@ -227,7 +227,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
           z-50 md:hidden
 
           transform transition-all duration-300 ease-out
-          ${isOpen ? 'opacity-100 translate-x-0 scale-100 pointer-events-auto visible' : 'opacity-0 translate-x-20 scale-95 pointer-events-none invisible'}
+          ${isOpen ? 'opacity-100 -translate-x-0 scale-100 pointer-events-auto visible' : 'opacity-0 -translate-x-20 scale-95 pointer-events-none invisible'}
         `}
       >
         <div className="flex flex-col gap-6 p-8">
