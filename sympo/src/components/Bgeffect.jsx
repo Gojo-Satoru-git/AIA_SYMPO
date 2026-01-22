@@ -53,7 +53,7 @@ const BackgroundEffect = () => {
       ))}
 
       {/* Dark vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),rgba(0,0,0,0.85))]" />
+      <div className="relative inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),rgba(0,0,0,0.85))]" />
     </div>
   );
 };
