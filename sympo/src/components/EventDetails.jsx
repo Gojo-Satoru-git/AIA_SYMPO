@@ -58,7 +58,7 @@ function EventDetails({ card, onClose, AddtoCart }) {
             showToast(`${card.title} added check the registration`, 'add');
           }}
         >
-          Add to cart
+          Add 
         </button>
         <p className="text-primary text-lg italic">Rules : {card.rules}</p>
       </div>

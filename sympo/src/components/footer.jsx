@@ -1,8 +1,9 @@
 const Footer = () => {
   return (
-    <footer className="bg-transparent text-white px-6 py-16">
+    <footer className="backdrop-blur-md text-white px-6 py-16">
       <div
         className="
+        
           max-w-7xl mx-auto
           flex flex-col items-center gap-12
           md:grid md:grid-cols-2 md:items-start
