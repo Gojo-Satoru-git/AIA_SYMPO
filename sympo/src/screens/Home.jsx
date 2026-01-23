@@ -19,6 +19,20 @@ const Home = () => {
     const timer = setTimeout(() => setShowLine(true), 2000);
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+ 
+  document.body.style.overflow = "hidden";
+
+
+  const unlock = setTimeout(() => {
+    document.body.style.overflow = "auto";
+  }, 10000); 
+
+  return () => {
+    document.body.style.overflow = "auto";
+    clearTimeout(unlock);
+  };
+}, []);
 
 
   useEffect(() => {
