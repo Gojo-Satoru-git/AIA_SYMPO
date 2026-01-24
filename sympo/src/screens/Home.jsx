@@ -111,7 +111,7 @@ const Home = () => {
     <img
       src="/76.png"
       alt="Logo 3"
-      className="h-16 sm:h-16 md:h-20 object-contain"
+      className="h-16 sm:h-16 md:h-20 rounded-full  object-contain"
     />
   
     <img
