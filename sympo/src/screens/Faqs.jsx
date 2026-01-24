@@ -49,7 +49,7 @@ const FAQs = () => {
                   bg-black/60 backdrop-blur-md
                   border border-primary/30
                   rounded-xl overflow-hidden
-                  transition-all duration-300
+                  transition-all duration-300 
                 "
               >
                 {/* Question*/}
