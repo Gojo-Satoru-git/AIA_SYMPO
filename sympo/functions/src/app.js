@@ -2,13 +2,14 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 
-import "./config/env.js";
 import { globalLimiter, authLimiter } from "./middlewares/rateLimit.middleware.js";
 import errorHandler from "./middlewares/error.middleware.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+
+import{FRONTEND_URL} from "./config/env.js";
 
 const app = express();
 
@@ -33,22 +34,9 @@ app.use(express.urlencoded({ limit: '10kb', extended: true }));
 // Rate limiting
 app.use(globalLimiter);
 
-// CORS configuration
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL,
-];
-
+// CORS configurationc
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: FRONTEND_URL || "http://localhost:5173",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
