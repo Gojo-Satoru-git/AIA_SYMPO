@@ -49,9 +49,9 @@ app.get("/", (req, res) => {
 });
 
 // Routes with specific limiters
-app.use("/api/auth", authLimiter, authRoutes);
-app.use("/api/user", globalLimiter, userRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/auth", authLimiter, authRoutes);
+app.use("/user", globalLimiter, userRoutes);
+app.use("/payment", paymentRoutes);
 
 // 404 handler
 app.use((req, res) => {
