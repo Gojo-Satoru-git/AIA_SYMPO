@@ -1,12 +1,14 @@
-import { TextField, Button, MenuItem } from "@mui/material";
+import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import useToast from "../context/useToast";
 import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { registerUser } from "../services/auth.service";
-import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const menuItemStyle = {
   color: "#e5e5e5",
@@ -75,12 +77,33 @@ const inputStyle = {
 
 const AuthForm = ({ mode }) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [formData, setFormData] = useState({});
-  const [year, setYear] = useState("");
+  const { fetchProfile } = useAuth();
+  const { showToast } = useToast();
   
+  const [loading, setLoading] = useState(false);
+  const [year, setYear] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
+  const [passValid, setPassValid] = useState({
+    upper: false, lower: false, num: false, special: false, length: false
+  });
+  
+  const [match, setMatch] = useState(false);
+  
+  useEffect(() => {
+    setPassValid({
+      upper: /[A-Z]/.test(password),
+      lower: /[a-z]/.test(password),
+      num: /[0-9]/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      length: password.length >= 8
+    });
+    setMatch(password && confirmPassword && password === confirmPassword);
+  }, [password, confirmPassword]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -93,8 +116,15 @@ const AuthForm = ({ mode }) => {
       setLoading(true);
 
       if (mode === "signup") {
-        if (data.password !== data.confirmPassword) {
-          toast.error("Passwords do not match");
+        if(!Object.values(passValid).every(Boolean)){
+          showToast("Password does not meet requirements", "error");
+          setLoading(false);
+          return;         
+        }
+
+        if (!match) {
+          showToast("Passwords do not match", "error");
+          setLoading(false);
           return;
         }
 
@@ -116,12 +146,12 @@ const AuthForm = ({ mode }) => {
           name: data.name,
           phone: data.phone,
           institute: data.institute,
-          year: data.year,
+          year: year,
         }, token);
 
         localStorage.setItem("authToken", token);
 
-        toast.success("Account created successfully 🎉");
+        showToast("Account created successfully", "success");
         navigate("/", { replace: true });
       }
 
@@ -131,17 +161,37 @@ const AuthForm = ({ mode }) => {
           data.email,
           data.password
         );
-        toast.success("Login successful ✅");
+        const token = await cred.user.getIdToken();
+        localStorage.setItem("authToken", token);
+
+        showToast("Login successful", "success");
         navigate("/", { replace: true });
       }
     } catch (err) {
       console.error(err);
-      toast.error(err?.response?.data?.message || err.message || "Something went wrong");    
+      showToast(err?.response?.data?.message || err.message || "Something went wrong", "error");    
     } finally {
       setLoading(false);
     }
   };
 
+  const ValidationItem = ({ valid, text }) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+      {valid ? 
+        <CheckCircleIcon sx={{ color: '#e50914', fontSize: 16 }} /> : 
+        <CancelIcon sx={{ color: '#333', fontSize: 16 }} />
+      }
+      <Typography sx={{ 
+        color: valid ? '#ffffff' : '#555', 
+        fontSize: '0.75rem', 
+        letterSpacing: "1px",
+        fontFamily: "StrangerRegular",
+        transition: 'all 0.3s ease' 
+      }}>
+        {text}
+      </Typography>
+    </Box>
+  );
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -213,36 +263,66 @@ const AuthForm = ({ mode }) => {
         type="password"
         required
         sx={inputStyle}
+        onChange={(e) => setPassword(e.target.value)}
+        onFocus={() => setPasswordFocused(true)}
+        onBlur={() => setPasswordFocused(false)}
       />
+
+      {/* PASSWORD STRENGTH INDICATOR (Only on Signup) */}
+      {mode === "signup" && (passwordFocused || password.length > 0) && (
+        <Box sx={{ 
+          p: 2,
+          bgcolor: 'rgba(229,9,20,0.05)',
+          borderRadius: "14px",
+          border: `1px solid rgba(229,9,20,0.4)`,
+          backdropFilter: "blur(6px)",
+          boxShadow: `
+            0 0 20px rgba(229,9,20,0.35),
+            inset 0 0 25px rgba(229,9,20,0.2)
+          `,
+          transition: "all 0.3s ease",
+          animation: "fadeIn 0.2s ease-in-out"
+        }}>
+          <div className="grid grid-cols-2 gap-x-4">
+            <ValidationItem valid={passValid.length} text="Min 8 Characters" />
+            <ValidationItem valid={passValid.upper} text="1 Uppercase (A-Z)" />
+            <ValidationItem valid={passValid.lower} text="1 Lowercase (a-z)" />
+            <ValidationItem valid={passValid.num} text="1 Number (0-9)" />
+            <ValidationItem valid={passValid.special} text="1 Special (!@#...)" />
+          </div>
+        </Box>
+      )}
 
       {/* CONFIRM PASSWORD */}
       {mode === "signup" && (
-        <TextField
-          name="confirmPassword"
-          label="Confirm Password"
-          type="password"
-          required
-          sx={inputStyle}
-        />
-      )}
-
-      {message && (
-        <p className="text-green-400 text-sm text-center">
-          {message}
-        </p>
-      )}
-
-      {error && (
-        <p className="text-red-500 text-sm text-center">
-          {error}
-        </p>
+        <div className="flex flex-col gap-2">
+            <TextField
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                required
+                sx={inputStyle}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+              {/* MATCH INDICATOR */}
+              {confirmPassword && (
+              <Typography sx={{
+                fontSize: "0.8rem",
+                color: match ? "#e50914" : "#555",
+                letterSpacing: "1px",
+                transition: "all 0.3s ease"
+              }}>
+                {match ? "Passwords Match" : "Passwords do not match"}
+              </Typography>
+            )}
+        </div>
       )}
 
       {/* ================= SUBMIT ================= */}
       <Button
   type="submit"
   fullWidth
-  disabled={loading}
+  disabled={loading || (mode === "signup" && (!match || !Object.values(passValid).every(Boolean)))}
   sx={{
     mt: 2,
     py: 1.4,
@@ -251,20 +331,14 @@ const AuthForm = ({ mode }) => {
     fontWeight: 700,
     letterSpacing: "0.2em",
     borderRadius: "999px",
+    boxShadow: `0 0 20px #e50914`,
     "&.Mui-disabled": {
       backgroundColor: "#555",
       color: "#aaa",
     },
-    boxShadow: `
-      0 0 12px rgba(229,9,20,0.8),
-      inset 0 0 8px rgba(255,255,255,0.15)
-    `,
     "&:hover": {
       backgroundColor: "#ff1a1a",
-      boxShadow: `
-        0 0 20px rgba(229,9,20,1),
-        inset 0 0 10px rgba(255,255,255,0.25)
-      `,
+      boxShadow: `0 0 30px #e50914`,
       transform: "scale(1.03)",
     },
     transition: "all 0.25s ease",

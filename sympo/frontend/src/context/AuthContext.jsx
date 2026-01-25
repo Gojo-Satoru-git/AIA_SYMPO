@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import api from "../services/api";
+import useToast from "../context/useToast";
 
 const AuthContext = createContext();
 
@@ -9,32 +10,41 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/auth/profile");
+      setRole(res.data.role);
+      return res.data;
+    } catch (err) {
+      console.warn("Manual profile fetch failed:", err);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        setCurrentUser(user);
+
+        const token = await user.getIdToken();
+        localStorage.setItem("authToken", token);
+
         try {
-          setCurrentUser(user);
-
-          const token = await user.getIdToken();
-          localStorage.setItem("token", token);
-
-          try {
-            const res = await api.get("/auth/profile");
-            setRole(res.data.role);
-          } catch (err) {
-            console.warn("Profile not ready yet (first-time signup)");
-          }
-          
+          const res = await api.get("/auth/profile");
+          setRole(res.data.role);
         } catch (err) {
-          console.error("Auth error:", err);
-          setCurrentUser(null);
-          setRole(null);
+          if (err.response && err.response.status === 404) {
+            console.log("User not found in DB yet (Signup in progress)");
+          } else {
+            console.error("Auth Profile Error:", err);
+          }
         }
       } else {
         setCurrentUser(null);
         setRole(null);
-        localStorage.removeItem("token");
+        localStorage.removeItem("authToken");
       }
 
       setLoading(false);

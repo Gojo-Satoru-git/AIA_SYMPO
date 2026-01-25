@@ -16,7 +16,7 @@ export const registerUser = async (payload, token) => {
 
 // export const getProfile = async (token) => {
 //   try {
-//     const response = await api.get("/user/profile");
+//     const response = await api.get("/auth/profile");
 //     return response.data;
 //   } catch (error) {
 //     if (error.response?.status === 401) {

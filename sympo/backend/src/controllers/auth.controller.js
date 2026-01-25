@@ -8,8 +8,8 @@ const validatePhone = (phone) => {
 };
 
 const sanitizeInput = (input) => {
-  if (typeof input !== 'string') return input;
-  return input.trim().substring(0, 255);
+  if (!input) return "";
+  return String(input).trim();
 };
 
 export const signup = async (req, res) => {

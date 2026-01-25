@@ -1,8 +1,13 @@
 @font-face {
-  font-family: "StrangerThings";
-  src: url("fonts/ITC-Benguiat-Bold.otf") format("truetype");
+  font-family: 'StrangerThings';
+  src: url('/fonts/ITC-Benguiat-Bold.otf') format('opentype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'StrangerRegular';
+  src: url('/fonts/ITCBenguiatStdBookCn.OTF') format('opentype');
   font-weight: normal;
-  font-style: normal;
   
 
    font-family: "Stranger";

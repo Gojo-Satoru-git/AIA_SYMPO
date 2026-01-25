@@ -16,6 +16,10 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
+      if (!config.headers) {
+        config.headers = {};
+      }
+
       await auth.authStateReady();
 
       const user = auth.currentUser;
@@ -30,9 +34,7 @@ api.interceptors.request.use(
       return Promise.reject(error);
     }
   },
-  (error) => {
-    Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
@@ -60,9 +62,9 @@ api.interceptors.response.use(
 
       console.error(`API Error ${status}:`, data?.message || "Unknown error");
       
-      if (status === 401) {
-        window.location.href = "/login";
-      }
+      // if (status === 401) {
+      //   window.location.href = "/login";
+      // }
     } else {
       console.error("Network Error:", error.message);
     }
