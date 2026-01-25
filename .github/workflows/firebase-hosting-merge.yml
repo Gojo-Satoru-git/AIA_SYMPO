@@ -1,30 +1,37 @@
 name: Deploy to Firebase Hosting on merge
-
 on:
   push:
     branches:
-      - main   # or rahul
+      - main
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: sympo/frontend
 
-      - name: Build React app
+      - name: Build
+        working-directory: sympo/frontend
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VIT_FIREBASE_MEASUREMENT_ID: ${{ secrets.VIT_FIREBASE_MEASUREMENT_ID }}
+          RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+          VITE_RAZORPAY_KEY_ID : ${{ secrets.VITE_RAZORPAY_KEY_ID }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: npm run build
-        working-directory: sympo/frontend
 
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TEKHORA_26 }}
           projectId: tekhora-26
-          channelId: live
           entryPoint: sympo/frontend
