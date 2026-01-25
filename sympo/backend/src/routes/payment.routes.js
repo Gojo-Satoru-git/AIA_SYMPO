@@ -11,10 +11,11 @@ import {
 } from "../controllers/scan.controller.js";
 
 import { paymentLimiter } from "../middlewares/rateLimit.middleware.js"
+import { requireRegisteredUser } from "../middlewares/requireRegisteredUser.js";
 
 const router = express.Router();
 
-router.post("/order", requireAuth, paymentLimiter, createOrder);
+router.post("/order", requireAuth, requireRegisteredUser, paymentLimiter, createOrder);
 router.post("/verify", requireAuth, paymentLimiter, verifyOrder);
 
 router.post("/scan/validate", requireAuth, requireAdmin, validateQR);

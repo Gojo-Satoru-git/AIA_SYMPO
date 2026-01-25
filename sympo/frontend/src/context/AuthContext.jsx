@@ -19,11 +19,15 @@ export const AuthProvider = ({ children }) => {
           const token = await user.getIdToken();
           localStorage.setItem("token", token);
 
-          const res = await api.get("/auth/profile");
-          setRole(res.data.role);
+          try {
+            const res = await api.get("/auth/profile");
+            setRole(res.data.role);
+          } catch (err) {
+            console.warn("Profile not ready yet (first-time signup)");
+          }
           
         } catch (err) {
-          console.error("Error fetching user profile:", err);
+          console.error("Auth error:", err);
           setCurrentUser(null);
           setRole(null);
         }

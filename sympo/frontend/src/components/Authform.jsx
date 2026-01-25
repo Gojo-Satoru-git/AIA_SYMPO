@@ -1,16 +1,12 @@
 import { TextField, Button, MenuItem } from "@mui/material";
-
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from "react-toastify";
-import { updateProfile } from "firebase/auth";
-
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { registerUser, getProfile } from "../services/auth.service";
+import { registerUser } from "../services/auth.service";
+import api from "../services/api";
+
 
 const menuItemStyle = {
   color: "#e5e5e5",
@@ -83,6 +79,7 @@ const AuthForm = ({ mode }) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({});
+  const [year, setYear] = useState("");
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,7 +95,6 @@ const AuthForm = ({ mode }) => {
       if (mode === "signup") {
         if (data.password !== data.confirmPassword) {
           toast.error("Passwords do not match");
-          setLoading(false);
           return;
         }
 
@@ -112,6 +108,7 @@ const AuthForm = ({ mode }) => {
           displayName: data.name,
         });
 
+        const token = await cred.user.getIdToken();
 
         await registerUser({
           uid: cred.user.uid,
@@ -120,7 +117,9 @@ const AuthForm = ({ mode }) => {
           phone: data.phone,
           institute: data.institute,
           year: data.year,
-        });
+        }, token);
+
+        localStorage.setItem("authToken", token);
 
         toast.success("Account created successfully 🎉");
         navigate("/", { replace: true });
@@ -132,15 +131,12 @@ const AuthForm = ({ mode }) => {
           data.email,
           data.password
         );
-        
-        const token = await cred.user.getIdToken();
-        await getProfile(token);
-
         toast.success("Login successful ✅");
         navigate("/", { replace: true });
       }
     } catch (err) {
-      toast.error(err.message || "Something went wrong");
+      console.error(err);
+      toast.error(err?.response?.data?.message || err.message || "Something went wrong");    
     } finally {
       setLoading(false);
     }
@@ -159,31 +155,20 @@ const AuthForm = ({ mode }) => {
 
           {/* INSTITUTE */}
           <div className="sm:col-span-2">
-            <TextField
-              name="institute"
-              label="Institute Name"
-              required
-              fullWidth
-              sx={inputStyle}
-            />
+            <TextField name="institute" label="Institute Name" required fullWidth sx={inputStyle} />
           </div>
 
           {/* PHONE */}
-          <TextField
-            name="phone"
-            label="Phone Number"
-            type="tel"
-            required
-            sx={inputStyle}
-          />
+          <TextField name="phone" label="Phone Number" type="tel" required sx={inputStyle} />
            
-
           {/* YEAR */}
           <TextField
             select
             name="year"
             label="Year of Study"
             required
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
             sx={{
               ...inputStyle,
               "& .MuiSelect-select": { color: "white" },
@@ -197,30 +182,15 @@ const AuthForm = ({ mode }) => {
               },
             }}
           >
-            <MenuItem value="1" sx={menuItemStyle}>
-              1st Year
-            </MenuItem>
-            <MenuItem value="2" sx={menuItemStyle}>
-              2nd Year
-            </MenuItem>
-            <MenuItem value="3" sx={menuItemStyle}>
-              3rd Year
-            </MenuItem>
-            <MenuItem value="4" sx={menuItemStyle}>
-              4th Year
-            </MenuItem>
+            <MenuItem value="1" sx={menuItemStyle}>1st Year</MenuItem>
+            <MenuItem value="2" sx={menuItemStyle}>2nd Year</MenuItem>
+            <MenuItem value="3" sx={menuItemStyle}>3rd Year</MenuItem>
+            <MenuItem value="4" sx={menuItemStyle}>4th Year</MenuItem>
           </TextField>
 
           {/* EMAIL */}
           <div className="sm:col-span-2">
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              required
-              fullWidth
-              sx={inputStyle}
-            />
+            <TextField name="email" label="Email" type="email" required fullWidth sx={inputStyle} />
           </div>
         </div>
       )}
@@ -303,7 +273,7 @@ const AuthForm = ({ mode }) => {
     { loading ? (
       <span className="flex items-center justify-center gap-2">
         <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-        PROCESSING
+        PROCESSING...
       </span>
     ) : mode === "signin" ? (
       "SIGN IN"

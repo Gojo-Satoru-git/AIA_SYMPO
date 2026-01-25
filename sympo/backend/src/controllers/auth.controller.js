@@ -2,12 +2,6 @@ import { db } from "../config/firebase.js";
 import admin from "firebase-admin";
 import { success, error } from "../utils/response.js";
 
-// Input validation helper
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 const validatePhone = (phone) => {
   const phoneRegex = /^[0-9]{10,15}$/;
   return phoneRegex.test(phone);
@@ -20,9 +14,12 @@ const sanitizeInput = (input) => {
 
 export const signup = async (req, res) => {
   try {
+    if (!req.user || !req.user.uid) {
+      return error(res, "Unauthorized", 401);
+    }
+
+    const { uid, email } = req.user;
     const { name, phone, institute, year } = req.body;
-    const uid = req.user.uid;
-    const email = req.user.email;
 
     if ( !name || !phone || !institute || !year)
       return error(res, "Missing required fields", 400);
@@ -44,31 +41,39 @@ export const signup = async (req, res) => {
     }
 
     const userRef = db.collection("users").doc(uid);
-    const doc = await userRef.get();
 
-    if (doc.exists)
-      return error(res, "User already registered", 400);
+    await db.runTransaction(async (t) => {
+      const doc = await t.get(userRef);
+      if(doc.exists){
+        throw new Error("USER_EXISTS");
+      }
 
-    await userRef.set({
-      uid,
-      email: email.toLowerCase(),
-      ...sanitizedData,
-      role: "PARTICIPANT",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      t.set(userRef, {
+        uid,
+        email:email ? email.toLowerCase() : "",
+        ...sanitizedData,
+        role: "PARTICIPANT",
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
     });
 
     console.log(`New user registered: ${uid}`);
-
     return success(res, { uid }, "User registered successfully", 201);
+
   } catch (err) {
-    console.log("Signup error: ", err);
-    return error(res, "Registration failed", 500);
+      console.error("Signup error: ", err);
+      if (err.message === "USER_EXISTS") {
+        return error(res, "User already registered", 400);
+      }
+      return error(res, "Registration failed", 500);
   }
 };
 
 export const getProfile = async (req, res) => {
   try {
+    if (!req.user || !req.user.uid) return error(res, "Unauthorized", 401);
+
     const userRef = db.collection("users").doc(req.user.uid);
     const doc = await userRef.get();
 
@@ -76,36 +81,36 @@ export const getProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.json({
-      uid: doc.data().uid,
-      email: doc.data().email,
-      role: doc.data().role,
-    });
+    const userData = doc.data();
+
+    return success(res, {
+      uid: userData.uid,
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+      institute: userData.institute,
+      year: userData.year,
+      role: userData.role
+    }, "Profile fetched successfully");
   } catch (err) {
     console.error("Profile error:", err);
-    res.status(500).json({ message: "Failed to fetch profile" });
+    return error(res, "Failed to fetch profile", 500);
   }
 };
 
 
 export const logout = async (req, res) => {
   try {
-    const uid = req.user.uid;
+    if (!req.user || !req.user.uid) return error(res, "Unauthorized", 401);
 
+    const uid = req.user.uid;
     // Revoke all refresh tokens
     await admin.auth().revokeRefreshTokens(uid);
 
-    console.log(`User logged out: ${uid}`);
+    return success(res, null, "Logged out successfully");
 
-    return res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
   } catch (err) {
-    console.log(`Logout error: ${uid}`);
-    return res.status(500).json({
-      success: false,
-      message: "Logout failed",
-    });
+      console.error(`Logout error: ${req.user?.uid}`, err);
+      return error(res, "Logout failed", 500);
   }
 };

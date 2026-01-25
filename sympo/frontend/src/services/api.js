@@ -16,6 +16,8 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
+      await auth.authStateReady();
+
       const user = auth.currentUser;
       if(user){
         const token = await user.getIdToken(true);
@@ -29,48 +31,42 @@ api.interceptors.request.use(
     }
   },
   (error) => {
-    console.error("Request setup failed: ", error);
-    return Promise.reject(error);
+    Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if(error.response) {
-      const {status, data} = error.response;
+  (response) => response,
+  async (error) => {
+    const config = error.config;
 
-      switch (status) {
-        case 400:
-          console.error("Bad Request: ", data.message);
-          break;
-        case 401:
-          console.error("Unauthorized - Token expired or invalid");
-          break;
-        case 403:
-          console.error("Forebidden: ", data.message);
-          break;
-        case 404:
-          console.error("Not Found:", data.message);
-          break;
-        case 429:
-          console.error("Too Many Requests - Rate limited");
-          break;
-        case 500:
-          console.error("Server Error:", data.message);
-          break;
-        default:
-          console.error(`HTTP Error ${status}:`, data.message);
+    if (config && !config.__isRetryRequest && (!error.response || error.response.status >= 500)) {
+      config.__retryCount = config.__retryCount || 0;
+      
+      if (config.__retryCount < MAX_RETRIES) {
+        config.__retryCount += 1;
+        config.__isRetryRequest = true;
+        console.log(`Retrying request... Attempt ${config.__retryCount}`);
+        
+        const delay = Math.pow(2, config.__retryCount) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        return api(config);
       }
-    } 
-    else if(error.message) {
-      console.error("Network Error - No response received");
     }
-    else {
-      console.error("Error: ", error.message);
+
+    if (error.response) {
+      const { status, data } = error.response;
+
+      console.error(`API Error ${status}:`, data?.message || "Unknown error");
+      
+      if (status === 401) {
+        window.location.href = "/login";
+      }
+    } else {
+      console.error("Network Error:", error.message);
     }
+
     return Promise.reject(error);
   }
 );

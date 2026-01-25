@@ -12,19 +12,11 @@ export const requireAuth = async (req, res, next) => {
 
     const decodedToken = await admin.auth().verifyIdToken(token);
 
-    const userDoc = await db.collection("users").doc(decodedToken.uid).get();
-
-    if(!userDoc.exists){
-      return res.status(401).json({message: "User note registered"});
-    }
-
-    req.user = {
-      ...decodedToken,
-      role: userDoc.data().role,
-    };
+    req.user = decodedToken
 
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
+

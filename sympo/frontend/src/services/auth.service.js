@@ -1,25 +1,30 @@
 import api from "./api";
 
-export const registerUser = async (payload) => {
-  try {
-    const response = await api.post("/auth/signup", payload);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error;
-  }
+export const registerUser = async (payload, token) => {
+  const response = await api.post(
+    "/auth/signup",
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+  return response.data;
 };
 
-export const getProfile = async (token) => {
-  try {
-    const response = await api.get("/user/profile");
-    return response.data;
-  } catch (error) {
-    if (error.response?.status === 401) {
-      throw new Error("Unauthorized access to profile");
-    }
-    throw error.response?.data || error;
-  }
-};
+
+// export const getProfile = async (token) => {
+//   try {
+//     const response = await api.get("/user/profile");
+//     return response.data;
+//   } catch (error) {
+//     if (error.response?.status === 401) {
+//       throw new Error("Unauthorized access to profile");
+//     }
+//     throw error.response?.data || error;
+//   }
+// };
 
 export const logoutUser = async () => {
   try {
@@ -27,6 +32,6 @@ export const logoutUser = async () => {
     return response.data;
   } catch (error) {
     console.error("Logout error:", error);
-    throw error.response?.data || error;
+    return { success: true };
   }
 };
