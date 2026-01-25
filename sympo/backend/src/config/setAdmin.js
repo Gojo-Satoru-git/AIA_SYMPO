@@ -34,7 +34,17 @@ if(!admin.apps.length){
   }
 }
 
-export const auth = admin.auth();
-export const db = admin.firestore();
+const makeAdmin = async () => {
+  const email = "naveen@gmail.com";
 
-export default admin;
+  const user = await admin.auth().getUserByEmail(email);
+
+  await admin.auth().setCustomUserClaims(user.uid, {
+    role: "ADMIN",
+  });
+
+  console.log("Admin role assigned successfully");
+  process.exit();
+};
+
+makeAdmin();

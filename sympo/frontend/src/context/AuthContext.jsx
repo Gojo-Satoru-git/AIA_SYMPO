@@ -1,26 +1,47 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase.js";
+import { auth } from "../firebase";
+import api from "../services/api";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      console.log("Auth State Changed:", user ? "Logged In" : "Logged Out");
-      setUser(firebaseUser);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          setCurrentUser(user);
+
+          const token = await user.getIdToken();
+          localStorage.setItem("token", token);
+
+          const res = await api.get("/auth/profile");
+          setRole(res.data.role);
+          
+        } catch (err) {
+          console.error("Error fetching user profile:", err);
+          setCurrentUser(null);
+          setRole(null);
+        }
+      } else {
+        setCurrentUser(null);
+        setRole(null);
+        localStorage.removeItem("token");
+      }
+
       setLoading(false);
     });
 
-    return () => unsub();
+    return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {children}
+    <AuthContext.Provider value={{ user: currentUser, role, loading }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

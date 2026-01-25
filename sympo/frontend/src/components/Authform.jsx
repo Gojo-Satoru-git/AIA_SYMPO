@@ -78,11 +78,11 @@ const inputStyle = {
 /* ================= COMPONENT ================= */
 
 const AuthForm = ({ mode }) => {
-  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [formData, setFormData] = useState({});
   
   const handleSubmit = async (e) => {
     e.preventDefault();

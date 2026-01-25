@@ -1,10 +1,23 @@
 import express from "express";
-import { createOrder, verifyOrder } from "../controllers/payment.controller.js";
-import { verifyToken } from "../middlewares/auth.middleware.js";
+import { requireAuth } from "../middlewares/auth.middleware.js";
+import { requireAdmin } from "../middlewares/admin.middleware.js";
+import {
+  createOrder,
+  verifyOrder
+} from "../controllers/payment.controller.js";
+import {
+  validateQR,
+  confirmEntry
+} from "../controllers/scan.controller.js";
+
+import { paymentLimiter } from "../middlewares/rateLimit.middleware.js"
 
 const router = express.Router();
 
-router.post("/order", verifyToken, createOrder);
-router.post("/verify", verifyToken, verifyOrder);
+router.post("/order", requireAuth, paymentLimiter, createOrder);
+router.post("/verify", requireAuth, paymentLimiter, verifyOrder);
+
+router.post("/scan/validate", requireAuth, requireAdmin, validateQR);
+router.post("/scan/confirm", requireAuth, requireAdmin, confirmEntry);
 
 export default router;

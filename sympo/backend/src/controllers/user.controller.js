@@ -7,11 +7,14 @@ export const getProfile = async (req, res) => {
 
     const userDoc = await db.collection("users").doc(uid).get();
 
-    if (!userDoc.exists)
+    if (!userDoc.exists){
       return error(res, "User not found", 404);
+    }
 
-    return success(res, userDoc.data());
+    const userData = userDoc.data();
+    return success(res, userData);
   } catch (err) {
+    console.error("Get profile error: ", err);
     return error(res, err.message);
   }
 };

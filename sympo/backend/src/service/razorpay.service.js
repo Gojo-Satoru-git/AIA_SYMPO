@@ -1,41 +1,58 @@
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
-import dotenv from 'dotenv';
 
-dotenv.config();
+if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  throw new Error("Missing Razorpay credentials");
+}
 
 const instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Function 1: Ask Razorpay to create a pending order
 export const createRazorpayOrder = async (amount) => {
-  const option = {
-    amount: amount * 100,
-    currency: 'INR',
-    receipt: `receipt_${Date.now()}`,
-  };
-
   try {
-    const order = await instance.orders.create(option);
+    // Validate amount
+    if (!Number.isInteger(amount) || amount < 1 || amount > 5000000) {
+      throw new Error("Invalid order amount");
+    }
+
+    const options = {
+        amount: amount * 100, // Convert to paise
+        currency: "INR",
+        receipt: `receipt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
+    const order = await instance.orders.create(options);
+    
+    if (!order || !order.id) {
+      throw new Error("Failed to create Razorpay order");
+    }
+
     return order;
-  } catch (error) {
-    throw error;
+  } catch (err) {
+    console.error("Razorpay order creation error:", err.message);
+    throw new Error("Failed to create order with payment provider");
   }
 };
 
-export const verifyRazorpayPayment = (
-  razorpay_order_id,
-  razorpay_payment_id,
-  razorpay_signature
-) => {
-  const body = razorpay_order_id + '|' + razorpay_payment_id;
+export const verifyRazorpayPayment = (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
+  try {
+    // Validate inputs
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return false;
+    }
 
-  const expectedSignature = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-    .update(body.toString())
-    .digest('hex');
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
-  return expectedSignature === razorpay_signature;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+    
+    return expectedSignature === razorpay_signature;
+  } catch (err) {
+    console.error("Payment verification error:", err.message);
+    return false;
+  }
 };

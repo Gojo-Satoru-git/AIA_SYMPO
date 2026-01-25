@@ -3,28 +3,61 @@ import cors from "cors";
 import helmet from "helmet";
 
 import "./config/env.js";
+import { globalLimiter, authLimiter } from "./middlewares/rateLimit.middleware.js";
 import errorHandler from "./middlewares/error.middleware.js";
-import rateLimiter from "./middlewares/rateLimit.middleware.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import paymentRoutes from './routes/payment.routes.js';
+import paymentRoutes from "./routes/payment.routes.js";
 
 const app = express();
 
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use(rateLimiter);
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+}));
 
+// Body parsing
+app.use(express.json({ limit: '10kb' })); // Limit payload size
+app.use(express.urlencoded({ limit: '10kb', extended: true }));
+
+// Rate limiting
+app.use(globalLimiter);
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  maxAge: 86400,
+}));
+
+// Health check endpoint
 app.get("/", (req, res) => {
-  res.send("Backend OK");
+  res.status(200).json({ status: "Backend OK" });
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
+// Routes with specific limiters
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/user", globalLimiter, userRoutes);
 app.use("/api/payment", paymentRoutes);
 
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Error handling middleware
 app.use(errorHandler);
 
 export default app;

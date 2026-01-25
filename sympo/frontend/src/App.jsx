@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useRef } from 'react';
 import BackgroundEffect from './components/Bgeffect';
 import Home from './screens/Home';
@@ -12,7 +12,11 @@ import NavMenubar from './components/NavMenuBar';
 import Auth from './screens/Auth';
 import AppShell from './components/AppShell';
 import Eventprovider from './context/Eventprovider';
-import WorkshoProvider from './context/WorkshoProvider';
+import WorkshoProvider from './context/WorkshopProvider';
+
+import { AuthProvider } from './context/AuthContext';
+import AdminRoute from "./components/AdminRoute";
+import ScanPage from './screens/ScanPage';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -73,6 +77,9 @@ const App = () => {
           {/* Auth pages */}
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
+
+          {/* QR Routes */}
+          <Route path="/scan/:token" element= { <AdminRoute> <ScanPage /> </AdminRoute>}/>
         </Routes>
       </>
     </AppShell>

@@ -1,25 +1,32 @@
-import axios from "axios";
+import api from "./api";
 
-const API = "http://localhost:5000/api";
-
-export const registerUser = (payload) =>
-  axios.post(`${API}/auth/signup`, payload);
-
-export const getProfile = (token) =>
-  axios.get(`${API}/user/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export const registerUser = async (payload) => {
+  try {
+    const response = await api.post("/auth/signup", payload);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
   }
-);
+};
 
-export const logoutUser = (token) =>
-  axios.post(
-    `${API}/auth/logout`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+export const getProfile = async (token) => {
+  try {
+    const response = await api.get("/user/profile");
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error("Unauthorized access to profile");
     }
-  );
+    throw error.response?.data || error;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post("/auth/logout");
+    return response.data;
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error.response?.data || error;
+  }
+};

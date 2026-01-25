@@ -1,17 +1,30 @@
-import { auth } from "../config/firebase.js";
+import admin, { db } from "../config/firebase.js";
 
-export const verifyToken = async (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
 
-    if (!token)
-      return res.status(401).json({ message: "No token provided" });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const decoded = await auth.verifyIdToken(token);
-    req.user = decoded;
+    const token = authHeader.split(" ")[1];
+
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
+    const userDoc = await db.collection("users").doc(decodedToken.uid).get();
+
+    if(!userDoc.exists){
+      return res.status(401).json({message: "User note registered"});
+    }
+
+    req.user = {
+      ...decodedToken,
+      role: userDoc.data().role,
+    };
 
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
