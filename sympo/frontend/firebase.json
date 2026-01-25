@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "sympo/frontend/dist",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
