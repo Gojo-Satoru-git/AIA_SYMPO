@@ -202,3 +202,16 @@
 .scroll-hint>div {
   overscroll-behavior-x: contain;
 }
+/* Disable scroll hint for this block by default (desktop) */
+.scroll-hint-sm-md::before,
+.scroll-hint-sm-md::after {
+  content: none !important;
+}
+
+/* Enable scroll hint ONLY on tablet & mobile */
+@media (max-width: 1024px) {
+  .scroll-hint-sm-md::before,
+  .scroll-hint-sm-md::after {
+    content: "" !important;
+  }
+}
