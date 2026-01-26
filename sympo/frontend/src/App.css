@@ -146,7 +146,8 @@
 
 /* Prevent scroll chaining */
 .scroll-hint > div {
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y:none;
 }
 
 

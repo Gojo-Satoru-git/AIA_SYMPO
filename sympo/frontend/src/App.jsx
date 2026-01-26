@@ -69,7 +69,6 @@ const App = () => {
   return (
     <AppShell>
       <>
-        <BackgroundEffect />
         <Routes>
           {/* Scroll-based landing page */}
           <Route path="/" element={<MainPage />} />
