@@ -1,6 +1,6 @@
 export const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== "ADMIN") {
-    return res.status(403).json({ message: "Admin access required" });
+    return res.status(403).json({ message: "Forbidden: Admin access required" });
   }
 
   next();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +18,20 @@ const Registration = () => {
   const [paymentLocked, setPaymentLocked] = useState(false);
   const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
+  const [savedQRs, setSavedQRs] = useState([]);
+  const [showSavedQRs, setShowSavedQRs] = useState(false);
+
+  // Load saved QR codes on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('savedQRCodes');
+    if (saved) {
+      try {
+        setSavedQRs(JSON.parse(saved));
+      } catch (err) {
+        console.error('Failed to parse saved QR codes:', err);
+      }
+    }
+  }, []);
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -32,6 +46,49 @@ const Registration = () => {
     );
   }
 
+  // Validate cart items
+  const validateCart = () => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      showToast("Cart is empty", "error");
+      return false;
+    }
+
+    for (const item of cart) {
+      if (!item.id || !item.title || item.price === undefined) {
+        showToast("Invalid item in cart. Please refresh and try again.", "error");
+        return false;
+      }
+      if (typeof item.price !== 'number' || item.price <= 0) {
+        showToast(`Invalid price for ${item.title}`, "error");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Save QR code to localStorage
+  const saveQRCode = (qrUrl, token) => {
+    const newQR = {
+      id: Date.now(),
+      url: qrUrl,
+      token: token,
+      timestamp: new Date().toLocaleString(),
+    };
+
+    const updated = [newQR, ...savedQRs].slice(0, 10); // Keep last 10
+    setSavedQRs(updated);
+    localStorage.setItem('savedQRCodes', JSON.stringify(updated));
+  };
+
+  // Clear a saved QR code
+  const clearSavedQR = (id) => {
+    const updated = savedQRs.filter(qr => qr.id !== id);
+    setSavedQRs(updated);
+    localStorage.setItem('savedQRCodes', JSON.stringify(updated));
+    showToast("Ticket removed", "info");
+  };
+
   // 1. Helper to load Razorpay Script
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -39,57 +96,37 @@ const Registration = () => {
         resolve(true);
         return;
       }
-
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
       script.onload = () => resolve(true);
-      script.onerror = () => {
-        console.error('Failed to load Razorpay SDK');
-        resolve(false);
-      };
+      // script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
 
-  // 3. Main Payment Function
   const handlePayment = async () => {
-    // A. Check Login
-    if (!user || !user.email) {
-      showToast('Please login to register', 'error');
-      return;
-    }
-
-    if (paymentLocked) return;
-
-    if (!Array.isArray(cart) || cart.length === 0) {
-      showToast('Cart is empty', 'error');
-      return;
-    }
+    if (!user) return showToast("Please login first", "error");
+    if (!validateCart()) return;
 
     setPaymentLocked(true);
     setPaymentLoading(true);
 
     try {
-      // B. Load SDK
       const isLoaded = await loadRazorpay();
-      if (!isLoaded) {
-        showToast('Razor service unavailable. Please try again later', 'error');
-        return;
-      }
+      if (!isLoaded) throw new Error("Razorpay SDK failed to load");
 
       // Create order
-      const { data: order } = await createPaymentOrder(cart.map((item) => item.id));
-
+      const { data: order } = await createPaymentOrder(cart);
+      
       setBackendAmount(order.amount);
-
-      // D. Configure Razorpay Popup
+      
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: order.keyId,
         amount: order.amount,
         currency: order.currency,
-        name: "Symposium '26",
-        description: 'Event Registration',
+        name: "TEKHORA'26",
+        description: "Event Registration",
         order_id: order.orderId,
 
         handler: async function (response) {
@@ -102,38 +139,18 @@ const Registration = () => {
 
             if (verifyRes.data.success) {
               const token = verifyRes.data.qrToken;
-
-              if (!token) {
-                showToast('QR generation failedd', 'error');
-                return;
-              }
-
               const scanUrl = `${window.location.origin}/scan/${token}`;
 
               setQrCode(scanUrl);
               setQrVisible(true);
-
-              showToast('Payment Successful!', 'success');
-              trackEvent('payment_success', {
-                amount: totalPrice,
-                items_count: cart.length,
-                timestamp: new Date().toISOString(),
-              });
+              saveQRCode(scanUrl, token);
               clearCart();
+              showToast("Payment Successful!", "success");
+              trackEvent("payment_success", { amount: order.amount });
             }
           } catch (err) {
-            console.error('Payment verification error: ', err);
-            showToast('Payment verification failed. Contact support.', 'error');
-            trackEvent('payment_verification_failed', {
-              error: err.message,
-            });
+            showToast("Verification failed. Contact support.", "error");
           }
-        },
-        modal: {
-          ondismiss: function () {
-            showToast('Payment cancelled', 'info');
-            trackEvent('payment_cancelled');
-          },
         },
         prefill: {
           name: user.displayName || 'Participant',
@@ -142,28 +159,19 @@ const Registration = () => {
         theme: {
           color: '#e50914',
         },
-        retry: {
-          enabled: false,
-        },
       };
 
-      const paymentObject = new window.Razorpay(options);
-
-      paymentObject.on('payment.failed', function (response) {
-        showToast('Payment failed. Please try again.', 'error');
-        trackEvent('payment_failed', {
-          error_code: response.error.code,
-          error_description: response.error.description,
-        });
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', (res) => {
+        showToast("Payment Failed", "error");
+        console.error(res.error);
       });
-      paymentObject.open();
+      rzp.open();
+
     } catch (error) {
-      console.error('Payment Error:', error);
-      showToast(error.message || 'Failed to initiate payment. Please try again.', 'error');
-
-      trackEvent('payment_error', {
-        error_message: error.message,
-      });
+      console.error(error);
+      showToast(error.message || "Payment init failed", "error");
     } finally {
       setPaymentLoading(false);
       setPaymentLocked(false);
@@ -248,14 +256,8 @@ const Registration = () => {
           <>
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
-                const isRemoving = removingId === item.id;
                 return (
-                  <div
-                    key={item.id}
-                    className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 shadow-stGlow ${
-                      isRemoving ? 'animate-slideOutLeft' : 'animate-slideInRight'
-                    }`}
-                  >
+                  <div key={item.id} className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}>
                     <div>
                       <p className="uppercase tracking-widest text-sm font-semibold">
                         {item.title}
@@ -266,7 +268,6 @@ const Registration = () => {
                       <span className="text-primary font-bold">₹{item.price}</span>
                       <button
                         onClick={() => handleRemoveItem(item.id, item.title)}
-                        disabled={isRemoving}
                         className="text-white/50 hover:text-primary transition disabled:opacity-50"
                       >
                         ✕
@@ -288,7 +289,7 @@ const Registration = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Pay Now Button */}
                 <button
-                  onClick={handlePayment} // <--- Attached Function
+                  onClick={handlePayment}
                   disabled={paymentLoading || paymentLocked}
                   className="
                           px-6 py-3
@@ -304,25 +305,29 @@ const Registration = () => {
                   {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
 
-                {/* Pay at Desk Button */}
-                <button
-                  className="
-                            px-6 py-3
-                            rounded-full
-                            border border-primary
-                            text-primary
-                            uppercase tracking-widest text-sm
-                            hover:bg-primary hover:text-black
-                            transition
-                          "
-                >
-                  Pay at Registration Desk
-                </button>
+                {/* View Saved Tickets Button */}
+                {savedQRs.length > 0 && (
+                  <button
+                    onClick={() => setShowSavedQRs(true)}
+                    className="
+                              px-6 py-3
+                              rounded-full
+                              border border-primary/50
+                              text-primary/70
+                              uppercase tracking-widest text-sm
+                              hover:border-primary hover:text-primary
+                              transition
+                            "
+                  >
+                    View Tickets ({savedQRs.length})
+                  </button>
+                )}
               </div>
             </div>
           </>
         )}
 
+        {/* Current QR Code Modal */}
         {qrCode && qrVisible && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
             <div className="bg-black border-2 border-primary rounded-2xl p-8 max-w-sm w-full">
@@ -363,6 +368,61 @@ const Registration = () => {
                 >
                   Download Ticket
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Saved QR Codes Modal */}
+        {showSavedQRs && savedQRs.length > 0 && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-black border-2 border-primary rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <button
+                onClick={() => setShowSavedQRs(false)}
+                className="absolute top-4 right-4 text-primary text-2xl hover:text-red-500 transition"
+              >
+                ✕
+              </button>
+
+              <h3 className="text-primary text-xl font-bold mb-6 uppercase">
+                Saved Tickets
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {savedQRs.map((qr) => (
+                  <div key={qr.id} className="bg-black/60 border border-primary/50 rounded-lg p-4 flex flex-col items-center">
+                    <QRCodeCanvas
+                      value={qr.url}
+                      size={150}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                      level="H"
+                      className="border-2 border-primary rounded-lg p-2 bg-white"
+                    />
+                    <p className="text-white/60 text-xs mt-3 text-center">{qr.timestamp}</p>
+                    <div className="flex gap-2 mt-4 w-full">
+                      <button
+                        onClick={() => {
+                          const canvas = document.querySelector(`[data-qr-id="${qr.id}"]`)?.nextElementSibling;
+                          if (!canvas) return;
+                          const link = document.createElement("a");
+                          link.href = canvas.toDataURL("image/png");
+                          link.download = `ticket-${qr.id}.png`;
+                          link.click();
+                        }}
+                        className="flex-1 px-3 py-2 bg-primary/20 text-primary rounded text-xs uppercase font-semibold hover:bg-primary/30 transition"
+                      >
+                        Download
+                      </button>
+                      <button
+                        onClick={() => clearSavedQR(qr.id)}
+                        className="flex-1 px-3 py-2 bg-red-500/20 text-red-400 rounded text-xs uppercase font-semibold hover:bg-red-500/30 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

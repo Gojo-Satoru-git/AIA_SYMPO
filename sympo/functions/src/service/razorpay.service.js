@@ -11,15 +11,17 @@ import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '../config/env1.js';
 import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from "../config/env1.js";
 
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  throw new Error("Missing Razorpay credentials");
+  console.warn("Missing Razorpay credentials in environment");
 }
 
-const instance = new Razorpay({
+const instance = RAZORPAY_KEY_ID ? new Razorpay({
   key_id: RAZORPAY_KEY_ID,
   key_secret: RAZORPAY_KEY_SECRET,
-});
+}) : null;
 
 export const createRazorpayOrder = async (amount) => {
+  if (!instance) throw new Error("Razorpay not configured");
+
   try {
     // Validate amount
     if (!Number.isInteger(amount) || amount < 1 || amount > 5000000) {
@@ -33,15 +35,10 @@ export const createRazorpayOrder = async (amount) => {
     };
 
     const order = await instance.orders.create(options);
-
-    if (!order || !order.id) {
-      throw new Error("Failed to create Razorpay order");
-    }
-
     return order;
   } catch (err) {
     console.error("Razorpay order creation error:", err.message);
-    throw new Error("Failed to create order with payment provider");
+    throw new Error("Payment provider error");
   }
 };
 
