@@ -31,10 +31,20 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'developme
   process.env.NODE_ENV = 'development';
 }
 
-export default {
-  PORT: parseInt(process.env.PORT, 10),
-  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
-  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
-  FRONTEND_URL: process.env.FRONTEND_URL,
-  NODE_ENV: process.env.NODE_ENV || 'development',
+// Define and export each variable individually (Named Exports)
+export const PORT = parseInt(process.env.PORT, 10) || 5000;
+export const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+export const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+export const FRONTEND_URL = process.env.FRONTEND_URL;
+export const NODE_ENV = process.env.NODE_ENV || 'development';
+
+// Optional: Keep the object export for files that use "import env from..."
+export const env = {
+  PORT,
+  RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET,
+  FRONTEND_URL,
+  NODE_ENV
 };
+
+export default env;

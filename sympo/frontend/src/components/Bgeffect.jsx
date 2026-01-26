@@ -39,18 +39,27 @@ const BackgroundEffect = () => {
       />
 
       {/* Floating particles */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="absolute w-1 h-1 rounded-full bg-red-500 shadow-[0_0_12px_red]"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            animation: `float ${p.duration}s ease-in-out infinite`,
-            animationDelay: `${p.delay}s`,
-          }}
-        />
-      ))}
+    {particles.map((p) => {
+  const isBlueSide = p.x < 50;
+
+  return (
+    <div
+      key={p.id}
+      className={`absolute w-1 h-1 rounded-full ${
+        isBlueSide
+          ? "bg-blue-500 shadow-[0_0_12px_#3b82f6]"
+          : "bg-red-500 shadow-[0_0_12px_red]"
+      }`}
+      style={{
+        left: `${p.x}%`,
+        top: `${p.y}%`,
+        animation: `float ${p.duration}s ease-in-out infinite`,
+        animationDelay: `${p.delay}s`,
+      }}
+    />
+  );
+})}
+
 
       {/* Dark vignette */}
       <div className="relative inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),rgba(0,0,0,0.85))]" />
