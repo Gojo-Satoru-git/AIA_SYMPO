@@ -171,6 +171,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
                 {user.displayName?.[0]?.toUpperCase() || "U"}
               </Avatar>
               <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+                <MenuItem>My Purchase</MenuItem>
                 <MenuItem disabled>{user.email}</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
