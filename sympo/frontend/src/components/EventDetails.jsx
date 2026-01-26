@@ -1,19 +1,50 @@
 import React from 'react';
 import useToast from '../context/useToast';
+import { useEffect } from 'react';
 function EventDetails({ card, onClose, AddtoCart }) {
   const { showToast } = useToast();
+
+  const [showArrow, SetshowArrow] = React.useState(false);
+
+  const scrollRef = React.useRef(null);
+
+  const checkoverflow = () => {
+    const el = scrollRef.current;
+    if (el) {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const isScrollable = scrollHeight > clientHeight;
+      const isBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
+      SetshowArrow(isScrollable && !isBottom);
+    }
+  };
+  useEffect(() => {
+    const el = scrollRef.current;
+
+    checkoverflow();
+    window.addEventListener('resize', checkoverflow);
+    if (el) {
+      el.addEventListener('scroll', checkoverflow);
+    }
+    return () => {
+      window.removeEventListener('resize', checkoverflow);
+      if (el) el.removeEventListener('scroll', checkoverflow);
+    };
+  }, [card]);
   return (
     <>
       <button onClick={onClose} className="absolute top-2 right-4 text-primary text-xl font-bold">
         ✕
       </button>
-      <div className="flex items-center flex-col gap-4 p-3 rounded-md max-w-3xl mx-auto mt-10 overflow-auto">
+
+      <div
+        ref={scrollRef}
+        className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
         <img
           src={card.image}
           alt={card.title}
-          className="w-72 h-64 object-cover  rounded-md shadow-stGlow"
+          className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
         />
-        <h2 className="text-3xl font-bold text-primary text-center">{card.title}</h2>
         <p className="text-primary text-lg text-center ">{card.description}</p>
         <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
           {/* Team Size */}
@@ -31,7 +62,7 @@ function EventDetails({ card, onClose, AddtoCart }) {
           </div>
 
           {/* Contacts Group */}
-          <div className="flex flex-col items-center border-l border-primary/30 pl-6">
+          <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
             <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
 
             <div className="flex gap-6 text-center">
@@ -58,9 +89,16 @@ function EventDetails({ card, onClose, AddtoCart }) {
             showToast(`${card.title} added check the registration`, 'add');
           }}
         >
-          Add 
+          Add
         </button>
         <p className="text-primary text-lg italic">Rules : {card.rules}</p>
+        {showArrow && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
+            <span className="text-red-600 text-xl animate-bounce drop-shadow-md bg-black/50 rounded-full px-2">
+              ↓
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

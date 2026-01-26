@@ -2,7 +2,10 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 
-import { globalLimiter, authLimiter } from "./middlewares/rateLimit.middleware.js";
+import {
+  globalLimiter,
+  authLimiter,
+} from "./middlewares/rateLimit.middleware.js";
 import errorHandler from "./middlewares/error.middleware.js";
 
 import authRoutes from "./routes/auth.routes.js";

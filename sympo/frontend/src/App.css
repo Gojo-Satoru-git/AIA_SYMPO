@@ -8,25 +8,27 @@
   font-family: 'StrangerRegular';
   src: url('/fonts/ITCBenguiatStdBookCn.OTF') format('opentype');
   font-weight: normal;
-  
 
-   font-family: "Stranger";
-  src: url("fonts/ITCBenguiatStdBookCn.OTF") format("opentype");
+  font-family: 'Stranger';
+  src: url('fonts/ITCBenguiatStdBookCn.OTF') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @keyframes redGlow {
   0% {
-    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4),
-                0 0 20px rgba(229, 9, 20, 0.3);
+    box-shadow:
+      0 0 10px rgba(229, 9, 20, 0.4),
+      0 0 20px rgba(229, 9, 20, 0.3);
   }
   50% {
-    box-shadow: 0 0 20px rgba(229, 9, 20, 0.8),
-                0 0 40px rgba(229, 9, 20, 0.6);
+    box-shadow:
+      0 0 20px rgba(229, 9, 20, 0.8),
+      0 0 40px rgba(229, 9, 20, 0.6);
   }
   100% {
-    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4),
-                0 0 20px rgba(229, 9, 20, 0.3);
+    box-shadow:
+      0 0 10px rgba(229, 9, 20, 0.4),
+      0 0 20px rgba(229, 9, 20, 0.3);
   }
 }
 
@@ -57,24 +59,17 @@
 
 /* moving red line */
 .animated-border::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: 16px;
   padding: 2px;
   filter: drop-shadow(0 0 8px red);
 
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #ff0000,
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, #ff0000, transparent);
 
   background-size: 300% 300%;
   animation: borderRun 8s linear infinite;
-  
 
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -114,7 +109,7 @@
 
 .scroll-hint::before,
 .scroll-hint::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   width: 32px;
@@ -133,7 +128,6 @@
   background: linear-gradient(to left, #000, transparent);
 }
 
-
 /* Enable scroll snapping properly */
 @media (max-width: 768px) {
   .snap-x {
@@ -143,13 +137,8 @@
 
 /* Hide gradient hint on desktop */
 
-
 /* Prevent scroll chaining */
 .scroll-hint > div {
   overscroll-behavior-x: none;
   overscroll-behavior-y:none;
 }
-
-
-
-
