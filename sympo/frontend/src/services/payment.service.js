@@ -1,26 +1,16 @@
 import api from "./api";
 
-// Validate event IDs format
-const validateEventIds = (eventIds) => {
-  if (!Array.isArray(eventIds) || eventIds.length === 0) {
-    throw new Error("Invalid event IDs");
-  }
-  
-  if (eventIds.length > 10) {
-    throw new Error("Cannot purchase more than 10 items at once");
-  }
-
-  // Validate each ID is a string/number
-  return eventIds.every(id => typeof id === 'string' || typeof id === 'number');
-};
-
-export const createPaymentOrder = async (eventIds) => {
+export const createPaymentOrder = async (cartItems) => {
   try {
-    if (!validateEventIds(eventIds)) {
-      throw new Error("Invalid event IDs format");
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      throw new Error("Cart is empty");
     }
+    const itemsPayload = cartItems.map(item => ({
+      eventId: item.id,
+      quantity: 1
+    }));
 
-    const response = await api.post("/payment/order", { eventIds });
+    const response = await api.post("/payment/order", { items: itemsPayload });
     
     if (!response.data.orderId || !response.data.amount) {
       throw new Error("Invalid order response from server");
@@ -35,14 +25,10 @@ export const createPaymentOrder = async (eventIds) => {
 
 export const verifyPaymentOrder = async (paymentData) => {
   try {
-    if (!paymentData.razorpay_order_id || 
-        !paymentData.razorpay_payment_id || 
-        !paymentData.razorpay_signature) {
-      throw new Error("Missing required payment verification data");
-    }
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
 
-    if (!/^[a-f0-9]{64}$/.test(paymentData.razorpay_signature)) {
-      throw new Error("Invalid signature format");
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      throw new Error("Missing required payment verification data");
     }
 
     const response = await api.post("/payment/verify", paymentData);
@@ -53,7 +39,7 @@ export const verifyPaymentOrder = async (paymentData) => {
 
     return response;
   } catch (error) {
-    console.error("Payment verification failed:", error);
+    console.error("Verification failed:", error);
     throw error.response?.data || error;
   }
 };
