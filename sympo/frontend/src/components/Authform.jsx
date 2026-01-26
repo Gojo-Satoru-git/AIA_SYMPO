@@ -155,7 +155,7 @@ const AuthForm = ({ mode }) => {
           displayName: data.name,
         });
 
-        const token = await cred.user.getIdToken();
+        const token = await cred.user.getIdToken(true);
 
         await registerUser({
           uid: cred.user.uid,
