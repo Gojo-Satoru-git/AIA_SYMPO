@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import api from "../services/api";
 
 const PurchaseContext = createContext({
   purchases: [],
@@ -9,6 +11,7 @@ const PurchaseContext = createContext({
 
 export const PurchaseProvider = ({ children }) => {
   const [purchases, setPurchases] = useState([]);
+  const { user } = useAuth(); // get the logged-in user
 
   const addPurchase = (newPurchase) => {
     setPurchases((prev) => [
@@ -24,6 +27,25 @@ export const PurchaseProvider = ({ children }) => {
   const clearPurchases = () => {
     setPurchases([]);
   };
+
+  // ✅ Fetch purchases on every refresh/login
+  useEffect(() => {
+    if (!user) {
+      setAllPurchases([]);
+      return;
+    }
+
+    const fetchPurchases = async () => {
+      try {
+        const res = await api.get("/user/purchases");
+        setAllPurchases(res.data.data.purchases);
+      } catch (err) {
+        console.error("Failed to fetch purchases:", err);
+      }
+    };
+
+    fetchPurchases();
+  }, [user]);
 
   return (
     <PurchaseContext.Provider
