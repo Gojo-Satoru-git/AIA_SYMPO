@@ -1,7 +1,7 @@
-name: Deploy to Firebase Hosting
+name: Deploy Preview to Firebase Hosting
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -33,12 +33,11 @@ jobs:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: npm run build
 
-      - name: Deploy to Firebase Hosting
+      - name: Deploy Preview
         uses: FirebaseExtended/action-hosting-deploy@v0
-
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TEKHORA_26 }}
           projectId: tekhora-26
           entryPoint: sympo/frontend
-          channelId: live
+          channelId: pr-${{ github.event.pull_request.number }}
