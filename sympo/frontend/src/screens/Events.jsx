@@ -35,6 +35,18 @@ const Events = () => {
   const Workshops = useContext(workshopcontext);
 
   let detail;
+
+  useEffect(() => {
+    if (clicked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [clicked]);
+
   useEffect(() => {
     if (scrollRef2.current) {
       scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
@@ -51,7 +63,15 @@ const Events = () => {
   return (
     <>
       {clicked && (
-        <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
+        <div
+          className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setClicked(false);
+              setCardclicked({ id: null, category: null });
+            }
+          }}
+        >
           <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={handleCart} />
         </div>
       )}
@@ -97,7 +117,7 @@ const Events = () => {
                 <Eventcard
                   title={events.title}
                   desc={events.description}
-                  img={events.image}
+                  image={events.image}
                   date={events.date}
                   time={events.time}
                   category={events.category}

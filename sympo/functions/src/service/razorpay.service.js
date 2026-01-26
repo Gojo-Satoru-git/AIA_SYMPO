@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import crypto from "crypto";
 import Razorpay from "razorpay";
+=======
+import crypto from 'crypto';
+import Razorpay from 'razorpay';
+
+import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '../config/env1.js';
+>>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
 
 import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from "../config/env1.js";
 

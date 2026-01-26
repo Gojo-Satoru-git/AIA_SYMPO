@@ -12,7 +12,11 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 
+<<<<<<< HEAD
 import { FRONTEND_URL } from "./config/env1.js";
+=======
+import{FRONTEND_URL} from "./config/env1.js";
+>>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
 
 const app = express();
 

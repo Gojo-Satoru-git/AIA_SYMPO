@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Eventcard({ title, desc, img, date, time, index, category, backside, onClick }) {
+function Eventcard({ title, desc, image, date, time, index, category, backside, onClick }) {
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [Flipped, setFlipped] = React.useState(true);
   const cardRef = React.useRef(null);
@@ -41,8 +41,8 @@ function Eventcard({ title, desc, img, date, time, index, category, backside, on
   }, [hasAppeared, index]);
   const sizeClasses =
     category === 'workshop'
-      ? 'w-[70vw] sm:w-80 h-96' // Larger for workshops
-      : 'w-[70vw] sm:w-72 h-80';
+      ? 'w-[70vw] sm:w-72 h-96' // Larger for workshops
+      : 'w-[70vw] sm:w-72 h-96';
 
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses}  m-2 sm:m-1`}>
@@ -54,20 +54,14 @@ function Eventcard({ title, desc, img, date, time, index, category, backside, on
         {/* FRONT FACE (Needs backface-hidden to swap correctly) */}
         <div
           onClick={onClick}
-          className="absolute inset-0 w-full h-full backface-hidden p-4 rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
+          className="absolute inset-0 w-full h-full backface-hidden rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
         >
-          <h1 className="text-primary text-center p-2 font-bold text-xl uppercase tracking-widest">
-            {title}
-          </h1>
-          <img
-            src={img}
-            alt={title}
-            className="w-full h-40 object-cover rounded-md mx-auto border border-primary/20"
-          />
-          <p className="text-primary text-center p-2 mt-2 text-sm">
-            {date} · {time}
-          </p>
-          <p className="text-primary text-center p-5 text-sm italic leading-tight">{desc}</p>
+          <img src={image} alt={title} className="w-full h-full object-cover mx-auto" />
+          <div className="flex-shrink-0 w-full">
+            <p className="text-primary text-center p-2 mt-1 text-sm font-bold">
+              {date} · {time}
+            </p>
+          </div>
         </div>
 
         {/* BACK FACE (Pre-rotated to face away) */}

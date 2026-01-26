@@ -7,13 +7,16 @@ function EventDetails({ card, onClose, AddtoCart }) {
       <button onClick={onClose} className="absolute top-2 right-4 text-primary text-xl font-bold">
         ✕
       </button>
-      <div className="flex items-center flex-col gap-4 p-3 rounded-md max-w-3xl mx-auto mt-10 overflow-auto">
-        <img
-          src={card.image}
-          alt={card.title}
-          className="w-72 h-64 object-cover  rounded-md shadow-stGlow"
-        />
-        <h2 className="text-3xl font-bold text-primary text-center">{card.title}</h2>
+
+      <div className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex items-end">
+          <img
+            src={card.image}
+            alt={card.title}
+            className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
+          />
+          <span className="   text-red-600 text-2xl animate-bounce ">↓</span>
+        </div>
         <p className="text-primary text-lg text-center ">{card.description}</p>
         <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
           {/* Team Size */}
