@@ -65,7 +65,7 @@ function Eventprovider({ children }) {
       title: 'Tournament of strategies',
       id: '1',
       image: '/event1.png',
-      backside: './assets/mike.png',
+      backside: './assets/Mike.png',
       description: 'This is event 1',
       category: 'Technical',
       date: '2026-02-21',

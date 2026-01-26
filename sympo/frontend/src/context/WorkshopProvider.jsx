@@ -3,7 +3,7 @@ import React from 'react';
 import { workshopcontext } from './workshop.context';
 
 function WorkshoProvider({ children }) {
-  const Workshops = [
+  const OtherEvents = [
     {
       title: 'Workshop1',
       id: '10',
@@ -38,8 +38,42 @@ function WorkshoProvider({ children }) {
         phone2: '9566322365',
       },
     },
+    {
+      title: 'Paper Presentation',
+      id: '12',
+      image: '/workshop2.png',
+      backside: './assets/Hopper.png',
+      description: 'This is Paper presentation',
+      date: '2026-02-21',
+      time: '11:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Poorna Prakash',
+        phone1: '8838730894',
+        name2: 'Nitin Pranav',
+        phone2: '9123591494',
+      },
+    },
+    {
+      title: 'Hackathon',
+      id: '13',
+      image: '/workshop2.png',
+      backside: './assets/Hopper.png',
+      description: 'This is Hackathon',
+      date: '2026-02-21',
+      time: '11:00 AM',
+      rules: 'Rules',
+      fees: 'Fees',
+      contact: {
+        name1: 'Sandheep',
+        phone1: '9884793806',
+        name2: 'Rahul',
+        phone2: '9159812736',
+      },
+    },
   ];
-  return <workshopcontext.Provider value={Workshops}>{children}</workshopcontext.Provider>;
+  return <workshopcontext.Provider value={OtherEvents}>{children}</workshopcontext.Provider>;
 }
 
 export default WorkshoProvider;

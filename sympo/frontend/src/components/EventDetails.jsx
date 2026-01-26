@@ -31,7 +31,7 @@ function EventDetails({ card, onClose, AddtoCart }) {
           </div>
 
           {/* Contacts Group */}
-          <div className="flex flex-col items-center border-l border-primary/30 pl-6">
+          <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
             <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
 
             <div className="flex gap-6 text-center">
@@ -58,7 +58,7 @@ function EventDetails({ card, onClose, AddtoCart }) {
             showToast(`${card.title} added check the registration`, 'add');
           }}
         >
-          Add 
+          Add
         </button>
         <p className="text-primary text-lg italic">Rules : {card.rules}</p>
       </div>
