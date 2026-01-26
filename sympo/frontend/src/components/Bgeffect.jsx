@@ -25,7 +25,6 @@ const BackgroundEffect = () => {
           background: 'radial-gradient(circle at 30% 50%, rgba(30,58,138,0.45), transparent 70%)',
         }}
       />
-
       {/* Red smoke */}
       <div
         className="absolute right-0 top-0 h-full w-1/2 blur-3xl animate-pulse opacity-70"
@@ -34,7 +33,6 @@ const BackgroundEffect = () => {
           animationDelay: '1.5s',
         }}
       />
-
       {/* Particles */}
       {particles.map((p) => {
         const isBlueSide = p.x < 50;
@@ -56,7 +54,7 @@ const BackgroundEffect = () => {
       })}
 
       {/* Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15),rgba(0,0,0,0.85))]" />
+     
     </div>
   );
 };
