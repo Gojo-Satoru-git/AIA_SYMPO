@@ -6,9 +6,6 @@ import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPasswo
 import { auth } from "../firebase";
 import { registerUser } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
-import { usePurchases } from "../context/PurchaseContext";
-
-import api from "../services/api";
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -96,8 +93,6 @@ const AuthForm = ({ mode }) => {
   });
   
   const [match, setMatch] = useState(false);
-
-  const { setAllPurchases } = usePurchases();
   
   useEffect(() => {
     setPassValid({
@@ -109,17 +104,6 @@ const AuthForm = ({ mode }) => {
     });
     setMatch(password && confirmPassword && password === confirmPassword);
   }, [password, confirmPassword]);
-
-  const fetchPurchases = async () => {
-          try {
-            const res = await api.get("/user/purchases");
-            setAllPurchases(res.data.data.purchases);
-            
-          }
-          catch (err) {
-            console.error("Fetch Purchases Error:", err);
-          }
-        };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,7 +139,7 @@ const AuthForm = ({ mode }) => {
           displayName: data.name,
         });
 
-        const token = await cred.user.getIdToken(true);
+        const token = await cred.user.getIdToken();
 
         await registerUser({
           uid: cred.user.uid,
@@ -188,8 +172,6 @@ const AuthForm = ({ mode }) => {
         localStorage.setItem("authToken", token);
 
         if (fetchProfile) await fetchProfile();
-
-        await fetchPurchases();
 
         showToast("Login successful", "success");
         navigate("/", { replace: true });
