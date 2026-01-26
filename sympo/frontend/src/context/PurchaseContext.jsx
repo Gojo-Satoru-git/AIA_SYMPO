@@ -1,15 +1,15 @@
 import React, { createContext, useContext, useState } from "react";
 
-const PurchaseContext = createContext(null);
+const PurchaseContext = createContext({
+  purchases: [],
+  addPurchase: () => {},
+  setAllPurchases: () => {},
+  clearPurchases: () => {},
+});
 
 export const PurchaseProvider = ({ children }) => {
   const [purchases, setPurchases] = useState([]);
 
-  /**
-   * Add one purchase OR multiple purchases
-   * - Object → appended
-   * - Array  → spread & appended
-   */
   const addPurchase = (newPurchase) => {
     setPurchases((prev) => [
       ...prev,
@@ -17,37 +17,23 @@ export const PurchaseProvider = ({ children }) => {
     ]);
   };
 
-  /**
-   * Replace all purchases (useful after login / API fetch)
-   */
   const setAllPurchases = (list) => {
     setPurchases(Array.isArray(list) ? list : []);
   };
 
-  /**
-   * Clear purchases (use on logout)
-   */
   const clearPurchases = () => {
     setPurchases([]);
   };
 
   return (
     <PurchaseContext.Provider
-      value={{
-        purchases,
-        addPurchase,
-        setAllPurchases,
-        clearPurchases,
-      }}
+      value={{ purchases, addPurchase, setAllPurchases, clearPurchases }}
     >
       {children}
     </PurchaseContext.Provider>
   );
 };
 
-/**
- * Hook to access purchases
- */
 export const usePurchases = () => {
   const context = useContext(PurchaseContext);
   if (!context) {

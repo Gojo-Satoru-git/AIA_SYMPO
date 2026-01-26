@@ -189,7 +189,6 @@ const AuthForm = ({ mode }) => {
 
         if (fetchProfile) await fetchProfile();
 
-        console.log("Fetching purchases after login...");
         await fetchPurchases();
 
         showToast("Login successful", "success");
