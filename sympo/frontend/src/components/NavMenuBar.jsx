@@ -32,21 +32,18 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
   const handleLogout = async () => {
 
     try{
-      await logoutUser();
-
-      
-
-      clearPurchases();
-      localStorage.clear();
-      await signOut(auth);
-      handleMenuClose();
-      navigate("/");
-
+      await logoutUser().catch(err => console.error("Server-side logout failed, proceeding with local logout"));
       /// add toast notification here
     }
     catch(err){
       console.error("Logout failed:", err);
       /// add toast notification here
+    } finally {
+        clearPurchases();
+        localStorage.clear();
+        await signOut(auth);
+        handleMenuClose();
+        navigate("/");
     }
 
   };

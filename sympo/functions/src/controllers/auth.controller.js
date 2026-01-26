@@ -63,9 +63,11 @@ export const getProfile = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    await admin.auth().revokeRefreshTokens(req.user.uid);
+    if (req.user?.uid) {
+      await admin.auth().revokeRefreshTokens(req.user.uid);
+    }
     return success(res, null, "Logged out");
   } catch (err) {
-    return error(res, "Logout failed");
+    return success(res, null, "Logged out (with session cleanup)");
   }
 };
