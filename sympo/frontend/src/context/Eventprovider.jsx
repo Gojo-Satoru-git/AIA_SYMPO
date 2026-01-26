@@ -15,7 +15,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Abinash',
         phone1: '6383467363',
@@ -34,7 +34,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Surya',
         phone1: '8148124727',
@@ -53,7 +53,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Itikash',
         phone1: '9786398639',
@@ -72,7 +72,7 @@ function Eventprovider({ children }) {
       teamSize: '3',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Chandru',
         phone1: '7667634519',
@@ -91,7 +91,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Jhanavi',
         phone1: '9384654366',
@@ -110,7 +110,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 2,
       contact: {
         name1: 'Mekesh',
         phone1: '9952598472',
@@ -129,7 +129,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Sudhahar',
         phone1: '9363595133',
@@ -148,7 +148,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'SriLakshmi',
         phone1: '9566208249',
@@ -167,7 +167,7 @@ function Eventprovider({ children }) {
       date: '2026-02-21',
       time: '10:00 AM',
       rules: 'Rules',
-      fees: 'Fees',
+      fees: 1,
       contact: {
         name1: 'Pragadheeshwaran',
         phone1: '8903098801',
