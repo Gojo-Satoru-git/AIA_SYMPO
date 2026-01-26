@@ -171,6 +171,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
                 {user.displayName?.[0]?.toUpperCase() || "U"}
               </Avatar>
               <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+                <MenuItem>My Purchase</MenuItem>
                 <MenuItem disabled>{user.email}</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
@@ -185,7 +186,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
           <button onClick={() => setIsOpen(!isOpen)} className="text-primary text-2xl">
             ☰
           </button>
-          <span className="text-primary uppercase tracking-widest">SYMPOSIUM</span>
+          <span className="text-primary uppercase tracking-widest">TEKHORA</span>
         </div>
 
         {/* --- AUTH UI FOR MOBILE --- */}

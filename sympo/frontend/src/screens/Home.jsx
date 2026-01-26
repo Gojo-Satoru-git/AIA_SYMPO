@@ -150,7 +150,7 @@ const Home = () => {
               WebkitTextStroke: "2px red",
             }}
           >
-            Symposium
+            Tekhora'26
           </h1>
 
             
