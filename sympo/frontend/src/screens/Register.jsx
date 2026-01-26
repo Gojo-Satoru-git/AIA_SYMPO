@@ -1,39 +1,41 @@
 import { useState } from 'react';
 import useCart from '../context/useCart';
-import useToast from "../context/useToast";
+import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';
 import { createPaymentOrder, verifyPaymentOrder } from '../services/payment.service';
 import { trackEvent } from '../utils/analytics';
-import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
-
+import PassPosterCard from '../components/PassCard';
+import { passes } from '../data/passess';
 const Registration = () => {
-  const { cart, removeFromCart, totalPrice, clearCart } = useCart();
+  const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
   const { showToast } = useToast();
   const { user, loading: authLoading } = useAuth();
-  
+
   const [backendAmount, setBackendAmount] = useState(null);
   const [removingId, setRemovingId] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentLocked, setPaymentLocked] = useState(false);
-  const [qrCode, setQrCode] = useState("");
+  const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
 
-  if(authLoading) {
+  const selectedPass = cart.find((item) => item.type == 'pass');
+
+  if (authLoading) {
     return (
       <section className="min-h-screen bg-transparent text-white px-6 py-24 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary mx-auto mb-4"></div>
           <p className="text-white/60">Loading...</p>
         </div>
-      </section>     
+      </section>
     );
   }
 
   // 1. Helper to load Razorpay Script
   const loadRazorpay = () => {
     return new Promise((resolve) => {
-      if(window.Razorpay){
+      if (window.Razorpay) {
         resolve(true);
         return;
       }
@@ -43,8 +45,8 @@ const Registration = () => {
       script.async = true;
       script.onload = () => resolve(true);
       script.onerror = () => {
-        console.error("Failed to load Razorpay SDK");
-        resolve(false)
+        console.error('Failed to load Razorpay SDK');
+        resolve(false);
       };
       document.body.appendChild(script);
     });
@@ -54,14 +56,14 @@ const Registration = () => {
   const handlePayment = async () => {
     // A. Check Login
     if (!user || !user.email) {
-      showToast("Please login to register", "error");
+      showToast('Please login to register', 'error');
       return;
     }
 
-    if(paymentLocked) return;
+    if (paymentLocked) return;
 
-    if(!Array.isArray(cart) || cart.length === 0){
-      showToast("Cart is empty", "error");
+    if (!Array.isArray(cart) || cart.length === 0) {
+      showToast('Cart is empty', 'error');
       return;
     }
 
@@ -72,24 +74,24 @@ const Registration = () => {
       // B. Load SDK
       const isLoaded = await loadRazorpay();
       if (!isLoaded) {
-        showToast("Razor service unavailable. Please try again later", "error");
+        showToast('Razor service unavailable. Please try again later', 'error');
         return;
       }
 
       // Create order
-      const { data: order } = await createPaymentOrder(cart.map(item => item.id));
-      
+      const { data: order } = await createPaymentOrder(cart.map((item) => item.id));
+
       setBackendAmount(order.amount);
-      
+
       // D. Configure Razorpay Popup
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
         name: "Symposium '26",
-        description: "Event Registration",
+        description: 'Event Registration',
         order_id: order.orderId,
-        
+
         handler: async function (response) {
           try {
             const verifyRes = await verifyPaymentOrder({
@@ -101,8 +103,8 @@ const Registration = () => {
             if (verifyRes.data.success) {
               const token = verifyRes.data.qrToken;
 
-              if(!token){
-                showToast("QR generation failedd", "error");
+              if (!token) {
+                showToast('QR generation failedd', 'error');
                 return;
               }
 
@@ -111,8 +113,8 @@ const Registration = () => {
               setQrCode(scanUrl);
               setQrVisible(true);
 
-              showToast("Payment Successful!", "success");
-              trackEvent("payment_success", {
+              showToast('Payment Successful!', 'success');
+              trackEvent('payment_success', {
                 amount: totalPrice,
                 items_count: cart.length,
                 timestamp: new Date().toISOString(),
@@ -120,25 +122,25 @@ const Registration = () => {
               clearCart();
             }
           } catch (err) {
-            console.error("Payment verification error: ", err);
-            showToast("Payment verification failed. Contact support.", "error");
-            trackEvent("payment_verification_failed", {
+            console.error('Payment verification error: ', err);
+            showToast('Payment verification failed. Contact support.', 'error');
+            trackEvent('payment_verification_failed', {
               error: err.message,
             });
           }
         },
         modal: {
           ondismiss: function () {
-            showToast("Payment cancelled", "info");
-            trackEvent("payment_cancelled");
+            showToast('Payment cancelled', 'info');
+            trackEvent('payment_cancelled');
           },
         },
         prefill: {
-          name: user.displayName || "Participant",
+          name: user.displayName || 'Participant',
           email: user.email,
         },
         theme: {
-          color: "#e50914",
+          color: '#e50914',
         },
         retry: {
           enabled: false,
@@ -146,24 +148,20 @@ const Registration = () => {
       };
 
       const paymentObject = new window.Razorpay(options);
-      
+
       paymentObject.on('payment.failed', function (response) {
-        showToast("Payment failed. Please try again.", "error");
-        trackEvent("payment_failed", {
+        showToast('Payment failed. Please try again.', 'error');
+        trackEvent('payment_failed', {
           error_code: response.error.code,
           error_description: response.error.description,
         });
       });
       paymentObject.open();
-
     } catch (error) {
-      console.error("Payment Error:", error);
-      showToast(
-        error.message || "Failed to initiate payment. Please try again.", 
-        "error"
-      );
+      console.error('Payment Error:', error);
+      showToast(error.message || 'Failed to initiate payment. Please try again.', 'error');
 
-      trackEvent("payment_error", {
+      trackEvent('payment_error', {
         error_message: error.message,
       });
     } finally {
@@ -190,6 +188,55 @@ const Registration = () => {
           </h2>
           <p className="text-white/60 text-sm">Review your selected events and workshops</p>
         </div>
+        {/* ================= PASSES ================= */}
+        <div className="flex flex-col gap-6">
+          <p className="text-center text-white/60 text-sm">Choose a pass (optional)</p>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {passes.map((pass) => {
+              const isSelected = selectedPass?.id === pass.id;
+
+              return (
+                <PassPosterCard
+                  key={pass.id}
+                  pass={pass}
+                  selected={isSelected}
+                  onToggle={() => {
+                    // deselect
+                    if (isSelected) {
+                      removeFromCart(pass.id);
+                      return;
+                    }
+
+                    // remove any existing pass
+                    if (selectedPass) {
+                      removeFromCart(selectedPass.id);
+                    }
+
+                    // remove covered events
+                    cart.forEach((item) => {
+                      if (
+                        item.type !== 'pass' &&
+                        (pass.includes === 'ALL' || pass.includes.includes(item.id))
+                      ) {
+                        removeFromCart(item.id);
+                      }
+                    });
+
+                    // add new pass
+                    addToCart({
+                      id: pass.id,
+                      title: pass.title,
+                      price: pass.price,
+                      type: 'pass',
+                      includes: pass.includes,
+                    });
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
 
         {cart.length === 0 ? (
           <div className="text-center mt-20">
@@ -206,11 +253,13 @@ const Registration = () => {
                   <div
                     key={item.id}
                     className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 shadow-stGlow ${
-                      isRemoving ? 'animate-slideOutLeft' : 
-                      'animate-slideInRight'}`}
+                      isRemoving ? 'animate-slideOutLeft' : 'animate-slideInRight'
+                    }`}
                   >
                     <div>
-                      <p className="uppercase tracking-widest text-sm font-semibold">{item.title}</p>
+                      <p className="uppercase tracking-widest text-sm font-semibold">
+                        {item.title}
+                      </p>
                       <p className="text-white/60 text-xs uppercase">{item.type}</p>
                     </div>
                     <div className="flex items-center gap-6">
@@ -231,7 +280,9 @@ const Registration = () => {
             <div className="mt-10 bg-black/60 backdrop-blur-md border border-primary rounded-2xl p-6 shadow-stGlowStrong flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
               <div className="text-center md:text-left">
                 <p className="text-white/60 text-xs uppercase tracking-widest">Total Amount</p>
-                <p className="text-primary text-2xl tracking-widest">₹{backendAmount ? backendAmount / 100 : totalPrice}</p>
+                <p className="text-primary text-2xl tracking-widest">
+                  ₹{backendAmount ? backendAmount / 100 : totalPrice}
+                </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -250,7 +301,7 @@ const Registration = () => {
                           disabled:opacity-50 disabled:cursor-not-allowed
                         "
                 >
-                  {paymentLoading ? "Processing..." : "Pay Now"}
+                  {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
 
                 {/* Pay at Desk Button */}
@@ -283,9 +334,7 @@ const Registration = () => {
               </button>
 
               <div className="text-center">
-                <h3 className="text-primary text-xl font-bold mb-4 uppercase">
-                  Entry Ticket
-                </h3>
+                <h3 className="text-primary text-xl font-bold mb-4 uppercase">Entry Ticket</h3>
                 <QRCodeCanvas
                   value={qrCode}
                   size={220}
@@ -294,9 +343,7 @@ const Registration = () => {
                   level="H"
                   className="mx-auto border-2 border-primary rounded-lg p-2 bg-white"
                 />
-                <p className="text-white/60 mt-6 text-sm">
-                  Show this QR at event entry
-                </p>
+                <p className="text-white/60 mt-6 text-sm">Show this QR at event entry</p>
                 <p className="text-white/40 text-xs mt-2">
                   Save screenshot or take photo before closing
                 </p>
@@ -304,11 +351,11 @@ const Registration = () => {
                 {/* Download QR Button */}
                 <button
                   onClick={() => {
-                    const canvas = document.querySelector("canvas");
+                    const canvas = document.querySelector('canvas');
                     if (!canvas) return;
 
-                    const link = document.createElement("a");
-                    link.href = canvas.toDataURL("image/png");
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
                     link.download = `symposium-ticket-${Date.now()}.png`;
                     link.click();
                   }}
