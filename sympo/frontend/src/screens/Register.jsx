@@ -100,43 +100,20 @@ const Registration = () => {
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
       script.onload = () => resolve(true);
-<<<<<<< HEAD
-      script.onerror = () => resolve(false);
-=======
-      script.onerror = () => {
-        console.error('Failed to load Razorpay SDK');
-        resolve(false);
-      };
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
+      // script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
 
   const handlePayment = async () => {
-<<<<<<< HEAD
     if (!user) return showToast("Please login first", "error");
     if (!validateCart()) return;
-=======
-    // A. Check Login
-    if (!user || !user.email) {
-      showToast('Please login to register', 'error');
-      return;
-    }
-
-    if (paymentLocked) return;
-
-    if (!Array.isArray(cart) || cart.length === 0) {
-      showToast('Cart is empty', 'error');
-      return;
-    }
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
 
     setPaymentLocked(true);
     setPaymentLoading(true);
 
     try {
       const isLoaded = await loadRazorpay();
-<<<<<<< HEAD
       if (!isLoaded) throw new Error("Razorpay SDK failed to load");
 
       // Create order
@@ -144,30 +121,12 @@ const Registration = () => {
       
       setBackendAmount(order.amount);
       
-=======
-      if (!isLoaded) {
-        showToast('Razor service unavailable. Please try again later', 'error');
-        return;
-      }
-
-      // Create order
-      const { data: order } = await createPaymentOrder(cart.map((item) => item.id));
-
-      setBackendAmount(order.amount);
-
-      // D. Configure Razorpay Popup
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
       const options = {
         key: order.keyId,
         amount: order.amount,
         currency: order.currency,
-<<<<<<< HEAD
         name: "TEKHORA'26",
         description: "Event Registration",
-=======
-        name: "Symposium '26",
-        description: 'Event Registration',
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
         order_id: order.orderId,
 
         handler: async function (response) {
@@ -180,54 +139,19 @@ const Registration = () => {
 
             if (verifyRes.data.success) {
               const token = verifyRes.data.qrToken;
-<<<<<<< HEAD
-=======
-
-              if (!token) {
-                showToast('QR generation failedd', 'error');
-                return;
-              }
-
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
               const scanUrl = `${window.location.origin}/scan/${token}`;
 
               setQrCode(scanUrl);
               setQrVisible(true);
-<<<<<<< HEAD
               saveQRCode(scanUrl, token);
-=======
-
-              showToast('Payment Successful!', 'success');
-              trackEvent('payment_success', {
-                amount: totalPrice,
-                items_count: cart.length,
-                timestamp: new Date().toISOString(),
-              });
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
               clearCart();
               showToast("Payment Successful!", "success");
               trackEvent("payment_success", { amount: order.amount });
             }
           } catch (err) {
-<<<<<<< HEAD
             showToast("Verification failed. Contact support.", "error");
           }
         },
-=======
-            console.error('Payment verification error: ', err);
-            showToast('Payment verification failed. Contact support.', 'error');
-            trackEvent('payment_verification_failed', {
-              error: err.message,
-            });
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            showToast('Payment cancelled', 'info');
-            trackEvent('payment_cancelled');
-          },
-        },
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
         prefill: {
           name: user.displayName || 'Participant',
           email: user.email,
@@ -237,7 +161,6 @@ const Registration = () => {
         },
       };
 
-<<<<<<< HEAD
       const rzp = new window.Razorpay(options);
       
       rzp.on('payment.failed', (res) => {
@@ -249,25 +172,6 @@ const Registration = () => {
     } catch (error) {
       console.error(error);
       showToast(error.message || "Payment init failed", "error");
-=======
-      const paymentObject = new window.Razorpay(options);
-
-      paymentObject.on('payment.failed', function (response) {
-        showToast('Payment failed. Please try again.', 'error');
-        trackEvent('payment_failed', {
-          error_code: response.error.code,
-          error_description: response.error.description,
-        });
-      });
-      paymentObject.open();
-    } catch (error) {
-      console.error('Payment Error:', error);
-      showToast(error.message || 'Failed to initiate payment. Please try again.', 'error');
-
-      trackEvent('payment_error', {
-        error_message: error.message,
-      });
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
     } finally {
       setPaymentLoading(false);
       setPaymentLocked(false);
@@ -353,16 +257,7 @@ const Registration = () => {
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
                 return (
-<<<<<<< HEAD
                   <div key={item.id} className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}>
-=======
-                  <div
-                    key={item.id}
-                    className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 shadow-stGlow ${
-                      isRemoving ? 'animate-slideOutLeft' : 'animate-slideInRight'
-                    }`}
-                  >
->>>>>>> 2048895c2166feff22ba876bfd513ec8d5660722
                     <div>
                       <p className="uppercase tracking-widest text-sm font-semibold">
                         {item.title}
