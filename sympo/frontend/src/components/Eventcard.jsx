@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 function Eventcard({ title, desc, image, date, time, index, category, backside, onClick }) {
