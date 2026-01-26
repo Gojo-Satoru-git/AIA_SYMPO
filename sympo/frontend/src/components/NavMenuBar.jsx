@@ -3,11 +3,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
+import { logoutUser } from '../services/auth.service';
 import { auth } from "../firebase";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MyPurchaseDialog from "./MyPurchase";
+
+import { usePurchases } from '../context/PurchaseContext';
 
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
@@ -19,13 +22,33 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const {clearPurchases} = usePurchases();
+
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
+
+
   const handleLogout = async () => {
-    await signOut(auth);
-    handleMenuClose();
-    navigate("/");
+
+    try{
+      await logoutUser();
+
+      
+
+      clearPurchases();
+      localStorage.clear();
+      await signOut(auth);
+      handleMenuClose();
+      navigate("/");
+
+      console.log("User logged out successfully");
+    }
+    catch(err){
+      console.error("Logout failed:", err);
+      /// add toast notification here
+    }
+
   };
 
   const registerBtnRef = useRef(null);

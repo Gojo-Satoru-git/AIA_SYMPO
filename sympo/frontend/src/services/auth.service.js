@@ -12,6 +12,7 @@ export const registerUser = async (userData, token) => {
 export const logoutUser = async () => {
   try {
     await api.post("/auth/logout");
+    console.log("User logged out successfully from API");
   } catch (error) {
     console.error("Logout API error", error);
   }
