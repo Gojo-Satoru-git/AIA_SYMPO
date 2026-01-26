@@ -10,8 +10,7 @@ const ContactCard = ({ eventName, coordinators }) => {
   return (
     <Card
       className="
-      animated-border
-        glow-red
+         glow-card
         transition-transform duration-300
         hover:md:scale-105
         flex-shrink-0

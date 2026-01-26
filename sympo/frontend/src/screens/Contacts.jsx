@@ -43,15 +43,15 @@ const Contacts = () => {
 
     scrollTimeout.current = setTimeout(() => {
       setIsScrolling(false);
-    }, 150);
+    }, 120);
   };
 
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: -960, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: 960, behavior: "smooth" });
   };
   const filteredEvents =
     Selected === "All"
@@ -63,7 +63,12 @@ const Contacts = () => {
 
   return (
     <div id="contacts" className="  pt-[15px] -mt-[100px]">
-      <Container maxWidth="lg" className="mt-12 px-4 sm:px-6" >
+      <Container  maxWidth="lg"
+  sx={{
+    minWidth: "97%",
+    px: { xs: 1.5, sm: 2, md: 0 }
+  }}
+  className="mt-12" >
     <div className="py-10">
 
         {/* ================= EVENT COORDINATORS ================= */}
@@ -109,7 +114,7 @@ const Contacts = () => {
       </div>
 
 
-        <div className="relative scroll-hint">
+        <div className="relative scroll-hint ">
 
           {/* LEFT ARROW (DESKTOP ONLY) */}
           <IconButton
@@ -140,8 +145,8 @@ const Contacts = () => {
               overflow-x-auto
               pb-6
               hide-scrollbar
-              px-4 sm:px-6 md:px-0 py-2
-              ${isScrolling ? "no-anim" : ""}
+               py-2
+              ${isScrolling ? "no-scrolling" : ""}
             `}
             style={{
               WebkitOverflowScrolling: "touch",
@@ -196,13 +201,15 @@ const Contacts = () => {
 >
   Swipe left or right to view registration contacts →
 </Typography>
-        <div className="relative scroll-hint">
-        <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
-          <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
-          <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
-          <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
-        </div>
-       </div>
+    <div className="relative scroll-hint scroll-hint-sm-md">
+  <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
+    <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
+    <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
+    <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
+  </div>
+</div>
+
+
         
       </div>
       </Container>
