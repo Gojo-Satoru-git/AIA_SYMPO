@@ -35,6 +35,18 @@ const Events = () => {
   const Workshops = useContext(workshopcontext);
 
   let detail;
+
+  useEffect(() => {
+    if (clicked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [clicked]);
+
   useEffect(() => {
     if (scrollRef2.current) {
       scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
@@ -51,7 +63,15 @@ const Events = () => {
   return (
     <>
       {clicked && (
-        <div className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm">
+        <div
+          className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setClicked(false);
+              setCardclicked({ id: null, category: null });
+            }
+          }}
+        >
           <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={handleCart} />
         </div>
       )}
@@ -97,7 +117,7 @@ const Events = () => {
                 <Eventcard
                   title={events.title}
                   desc={events.description}
-                  img={events.image}
+                  image={events.image}
                   date={events.date}
                   time={events.time}
                   category={events.category}
@@ -122,7 +142,7 @@ const Events = () => {
         <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">→</span>
         <div className="relative text-primary mt-0">
           <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
-            Workshops
+            Other Events
           </h2>
           <div className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4">
             {Workshops.map((workshop, index) => (

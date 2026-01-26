@@ -89,7 +89,7 @@
 /* 🔥 Reduce load on mobile */
 /* moving red line */
 .animated-border::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: 16px;
@@ -136,7 +136,7 @@
 
 .scroll-hint::before,
 .scroll-hint::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   width: 32px;
@@ -189,7 +189,6 @@
   }
 }
 
-
 /* Enable scroll snapping properly */
 @media (max-width: 768px) {
   .snap-x {
@@ -198,7 +197,6 @@
 }
 
 /* Hide gradient hint on desktop */
-
 
 /* Prevent scroll chaining */
 .scroll-hint>div {

@@ -1,8 +1,7 @@
-import crypto from 'crypto';
-import Razorpay from 'razorpay';
+import crypto from "crypto";
+import Razorpay from "razorpay";
 
-import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '../config/env1.js';
-
+import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from "../config/env1.js";
 
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
   console.warn("Missing Razorpay credentials in environment");
@@ -23,9 +22,9 @@ export const createRazorpayOrder = async (amount) => {
     }
 
     const options = {
-        amount: amount * 100, // Convert to paise
-        currency: "INR",
-        receipt: `receipt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      amount: amount * 100, // Convert to paise
+      currency: "INR",
+      receipt: `receipt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
     const order = await instance.orders.create(options);
@@ -36,7 +35,11 @@ export const createRazorpayOrder = async (amount) => {
   }
 };
 
-export const verifyRazorpayPayment = (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
+export const verifyRazorpayPayment = (
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+) => {
   try {
     // Validate inputs
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -49,7 +52,7 @@ export const verifyRazorpayPayment = (razorpay_order_id, razorpay_payment_id, ra
       .createHmac("sha256", RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
-    
+
     return expectedSignature === razorpay_signature;
   } catch (err) {
     console.error("Payment verification error:", err.message);

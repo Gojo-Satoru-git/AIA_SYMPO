@@ -10,6 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import ToastProvider from './context/toast.provider';
 import 'react-toastify/dist/ReactToastify.css';
 import CartProvider from './context/cart.provider';
+import { PurchaseProvider } from "./context/PurchaseContext";
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')).render(
         <ToastProvider>
           <AuthProvider>
             <CartProvider>
+              <PurchaseProvider>
               <App />
+              </PurchaseProvider>
             </CartProvider>
           </AuthProvider>
         </ToastProvider>

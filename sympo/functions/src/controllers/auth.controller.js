@@ -38,7 +38,6 @@ export const signup = async (req, res) => {
       });
     });
 
-    console.log(`New user registered: ${uid}`);
     return success(res, { uid }, "User registered successfully", 201);
 
   } catch (err) {
