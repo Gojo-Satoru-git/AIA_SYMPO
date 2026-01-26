@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
 
-import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '../config/env1.js';
+import { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } from '../config/env.js';
 
 
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
