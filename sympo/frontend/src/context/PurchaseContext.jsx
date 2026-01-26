@@ -15,8 +15,8 @@ export const PurchaseProvider = ({ children }) => {
 
   const addPurchase = (newPurchase) => {
     setPurchases((prev) => [
-      ...prev,
       ...(Array.isArray(newPurchase) ? newPurchase : [newPurchase]),
+      ...prev,
     ]);
   };
 

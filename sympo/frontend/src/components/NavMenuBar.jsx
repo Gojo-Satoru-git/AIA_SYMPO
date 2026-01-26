@@ -42,7 +42,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       handleMenuClose();
       navigate("/");
 
-      console.log("User logged out successfully");
+      /// add toast notification here
     }
     catch(err){
       console.error("Logout failed:", err);
