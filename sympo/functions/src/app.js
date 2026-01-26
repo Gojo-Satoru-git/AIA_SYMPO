@@ -9,7 +9,7 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 
-import{FRONTEND_URL} from "./config/env.js";
+import{FRONTEND_URL} from "./config/env1.js";
 
 const app = express();
 
