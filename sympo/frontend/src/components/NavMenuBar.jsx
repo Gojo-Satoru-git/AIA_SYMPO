@@ -7,9 +7,12 @@ import { auth } from "../firebase";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import MyPurchaseDialog from "./MyPurchase";
+
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -171,14 +174,20 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
                 {user.displayName?.[0]?.toUpperCase() || "U"}
               </Avatar>
               <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-                <MenuItem>My Purchase</MenuItem>
+                
                 <MenuItem disabled>{user.email}</MenuItem>
+                <MenuItem  onClick={() => {
+                          handleMenuClose();
+                          setPurchaseOpen(true);
+                        }}>My Purchase</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
           )}
         </div>
       </nav>
+       
+
 
       {/* mobile */}
       <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center lg:hidden">
@@ -262,7 +271,12 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
             )
           )}
         </div>
-      </aside>
+        </aside>
+        <MyPurchaseDialog
+          open={purchaseOpen}
+          onClose={() => setPurchaseOpen(false)}
+          />
+
     </>
   );
 };
