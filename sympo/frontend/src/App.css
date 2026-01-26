@@ -8,53 +8,85 @@
   font-family: 'StrangerRegular';
   src: url('/fonts/ITCBenguiatStdBookCn.OTF') format('opentype');
   font-weight: normal;
-  
 
-   font-family: "Stranger";
+
+  font-family: "Stranger";
   src: url("fonts/ITCBenguiatStdBookCn.OTF") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
+
+
+
+/* ====== CARD BASE ====== */
+.glow-card {
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  border: 3px solid #ff0000;
+
+  /* VERY IMPORTANT */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ====== SOFT GLOW (GPU SAFE) ====== */
+.glow-card::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 14px;
+
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.55);
+
+  opacity: 1;
+  transition: opacity 0.15s ease-out;
+  pointer-events: none;
+}
+
+/* ====== DISABLE GLOW DURING SCROLL ====== */
+.scrolling .glow-card::after {
+  opacity: 0;
+}
+
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+/* moving red line */
+
 @keyframes redGlow {
   0% {
-    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4),
-                0 0 20px rgba(229, 9, 20, 0.3);
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4), 0 0 20px rgba(229, 9, 20, 0.3);
   }
+
   50% {
-    box-shadow: 0 0 20px rgba(229, 9, 20, 0.8),
-                0 0 40px rgba(229, 9, 20, 0.6);
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.8), 0 0 40px rgba(229, 9, 20, 0.6);
   }
+
   100% {
-    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4),
-                0 0 20px rgba(229, 9, 20, 0.3);
+    box-shadow: 0 0 10px rgba(229, 9, 20, 0.4), 0 0 20px rgba(229, 9, 20, 0.3);
   }
 }
 
 .glow-red {
   animation: redGlow 5s infinite ease-in-out;
 }
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.no-anim .glow-red {
-  animation: none !important;
-}
 
-.no-anim .animated-border::before {
-  animation: none !important;
-  filter: none;
-}
-/* ================= Animated Red Border ================= */
 .animated-border {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
 }
 
+/* 🔥 Reduce load on mobile */
 /* moving red line */
 .animated-border::before {
   content: "";
@@ -63,25 +95,12 @@
   border-radius: 16px;
   padding: 2px;
   filter: drop-shadow(0 0 8px red);
-
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #ff0000,
-    transparent
-  );
-
+  background: linear-gradient(90deg, transparent, #ff0000, transparent);
   background-size: 300% 300%;
   animation: borderRun 8s linear infinite;
-  
-
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-
   pointer-events: none;
 }
 
@@ -89,10 +108,12 @@
   0% {
     background-position: 0% 50%;
   }
+
   100% {
     background-position: 300% 50%;
   }
 }
+
 /* 🔥 Reduce load on mobile */
 @media (max-width: 768px) {
   .glow-red {
@@ -107,6 +128,7 @@
     perspective: none;
   }
 }
+
 /* ===== Horizontal Scroll Gradient Hint ===== */
 .scroll-hint {
   position: relative;
@@ -132,6 +154,40 @@
   right: 0;
   background: linear-gradient(to left, #000, transparent);
 }
+/* Wrapper for THIS div only */
+.scroll-hint-wrapper-sm-md {
+  position: relative;
+}
+
+/* Disable hint by default (desktop) */
+.scroll-hint-wrapper-sm-md::before,
+.scroll-hint-wrapper-sm-md::after {
+  content: none !important;
+}
+
+/* Enable hint only on tablet + mobile */
+@media (max-width: 1024px) {
+  .scroll-hint-wrapper-sm-md::before,
+  .scroll-hint-wrapper-sm-md::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 56px;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* LEFT hint */
+  .scroll-hint-wrapper-sm-md::before {
+    left: 0;
+  }
+
+  /* RIGHT hint */
+  .scroll-hint-wrapper-sm-md::after {
+    right: 0;
+  }
+}
 
 
 /* Enable scroll snapping properly */
@@ -145,11 +201,6 @@
 
 
 /* Prevent scroll chaining */
-.scroll-hint > div {
-  overscroll-behavior-x: none;
-  overscroll-behavior-y:none;
+.scroll-hint>div {
+  overscroll-behavior-x: contain;
 }
-
-
-
-

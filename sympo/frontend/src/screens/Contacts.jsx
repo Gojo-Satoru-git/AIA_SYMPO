@@ -43,15 +43,15 @@ const Contacts = () => {
 
     scrollTimeout.current = setTimeout(() => {
       setIsScrolling(false);
-    }, 150);
+    }, 120);
   };
 
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: -960, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: 960, behavior: "smooth" });
   };
   const filteredEvents =
     Selected === "All"
@@ -141,7 +141,7 @@ const Contacts = () => {
               pb-6
               hide-scrollbar
               px-4 sm:px-6 md:px-0 py-2
-              ${isScrolling ? "no-anim" : ""}
+              ${isScrolling ? "no-scrolling" : ""}
             `}
             style={{
               WebkitOverflowScrolling: "touch",
@@ -196,13 +196,14 @@ const Contacts = () => {
 >
   Swipe left or right to view registration contacts →
 </Typography>
-        <div className="relative scroll-hint">
-        <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
-          <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
-          <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
-          <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
-        </div>
-       </div>
+     <div className="relative scroll-hint-wrapper-sm-md">
+  <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
+    <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
+    <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
+    <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
+  </div>
+</div>
+
         
       </div>
       </Container>
