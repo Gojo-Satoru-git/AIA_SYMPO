@@ -1,13 +1,12 @@
 import React from 'react';
 import useToast from '../context/useToast';
 import { useEffect } from 'react';
-function EventDetails({ card, onClose, AddtoCart }) {
+function EventDetails({ card, onClose, AddtoCart, check }) {
   const { showToast } = useToast();
-
   const [showArrow, SetshowArrow] = React.useState(false);
 
   const scrollRef = React.useRef(null);
-
+  console.log(check);
   const checkoverflow = () => {
     const el = scrollRef.current;
     if (el) {
@@ -20,6 +19,7 @@ function EventDetails({ card, onClose, AddtoCart }) {
   useEffect(() => {
     const el = scrollRef.current;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkoverflow();
     window.addEventListener('resize', checkoverflow);
     if (el) {
@@ -83,10 +83,14 @@ function EventDetails({ card, onClose, AddtoCart }) {
           </div>
         </div>
         <button
-          className="bg-primary text-black rounded-full px-4 py-2 shadow-stGlow"
+          className={`${check(card) ? 'opacity-35' : ''} bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
           onClick={() => {
-            AddtoCart(card, card.category ? 'event' : 'workshop');
-            showToast(`${card.title} added check the registration`, 'add');
+            if (!check(card)) {
+              AddtoCart(card, card.category ? 'event' : 'workshop');
+              showToast(`${card.title} added check the registration`, 'add');
+            } else {
+              showToast(`${card.title} already in cart`);
+            }
           }}
         >
           Add
