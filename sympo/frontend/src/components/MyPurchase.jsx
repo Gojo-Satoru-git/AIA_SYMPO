@@ -148,10 +148,7 @@ const MyPurchaseDialog = ({ open, onClose }) => {
 
             <Typography variant="caption" color="#fff" mt={1} display="block">
               Total Paid: ₹
-              {(activePurchase.events || []).reduce(
-                (sum, e) => sum + (e.price || 0),
-                0
-              )}
+              {activePurchase.amount}
             </Typography>
           </DialogContent>
         )}
