@@ -72,7 +72,7 @@ const Events = () => {
     } else if (scrollLeft == 0) {
       setshowLeft(false);
     }
-    if (scrollLeft + clientWidth >= scrollWidth - 10) {
+    if (scrollLeft + clientWidth >= scrollWidth - 20) {
       setshowRight(false);
     } else {
       setshowRight(true);
@@ -83,7 +83,7 @@ const Events = () => {
     const el = scrollRef3.current;
     if (!el) return;
     const { scrollLeft, clientWidth, scrollWidth } = el;
-    if (scrollLeft + clientWidth >= scrollWidth - 10) {
+    if (scrollLeft + clientWidth >= scrollWidth - 20) {
       setshowWRight(false);
     } else {
       setshowWRight(true);
