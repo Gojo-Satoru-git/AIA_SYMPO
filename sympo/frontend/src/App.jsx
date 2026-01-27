@@ -15,7 +15,7 @@ import Eventprovider from './context/Eventprovider';
 import WorkshoProvider from './context/WorkshopProvider';
 
 import { AuthProvider } from './context/AuthContext';
-import AdminRoute from "./components/AdminRoute";
+import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
 
 const MainPage = () => {
@@ -60,7 +60,6 @@ const MainPage = () => {
         <Eventprovider>
           <Contact />
         </Eventprovider>
-        
       </div>
 
       <Footer />
@@ -81,7 +80,15 @@ const App = () => {
           <Route path="/signup" element={<Auth mode="signup" />} />
 
           {/* QR Routes */}
-          <Route path="/scan/:token" element= { <AdminRoute> <ScanPage /> </AdminRoute>}/>
+          <Route
+            path="/scan/:token"
+            element={
+              <AdminRoute>
+                {' '}
+                <ScanPage />{' '}
+              </AdminRoute>
+            }
+          />
         </Routes>
       </>
     </AppShell>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import {useState , useEffect , useRef} from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function Eventcard({ title, desc, image, date, time, index, category, backside, onClick }) {
   const [hasAppeared, setHasAppeared] = useState(false);
