@@ -4,11 +4,18 @@ import EventDetails from '../components/EventDetails';
 import useCart from '../context/useCart';
 import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
+import { usePurchases } from '../context/PurchaseContext';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-  const { addToCart,check} = useCart();
+  const { addToCart } = useCart();
+
+  const { checkPurchases, purchases } = usePurchases();
+  console.log(purchases);
+
   const [clicked, setClicked] = React.useState(false);
+  const [showLeft, setshowLeft] = useState(false);
+  const [showRight, setshowRight] = useState(false);
 
   const [cardclicked, setCardclicked] = React.useState({
     id: null,
@@ -18,7 +25,9 @@ const Events = () => {
   const scroll = (directions) => {
     const { current } = scrollRef2;
     if (current) {
-      const scrollAmount = directions === 'left' ? -320 : 320;
+      const firstCard = current.firstElementChild;
+      const scrollSize = firstCard ? firstCard.clientWidth + 16 : 200;
+      const scrollAmount = directions === 'left' ? -scrollSize : scrollSize;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
@@ -52,6 +61,34 @@ const Events = () => {
       scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
     }
   }, [Selected]);
+
+  const checkScroll = () => {
+    const el = scrollRef2.current;
+    if (!el) return;
+    const { scrollLeft, clientWidth, scrollWidth } = el;
+    if (scrollLeft > 0) {
+      setshowLeft(true);
+    } else if (scrollLeft == 0) {
+      setshowLeft(false);
+    }
+    if (scrollLeft + clientWidth >= scrollWidth) {
+      setshowRight(false);
+    } else {
+      setshowRight(true);
+    }
+  };
+
+  useEffect(() => {
+    if (scrollRef2.current) {
+      scrollRef2.current.scroll({ left: 0, behavior: 'smooth' });
+      const timer = setTimeout(() => {
+        checkScroll();
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, [Selected]);
+
   if (cardclicked !== null) {
     detail =
       cardclicked.category === 'workshop'
@@ -76,7 +113,7 @@ const Events = () => {
             card={detail}
             onClose={() => setClicked(false)}
             AddtoCart={handleCart}
-            check={check}
+            check={checkPurchases}
           />
         </div>
       )}
@@ -107,14 +144,18 @@ const Events = () => {
         </div>
 
         <div className="relative w-full max-w-8xl flex items-center group">
-          <button
-            onClick={() => scroll('left')}
-            className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
-          >
-            <span className="mb-auto">‹</span>
-          </button>
+          {showLeft && (
+            <button
+              onClick={() => scroll('left')}
+              className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
+            >
+              <span className="mb-auto">‹</span>
+            </button>
+          )}
+
           <div
             ref={scrollRef2}
+            onScroll={checkScroll}
             className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
           >
             {display.map((events, index) => (
@@ -137,12 +178,14 @@ const Events = () => {
               </div>
             ))}
           </div>
-          <button
-            onClick={() => scroll('right')}
-            className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
-          >
-            <span className="mb-auto">›</span>
-          </button>
+          {showRight && (
+            <button
+              onClick={() => scroll('right')}
+              className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+            >
+              <span className="mb-auto">›</span>
+            </button>
+          )}
         </div>
         <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">→</span>
         <div className="relative text-primary mt-0">
@@ -172,9 +215,11 @@ const Events = () => {
               </div>
             ))}
           </div>
-          <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
-            →
-          </span>
+          {showRight && (
+            <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
+              →
+            </span>
+          )}
         </div>
       </div>
     </>

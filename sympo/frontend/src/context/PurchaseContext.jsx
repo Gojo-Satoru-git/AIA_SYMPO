@@ -7,6 +7,7 @@ const PurchaseContext = createContext({
   addPurchase: () => {},
   setAllPurchases: () => {},
   clearPurchases: () => {},
+  checkPurchases : () => {},
 });
 
 export const PurchaseProvider = ({ children }) => {
@@ -18,6 +19,16 @@ export const PurchaseProvider = ({ children }) => {
       ...(Array.isArray(newPurchase) ? newPurchase : [newPurchase]),
       ...prev,
     ]);
+  };
+
+  const checkPurchases = (item) => {
+    if (!item || !item.id) return false;
+    const exists = purchases.some((order) => {
+      return order.events.some((event) => {
+        event.eventId == item.id;
+      });
+    });
+    return exists ? true : false;
   };
 
   const setAllPurchases = (list) => {
@@ -49,7 +60,7 @@ export const PurchaseProvider = ({ children }) => {
 
   return (
     <PurchaseContext.Provider
-      value={{ purchases, addPurchase, setAllPurchases, clearPurchases }}
+      value={{ purchases, addPurchase, setAllPurchases, clearPurchases ,checkPurchases }}
     >
       {children}
     </PurchaseContext.Provider>

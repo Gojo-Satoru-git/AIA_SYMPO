@@ -6,7 +6,6 @@ function EventDetails({ card, onClose, AddtoCart, check }) {
   const [showArrow, SetshowArrow] = React.useState(false);
 
   const scrollRef = React.useRef(null);
-  console.log(check);
   const checkoverflow = () => {
     const el = scrollRef.current;
     if (el) {
