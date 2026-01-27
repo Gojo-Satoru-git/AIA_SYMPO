@@ -7,10 +7,12 @@ if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
   console.warn("Missing Razorpay credentials in environment");
 }
 
-const instance = RAZORPAY_KEY_ID ? new Razorpay({
-  key_id: RAZORPAY_KEY_ID,
-  key_secret: RAZORPAY_KEY_SECRET,
-}) : null;
+const instance = RAZORPAY_KEY_ID
+  ? new Razorpay({
+      key_id: RAZORPAY_KEY_ID,
+      key_secret: RAZORPAY_KEY_SECRET,
+    })
+  : null;
 
 export const createRazorpayOrder = async (amount) => {
   if (!instance) throw new Error("Razorpay not configured");

@@ -39,9 +39,10 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       console.error("Logout failed:", err);
       /// add toast notification here
     } finally {
-        clearPurchases();
-        localStorage.clear();
+        
         await signOut(auth);
+        clearPurchases();
+        localStorage.clear();      
         handleMenuClose();
         navigate("/");
     }

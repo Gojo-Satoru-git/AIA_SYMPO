@@ -7,7 +7,7 @@ import { workshopcontext } from '../context/workshop.context';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-  const { addToCart } = useCart();
+  const { addToCart,check} = useCart();
   const [clicked, setClicked] = React.useState(false);
 
   const [cardclicked, setCardclicked] = React.useState({
@@ -72,7 +72,12 @@ const Events = () => {
             }
           }}
         >
-          <EventDetails card={detail} onClose={() => setClicked(false)} AddtoCart={handleCart} />
+          <EventDetails
+            card={detail}
+            onClose={() => setClicked(false)}
+            AddtoCart={handleCart}
+            check={check}
+          />
         </div>
       )}
       <div className={`flex flex-col p-10 sm:justify-start  min-h-screen`}>
