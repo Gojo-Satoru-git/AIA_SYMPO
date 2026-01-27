@@ -129,7 +129,14 @@ const MyPurchaseDialog = ({ open, onClose }) => {
               TEKHORA 26
             </Typography>
 
-            <Box display="flex" justifyContent="center" my={2}>
+            <Box sx={{ 
+                  display: "inline-flex",
+                  justifyContent: "center", 
+                  p: 2,                   
+                  backgroundColor: "#fff", 
+                  borderRadius: "12px",
+                  my: 2 
+                }}>
               <QRCodeBox value={activePurchase.qrToken} size={220} />
             </Box>
 
@@ -141,10 +148,7 @@ const MyPurchaseDialog = ({ open, onClose }) => {
 
             <Typography variant="caption" color="#fff" mt={1} display="block">
               Total Paid: ₹
-              {(activePurchase.events || []).reduce(
-                (sum, e) => sum + (e.price || 0),
-                0
-              )}
+              {activePurchase.amount}
             </Typography>
           </DialogContent>
         )}
