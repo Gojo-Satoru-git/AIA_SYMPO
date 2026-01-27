@@ -11,7 +11,7 @@ import { usePurchases } from "../context/PurchaseContext";
 import QRCodeBox from "./QrCodeBox";
 
 const MyPurchaseDialog = ({ open, onClose }) => {
-  const { purchases = [] } = usePurchases(); // ✅ SAFE DEFAULT
+  const { purchases = [] } = usePurchases();
   const [activePurchase, setActivePurchase] = useState(null);
 
   return (
@@ -52,11 +52,6 @@ const MyPurchaseDialog = ({ open, onClose }) => {
                 : [];
 
               const eventNames = events.map((e) => e.title).join(", ");
-              const totalPrice = events.reduce(
-                (sum, e) => sum + (e.price || 0),
-                0
-              );
-
               return (
                 <Box
                   key={purchase.orderId}
@@ -77,7 +72,7 @@ const MyPurchaseDialog = ({ open, onClose }) => {
                     </Typography>
 
                     <Typography variant="caption" color="#fff">
-                      Total Paid: ₹{totalPrice}
+                      Total Paid: ₹{purchase.amount}
                     </Typography>
                   </Box>
 

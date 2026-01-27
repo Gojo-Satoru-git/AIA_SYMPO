@@ -23,7 +23,7 @@ app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(globalLimiter);
 
 app.use(cors({
-  origin: FRONTEND_URL || "http://localhost:5174",
+  origin: FRONTEND_URL || "http://localhost:5173",
   methods: ["GET", "POST"],
   credentials: true,
 }));

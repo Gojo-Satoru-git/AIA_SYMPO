@@ -22,8 +22,10 @@ export const getPurchases = async (req, res) => {
       purchases.push({
         orderId: doc.id,
         amount: orderData.amount,
-        events: orderData.events,
-        createdAt: orderData.createdAt,
+        events: orderData.items.map(item => ({
+          eventId: item.eventId,
+          title: item.title
+        })),
         qrToken: orderData.qrToken
       });
     });

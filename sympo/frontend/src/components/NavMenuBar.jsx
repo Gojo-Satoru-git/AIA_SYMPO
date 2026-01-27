@@ -3,11 +3,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
+import { logoutUser } from '../services/auth.service';
 import { auth } from "../firebase";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MyPurchaseDialog from "./MyPurchase";
+
+import { usePurchases } from '../context/PurchaseContext';
 
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
@@ -19,13 +22,31 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const {clearPurchases} = usePurchases();
+
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
+
+
   const handleLogout = async () => {
-    await signOut(auth);
-    handleMenuClose();
-    navigate("/");
+
+    try{
+      await logoutUser().catch(err => console.error("Server-side logout failed, proceeding with local logout"));
+      /// add toast notification here
+    }
+    catch(err){
+      console.error("Logout failed:", err);
+      /// add toast notification here
+    } finally {
+        
+        await signOut(auth);
+        clearPurchases();
+        localStorage.clear();      
+        handleMenuClose();
+        navigate("/");
+    }
+
   };
 
   const registerBtnRef = useRef(null);
