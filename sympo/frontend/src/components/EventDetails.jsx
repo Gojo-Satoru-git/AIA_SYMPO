@@ -83,7 +83,7 @@ function EventDetails({ card, onClose, AddtoCart, check }) {
           </div>
         </div>
         <button
-          className="bg-primary text-black rounded-full px-4 py-2 shadow-stGlow"
+          className={`${check(card) ? 'opacity-35' : ''} bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
           onClick={() => {
             if (!check(card)) {
               AddtoCart(card, card.category ? 'event' : 'workshop');
