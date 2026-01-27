@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
 import useCart from '../context/useCart';
@@ -7,23 +7,24 @@ import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
 const Events = () => {
   const scrollRef2 = useRef(null);
+  const scrollRef3 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-  const { addToCart } = useCart();
+  const { addToCart, checkCart } = useCart();
 
-  const { checkPurchases, purchases } = usePurchases();
-  console.log(purchases);
+  const { checkPurchases } = usePurchases();
 
-  const [clicked, setClicked] = React.useState(false);
+  const [clicked, setClicked] = useState(false);
   const [showLeft, setshowLeft] = useState(false);
   const [showRight, setshowRight] = useState(false);
+  const [showWRight, setshowWRight] = useState(true);
 
-  const [cardclicked, setCardclicked] = React.useState({
+  const [cardclicked, setCardclicked] = useState({
     id: null,
     category: null,
   });
 
-  const scroll = (directions) => {
-    const { current } = scrollRef2;
+  const scroll = (directions, scrollRef) => {
+    const { current } = scrollRef;
     if (current) {
       const firstCard = current.firstElementChild;
       const scrollSize = firstCard ? firstCard.clientWidth + 16 : 200;
@@ -71,13 +72,28 @@ const Events = () => {
     } else if (scrollLeft == 0) {
       setshowLeft(false);
     }
-    if (scrollLeft + clientWidth >= scrollWidth) {
+    if (scrollLeft + clientWidth >= scrollWidth - 10) {
       setshowRight(false);
     } else {
       setshowRight(true);
     }
   };
 
+  const checkScroll2 = () => {
+    const el = scrollRef3.current;
+    if (!el) return;
+    const { scrollLeft, clientWidth, scrollWidth } = el;
+    if (scrollLeft + clientWidth >= scrollWidth - 10) {
+      setshowWRight(false);
+    } else {
+      setshowWRight(true);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => checkScroll2(), 50);
+    return () => clearTimeout(timer);
+  }, [Workshops]);
   useEffect(() => {
     if (scrollRef2.current) {
       scrollRef2.current.scroll({ left: 0, behavior: 'smooth' });
@@ -113,7 +129,8 @@ const Events = () => {
             card={detail}
             onClose={() => setClicked(false)}
             AddtoCart={handleCart}
-            check={checkPurchases}
+            checkPurchase={checkPurchases}
+            checkCart={checkCart}
           />
         </div>
       )}
@@ -146,7 +163,7 @@ const Events = () => {
         <div className="relative w-full max-w-8xl flex items-center group">
           {showLeft && (
             <button
-              onClick={() => scroll('left')}
+              onClick={() => scroll('left', scrollRef2)}
               className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
             >
               <span className="mb-auto">‹</span>
@@ -180,19 +197,27 @@ const Events = () => {
           </div>
           {showRight && (
             <button
-              onClick={() => scroll('right')}
+              onClick={() => scroll('right', scrollRef2)}
               className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
             >
               <span className="mb-auto">›</span>
             </button>
           )}
         </div>
-        <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">→</span>
+        {showRight && (
+          <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
+            →
+          </span>
+        )}
         <div className="relative text-primary mt-0">
           <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
             Other Events
           </h2>
-          <div className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4">
+          <div
+            className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
+            ref={scrollRef3}
+            onScroll={checkScroll2}
+          >
             {Workshops.map((workshop, index) => (
               <div
                 key={`${Selected}-${workshop.id}`}
@@ -215,7 +240,7 @@ const Events = () => {
               </div>
             ))}
           </div>
-          {showRight && (
+          {showWRight && (
             <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
               →
             </span>

@@ -1,17 +1,17 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function Eventcard({ title, desc, image, date, time, index, category, backside, onClick }) {
-  const [hasAppeared, setHasAppeared] = React.useState(false);
-  const [Flipped, setFlipped] = React.useState(true);
-  const cardRef = React.useRef(null);
+  const [hasAppeared, setHasAppeared] = useState(false);
+  const [Flipped, setFlipped] = useState(true);
+  const cardRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setHasAppeared(false);
     setFlipped(true);
   }, [category, title]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         // Use the first entry (index 0)
@@ -31,7 +31,7 @@ function Eventcard({ title, desc, image, date, time, index, category, backside, 
     return () => observer.disconnect();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (hasAppeared) {
       const delay = index * 200;
       const timer = setTimeout(() => {

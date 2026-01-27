@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext";
-import api from "../services/api";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import api from '../services/api';
 
 const PurchaseContext = createContext({
   purchases: [],
   addPurchase: () => {},
   setAllPurchases: () => {},
   clearPurchases: () => {},
-  checkPurchases : () => {},
+  checkPurchases: () => {},
 });
 
 export const PurchaseProvider = ({ children }) => {
@@ -24,8 +24,9 @@ export const PurchaseProvider = ({ children }) => {
   const checkPurchases = (item) => {
     if (!item || !item.id) return false;
     const exists = purchases.some((order) => {
+      if (!order.events) return false;
       return order.events.some((event) => {
-        event.eventId == item.id;
+        return event.eventId == item.id;
       });
     });
     return exists ? true : false;
@@ -48,10 +49,10 @@ export const PurchaseProvider = ({ children }) => {
 
     const fetchPurchases = async () => {
       try {
-        const res = await api.get("/user/purchases");
+        const res = await api.get('/user/purchases');
         setAllPurchases(res.data.data.purchases);
       } catch (err) {
-        console.error("Failed to fetch purchases:", err);
+        console.error('Failed to fetch purchases:', err);
       }
     };
 
@@ -60,7 +61,7 @@ export const PurchaseProvider = ({ children }) => {
 
   return (
     <PurchaseContext.Provider
-      value={{ purchases, addPurchase, setAllPurchases, clearPurchases ,checkPurchases }}
+      value={{ purchases, addPurchase, setAllPurchases, clearPurchases, checkPurchases }}
     >
       {children}
     </PurchaseContext.Provider>
@@ -70,7 +71,7 @@ export const PurchaseProvider = ({ children }) => {
 export const usePurchases = () => {
   const context = useContext(PurchaseContext);
   if (!context) {
-    throw new Error("usePurchases must be used inside PurchaseProvider");
+    throw new Error('usePurchases must be used inside PurchaseProvider');
   }
   return context;
 };

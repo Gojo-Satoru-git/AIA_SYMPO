@@ -22,7 +22,10 @@ const CartProvider = ({ children }) => {
       return exists ? prev : [...prev, item];
     });
   };
-
+  const checkCart = (item) => {
+    const exists = cart.some((p) => p.id === item.id);
+    return exists ? true : false;
+  };
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
@@ -38,6 +41,7 @@ const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         clearCart,
+        checkCart,
         totalPrice,
       }}
     >
