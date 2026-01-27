@@ -1,5 +1,7 @@
 import useToast from '../context/useToast';
 import { useEffect, useRef, useState } from 'react';
+
+
 function EventDetails({ card, onClose, AddtoCart, checkPurchase, checkCart }) {
   const { showToast } = useToast();
   const [showArrow, SetshowArrow] = useState(false);

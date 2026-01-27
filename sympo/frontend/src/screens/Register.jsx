@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';

@@ -1,4 +1,3 @@
-import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { eventcontext } from './event.context';
 
