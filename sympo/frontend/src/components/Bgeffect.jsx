@@ -54,7 +54,7 @@ const BackgroundEffect = () => {
       })}
 
       {/* Vignette */}
-     
+    
     </div>
   );
 };
