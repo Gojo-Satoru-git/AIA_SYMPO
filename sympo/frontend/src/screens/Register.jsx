@@ -9,6 +9,7 @@ import PassPosterCard from '../components/PassCard';
 import { passes } from '../data/passess';
 import { usePurchases } from '../context/PurchaseContext';
 
+
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
   const { showToast } = useToast();
@@ -22,7 +23,6 @@ const Registration = () => {
   const [qrVisible, setQrVisible] = useState(false);
 
   const { addPurchase } = usePurchases();
-
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -154,8 +154,17 @@ const Registration = () => {
       rzp.open();
 
     } catch (error) {
-      console.error(error);
-      showToast(error.message || "Payment init failed", "error");
+      const errData = error?.response?.data || error;
+
+      const eventName =
+        cart?.find(e => e.id === errData.eventId)?.title || 'Unknown Event';
+
+
+      showToast(
+        `${errData.message || "Payment init failed"} for ${eventName}`,
+        "error"
+      );
+
     } finally {
       setPaymentLoading(false);
       setPaymentLocked(false);

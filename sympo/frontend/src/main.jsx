@@ -11,6 +11,8 @@ import ToastProvider from './context/toast.provider';
 import 'react-toastify/dist/ReactToastify.css';
 import CartProvider from './context/cart.provider';
 import { PurchaseProvider } from "./context/PurchaseContext";
+import { SeatAvalProvider } from './context/SeatAvalProvider.jsx';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
@@ -19,7 +21,9 @@ createRoot(document.getElementById('root')).render(
           <AuthProvider>
             <CartProvider>
               <PurchaseProvider>
-              <App />
+                <SeatAvalProvider>
+                  <App />
+                </SeatAvalProvider>
               </PurchaseProvider>
             </CartProvider>
           </AuthProvider>
