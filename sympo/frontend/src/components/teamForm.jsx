@@ -1,6 +1,6 @@
 import { TextField, Button } from '@mui/material';
 
-function TeamForm({ onclose, teamSize, mini }) {
+function TeamForm({ onclose, teamSize, mini, setShowAdd }) {
   const inputStyle = {
     label: {
       color: '#b0b0b0',
@@ -42,7 +42,13 @@ function TeamForm({ onclose, teamSize, mini }) {
         ✕
       </button>
 
-      <form className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setShowAdd(false);
+        }}
+        className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
         <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
           Problem statement
         </h1>

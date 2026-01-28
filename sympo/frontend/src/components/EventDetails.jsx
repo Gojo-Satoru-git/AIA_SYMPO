@@ -7,6 +7,8 @@ function EventDetails({ card, onClose, checkPurchase }) {
   const { showToast } = useToast();
   const { addToCart, checkCart } = useCart();
   const [showArrow, SetshowArrow] = useState(false);
+  const [showAdd, setShowAdd] = useState(card.title == 'Hackathon');
+  console.log(showAdd);
 
   const [showForm, SetshowForm] = useState(false);
 
@@ -40,6 +42,7 @@ function EventDetails({ card, onClose, checkPurchase }) {
         <TeamForm
           teamSize={card.teamSize}
           mini={card.miniTeamSize}
+          setShowAdd={setShowAdd}
           onclose={() => {
             SetshowForm(false);
           }}
@@ -101,7 +104,7 @@ function EventDetails({ card, onClose, checkPurchase }) {
             </div>
             <div className="flex items-center gap-8">
               <button
-                className={`${checkPurchase(card) || checkCart(card) ? 'opacity-35' : ''} bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
+                className={`${checkPurchase(card) || checkCart(card) || showAdd ? 'opacity-35' : ''} bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
                 onClick={() => {
                   if (checkPurchase(card)) {
                     showToast(`${card.title} already in your purchase`, 'info');
@@ -117,7 +120,7 @@ function EventDetails({ card, onClose, checkPurchase }) {
               </button>
               {card.title == 'Hackathon' && (
                 <button
-                  className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
+                  className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd ||checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
                   onClick={() => {
                     SetshowForm(true);
                   }}
