@@ -1,11 +1,10 @@
 import useToast from '../context/useToast';
 import { useEffect, useRef, useState } from 'react';
-
-
-function EventDetails({ card, onClose, AddtoCart, checkPurchase, checkCart }) {
+import useCart from '../context/useCart';
+function EventDetails({ card, onClose, checkPurchase }) {
   const { showToast } = useToast();
   const [showArrow, SetshowArrow] = useState(false);
-
+  const { addToCart, checkCart, isEventCoveredByPass } = useCart();
   const scrollRef = useRef(null);
   const checkoverflow = () => {
     const el = scrollRef.current;
@@ -85,10 +84,14 @@ function EventDetails({ card, onClose, AddtoCart, checkPurchase, checkCart }) {
         <button
           className={`${checkPurchase(card) || checkCart(card) ? 'opacity-35' : ''} bg-primary text-black rounded-full px-4 py-2 shadow-stGlow `}
           onClick={() => {
+            if (isEventCoveredByPass(card.id)) {
+              showToast(`Already included under pass`);
+              return;
+            }
             if (checkPurchase(card)) {
               showToast(`${card.title} already in your purchase`, 'info');
             } else if (!checkCart(card)) {
-              AddtoCart(card, card.category ? 'event' : 'workshop');
+              addToCart(card, card.category ? 'event' : 'workshop');
               showToast(`${card.title} added check the registration`, 'success');
             } else {
               showToast(`${card.title} is already in your cart`, 'info');

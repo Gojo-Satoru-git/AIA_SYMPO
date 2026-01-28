@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useContext } from 'react';
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
-import useCart from '../context/useCart';
 import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
@@ -9,7 +8,6 @@ const Events = () => {
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-  const { addToCart, checkCart } = useCart();
 
   const { checkPurchases } = usePurchases();
 
@@ -17,7 +15,6 @@ const Events = () => {
   const [showLeft, setshowLeft] = useState(false);
   const [showRight, setshowRight] = useState(false);
   const [showWRight, setshowWRight] = useState(true);
-
   const [cardclicked, setCardclicked] = useState({
     id: null,
     category: null,
@@ -31,15 +28,6 @@ const Events = () => {
       const scrollAmount = directions === 'left' ? -scrollSize : scrollSize;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
-  };
-  const handleCart = (item, type) => {
-    const price = Number(item.fees);
-    addToCart({
-      id: item.id,
-      title: item.title,
-      price: Number.isFinite(price) ? price : 0,
-      type,
-    });
   };
   const eventext = useContext(eventcontext);
   const Workshops = useContext(workshopcontext);
@@ -128,9 +116,7 @@ const Events = () => {
           <EventDetails
             card={detail}
             onClose={() => setClicked(false)}
-            AddtoCart={handleCart}
             checkPurchase={checkPurchases}
-            checkCart={checkCart}
           />
         </div>
       )}
