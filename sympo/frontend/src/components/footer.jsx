@@ -40,7 +40,7 @@ const Footer = () => {
             </h3>
 
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/aia_mit/"
               target="_blank"
               rel="noreferrer"
               className="

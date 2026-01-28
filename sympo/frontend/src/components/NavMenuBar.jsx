@@ -1,28 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
+import { logoutUser } from '../services/auth.service';
 import { auth } from "../firebase";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import MyPurchaseDialog from "./MyPurchase";
+
+import { usePurchases } from '../context/PurchaseContext';
+
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const {clearPurchases} = usePurchases();
+
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
+
+
   const handleLogout = async () => {
-    await signOut(auth);
-    handleMenuClose();
-    navigate("/");
+
+    try{
+      await logoutUser().catch(err => console.error("Server-side logout failed, proceeding with local logout"));
+      /// add toast notification here
+    }
+    catch(err){
+      console.error("Logout failed:", err);
+      /// add toast notification here
+    } finally {
+        
+        await signOut(auth);
+        clearPurchases();
+        localStorage.clear();      
+        handleMenuClose();
+        navigate("/");
+    }
+
   };
 
   const registerBtnRef = useRef(null);
@@ -171,14 +195,20 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
                 {user.displayName?.[0]?.toUpperCase() || "U"}
               </Avatar>
               <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-                <MenuItem>My Purchase</MenuItem>
+                
                 <MenuItem disabled>{user.email}</MenuItem>
+                <MenuItem  onClick={() => {
+                          handleMenuClose();
+                          setPurchaseOpen(true);
+                        }}>My Purchase</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
           )}
         </div>
       </nav>
+       
+
 
       {/* mobile */}
       <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center lg:hidden">
@@ -262,7 +292,12 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
             )
           )}
         </div>
-      </aside>
+        </aside>
+        <MyPurchaseDialog
+          open={purchaseOpen}
+          onClose={() => setPurchaseOpen(false)}
+          />
+
     </>
   );
 };

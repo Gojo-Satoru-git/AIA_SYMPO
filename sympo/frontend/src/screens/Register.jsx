@@ -7,6 +7,8 @@ import { trackEvent } from '../utils/analytics';
 import { QRCodeCanvas } from 'qrcode.react';
 import PassPosterCard from '../components/PassCard';
 import { passes } from '../data/passess';
+import { usePurchases } from '../context/PurchaseContext';
+
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
   const { showToast } = useToast();
@@ -18,6 +20,9 @@ const Registration = () => {
   const [paymentLocked, setPaymentLocked] = useState(false);
   const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
+
+  const { addPurchase } = usePurchases();
+
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -32,6 +37,28 @@ const Registration = () => {
     );
   }
 
+  // Validate cart items
+  const validateCart = () => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      showToast("Cart is empty", "error");
+      return false;
+    }
+
+    for (const item of cart) {
+      if (!item.id || !item.title || item.price === undefined) {
+        showToast("Invalid item in cart. Please refresh and try again.", "error");
+        return false;
+      }
+      if (typeof item.price !== 'number' || item.price <= 0) {
+        showToast(`Invalid price for ${item.title}`, "error");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+
   // 1. Helper to load Razorpay Script
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -39,7 +66,6 @@ const Registration = () => {
         resolve(true);
         return;
       }
-
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
@@ -52,44 +78,28 @@ const Registration = () => {
     });
   };
 
-  // 3. Main Payment Function
   const handlePayment = async () => {
-    // A. Check Login
-    if (!user || !user.email) {
-      showToast('Please login to register', 'error');
-      return;
-    }
-
-    if (paymentLocked) return;
-
-    if (!Array.isArray(cart) || cart.length === 0) {
-      showToast('Cart is empty', 'error');
-      return;
-    }
+    if (!user) return showToast("Please login first", "error");
+    if (!validateCart()) return;
 
     setPaymentLocked(true);
     setPaymentLoading(true);
 
     try {
-      // B. Load SDK
       const isLoaded = await loadRazorpay();
-      if (!isLoaded) {
-        showToast('Razor service unavailable. Please try again later', 'error');
-        return;
-      }
+      if (!isLoaded) throw new Error("Razorpay SDK failed to load");
 
       // Create order
-      const { data: order } = await createPaymentOrder(cart.map((item) => item.id));
-
+      const { data: order } = await createPaymentOrder(cart);
+      
       setBackendAmount(order.amount);
-
-      // D. Configure Razorpay Popup
+      
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: order.keyId,
         amount: order.amount,
         currency: order.currency,
-        name: "Symposium '26",
-        description: 'Event Registration',
+        name: "TEKHORA'26",
+        description: "Event Registration",
         order_id: order.orderId,
 
         handler: async function (response) {
@@ -101,39 +111,30 @@ const Registration = () => {
             });
 
             if (verifyRes.data.success) {
+
+              const paymentData = verifyRes.data.data; 
+
+              addPurchase({
+                orderId: response.razorpay_payment_id,
+                amount: order.amount / 100,
+                events: cart.map(item => ({ eventId: item.id, title: item.title })),
+                qrToken: verifyRes.data.qrToken || paymentData?.qrToken
+              });
+              
               const token = verifyRes.data.qrToken;
-
-              if (!token) {
-                showToast('QR generation failedd', 'error');
-                return;
-              }
-
               const scanUrl = `${window.location.origin}/scan/${token}`;
 
               setQrCode(scanUrl);
               setQrVisible(true);
 
-              showToast('Payment Successful!', 'success');
-              trackEvent('payment_success', {
-                amount: totalPrice,
-                items_count: cart.length,
-                timestamp: new Date().toISOString(),
-              });
+              
               clearCart();
+              showToast("Payment Successful!", "success");
+              trackEvent("payment_success", { amount: order.amount });
             }
           } catch (err) {
-            console.error('Payment verification error: ', err);
-            showToast('Payment verification failed. Contact support.', 'error');
-            trackEvent('payment_verification_failed', {
-              error: err.message,
-            });
+            showToast("Verification failed. Contact support.", "error");
           }
-        },
-        modal: {
-          ondismiss: function () {
-            showToast('Payment cancelled', 'info');
-            trackEvent('payment_cancelled');
-          },
         },
         prefill: {
           name: user.displayName || 'Participant',
@@ -142,28 +143,19 @@ const Registration = () => {
         theme: {
           color: '#e50914',
         },
-        retry: {
-          enabled: false,
-        },
       };
 
-      const paymentObject = new window.Razorpay(options);
-
-      paymentObject.on('payment.failed', function (response) {
-        showToast('Payment failed. Please try again.', 'error');
-        trackEvent('payment_failed', {
-          error_code: response.error.code,
-          error_description: response.error.description,
-        });
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', (res) => {
+        showToast("Payment Failed", "error");
+        console.error(res.error);
       });
-      paymentObject.open();
+      rzp.open();
+
     } catch (error) {
-      console.error('Payment Error:', error);
-      showToast(error.message || 'Failed to initiate payment. Please try again.', 'error');
-
-      trackEvent('payment_error', {
-        error_message: error.message,
-      });
+      console.error(error);
+      showToast(error.message || "Payment init failed", "error");
     } finally {
       setPaymentLoading(false);
       setPaymentLocked(false);
@@ -248,14 +240,8 @@ const Registration = () => {
           <>
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
-                const isRemoving = removingId === item.id;
                 return (
-                  <div
-                    key={item.id}
-                    className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 shadow-stGlow ${
-                      isRemoving ? 'animate-slideOutLeft' : 'animate-slideInRight'
-                    }`}
-                  >
+                  <div key={item.id} className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}>
                     <div>
                       <p className="uppercase tracking-widest text-sm font-semibold">
                         {item.title}
@@ -266,7 +252,6 @@ const Registration = () => {
                       <span className="text-primary font-bold">₹{item.price}</span>
                       <button
                         onClick={() => handleRemoveItem(item.id, item.title)}
-                        disabled={isRemoving}
                         className="text-white/50 hover:text-primary transition disabled:opacity-50"
                       >
                         ✕
@@ -288,7 +273,7 @@ const Registration = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Pay Now Button */}
                 <button
-                  onClick={handlePayment} // <--- Attached Function
+                  onClick={handlePayment}
                   disabled={paymentLoading || paymentLocked}
                   className="
                           px-6 py-3
@@ -304,25 +289,13 @@ const Registration = () => {
                   {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
 
-                {/* Pay at Desk Button */}
-                <button
-                  className="
-                            px-6 py-3
-                            rounded-full
-                            border border-primary
-                            text-primary
-                            uppercase tracking-widest text-sm
-                            hover:bg-primary hover:text-black
-                            transition
-                          "
-                >
-                  Pay at Registration Desk
-                </button>
+                
               </div>
             </div>
           </>
         )}
 
+        {/* Current QR Code Modal */}
         {qrCode && qrVisible && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
             <div className="bg-black border-2 border-primary rounded-2xl p-8 max-w-sm w-full">
@@ -345,7 +318,7 @@ const Registration = () => {
                 />
                 <p className="text-white/60 mt-6 text-sm">Show this QR at event entry</p>
                 <p className="text-white/40 text-xs mt-2">
-                  Save screenshot or take photo before closing
+                  You Can also find this QR in your purchases section.
                 </p>
 
                 {/* Download QR Button */}

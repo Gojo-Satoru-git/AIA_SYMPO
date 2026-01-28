@@ -4,9 +4,9 @@ import RegistrationCard from "../components/RegContactCard";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { eventcontext } from '../context/event.context';
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { useEffect, useRef, useState } from "react";
-const events = [{ eventName: "Hackathon",category: "technical", coordinators: [{ name: "Sandeep", phone: "9884793806" }, { name: "Rahul ", phone: "9159812736" },], }, { eventName: "workshop2",category: "technical", coordinators: [{ name: "Kamalnath", phone: "9150580147" }, { name: "Albin Joseph ", phone: "9566322365" },], }, { eventName: "Workshop1",category: "technical", coordinators: [{ name: "Dipakumar", phone: "7639933600" }, { name: "Ramkumar", phone: "8825538554" },], }, { eventName: "Poster Presentation",category: "technical", coordinators: [{ name: "Poorna Prakash ", phone: " 8838730894" }, { name: "Madhubala ", phone: "9345778968 " },], }, { eventName: "Ninja Coding",category: "technical", coordinators: [{ name: "Mekesh", phone: " 9952598472 " }, { name: "Rasheen fahmi", phone: "7867896416" },], }, { eventName: "Call of Query",category: "technical", coordinators: [{ name: "Surya", phone: "8148124727" }, { name: "Jayasree", phone: "8072064228" },], }, { eventName: "Coding with AI",category: "technical", coordinators: [{ name: "SriLakshmi", phone: "9566208249" }, { name: "Rakshitha", phone: "8610209696" },], }, { eventName: "Tournament of Strategies",category: "technical", coordinators: [{ name: "Chandru", phone: "7667634519" }, { name: "Mirsha", phone: "9940358967" },], }, { eventName: "TREASURE HUNT",category: "non-technical", coordinators: [{ name: "Jhanavi", phone: "9384654366" }, { name: "Jessica", phone: "6385033919" },], }, { eventName: "CONNEXTIONS",category: "non-technical", coordinators: [{ name: "Karthikeyan", phone: "8825535520" }, { name: "Ithikash", phone: "9786398639" },], }, { eventName: "FANDOM QUIZ",category: "non-technical", coordinators: [{ name: "Pragadeeshwaran", phone: "8903098801" }, { name: "Ganesh", phone: "7339532544" },], }, { eventName: "IPL AUCTION",category: "non-technical", coordinators: [{ name: "Abinash", phone: "6383467363" }, { name: "Joel", phone: "6381165383" },], }, { eventName: "ADZAP",category: "non-technical", coordinators: [{ name: "Sudhahar", phone: "9363595133" }, { name: "PrithiviRaj", phone: "9042781374" },], }];
 
 
 
@@ -16,8 +16,16 @@ const Contacts = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [Selected, SetSelected] = useState("All");
+   const eventext = useContext(eventcontext);
 
-
+const formattedEvents = eventext.map(event => ({
+  eventName: event.title,
+  category: event.category,
+  coordinators: [
+    { name: event.contact.name1, phone: event.contact.phone1 },
+    { name: event.contact.name2, phone: event.contact.phone2 }
+  ]
+}));
 
   useEffect(() => {
     const checkMobile = () => {
@@ -43,27 +51,32 @@ const Contacts = () => {
 
     scrollTimeout.current = setTimeout(() => {
       setIsScrolling(false);
-    }, 150);
+    }, 120);
   };
 
   const scrollLeft = () => {
-    scrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: -960, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    scrollRef.current.scrollBy({ left: 960, behavior: "smooth" });
   };
   const filteredEvents =
     Selected === "All"
-      ? events
-      : events.filter(
+      ? formattedEvents
+      : formattedEvents.filter(
         (event) =>
           event.category?.toLowerCase() === Selected.toLowerCase()
       );
 
   return (
     <div id="contacts" className="  pt-[15px] -mt-[100px]">
-      <Container maxWidth="lg" className="mt-12 px-4 sm:px-6" >
+      <Container  maxWidth="lg"
+  sx={{
+    minWidth: "97%",
+    px: { xs: 1.5, sm: 2, md: 0 }
+  }}
+  className="mt-12" >
     <div className="py-10">
 
         {/* ================= EVENT COORDINATORS ================= */}
@@ -109,7 +122,7 @@ const Contacts = () => {
       </div>
 
 
-        <div className="relative scroll-hint">
+        <div className="relative scroll-hint ">
 
           {/* LEFT ARROW (DESKTOP ONLY) */}
           <IconButton
@@ -140,8 +153,8 @@ const Contacts = () => {
               overflow-x-auto
               pb-6
               hide-scrollbar
-              px-4 sm:px-6 md:px-0 py-2
-              ${isScrolling ? "no-anim" : ""}
+               py-2
+              ${isScrolling ? "no-scrolling" : ""}
             `}
             style={{
               WebkitOverflowScrolling: "touch",
@@ -196,13 +209,15 @@ const Contacts = () => {
 >
   Swipe left or right to view registration contacts →
 </Typography>
-        <div className="relative scroll-hint">
-        <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
-          <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
-          <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
-          <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
-        </div>
-       </div>
+    <div className="relative scroll-hint scroll-hint-sm-md">
+  <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
+    <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
+    <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
+    <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
+  </div>
+</div>
+
+
         
       </div>
       </Container>

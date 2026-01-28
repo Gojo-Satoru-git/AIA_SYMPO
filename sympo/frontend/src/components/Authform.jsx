@@ -77,8 +77,9 @@ const inputStyle = {
 
 const AuthForm = ({ mode }) => {
   const navigate = useNavigate();
-  const { fetchProfile } = useAuth();
   const { showToast } = useToast();
+
+  const { fetchProfile } = useAuth();
   
   const [loading, setLoading] = useState(false);
   const [year, setYear] = useState("");
@@ -151,6 +152,12 @@ const AuthForm = ({ mode }) => {
 
         localStorage.setItem("authToken", token);
 
+        if (fetchProfile) {
+           await fetchProfile();
+        } else {
+           console.error("fetchProfile function not found in context");
+        }
+
         showToast("Account created successfully", "success");
         navigate("/", { replace: true });
       }
@@ -163,6 +170,8 @@ const AuthForm = ({ mode }) => {
         );
         const token = await cred.user.getIdToken();
         localStorage.setItem("authToken", token);
+
+        if (fetchProfile) await fetchProfile();
 
         showToast("Login successful", "success");
         navigate("/", { replace: true });

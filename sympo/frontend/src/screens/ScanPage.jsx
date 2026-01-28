@@ -9,7 +9,7 @@ const ScanPage = () => {
   const [error, setError] = useState(null);
   const [verifying, setVerifying] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState("");
+  const [selectedEventId, setSelectedEventId] = useState("");
 
   useEffect(() => {
     const validateQR = async () => {
@@ -28,33 +28,34 @@ const ScanPage = () => {
       }
     };
 
-    if (token) {
-      validateQR();
-    } else {
+    if (token) validateQR();
+    else {
       setError("QR token missing");
       setLoading(false);
     }
   }, [token]);
 
   const handleVerify = async () => {
-    if(!selectedEvent) {
-      setError("Please select an event");
-      return;
-    }
+    if(!selectedEventId) return;
+
     try {
       setVerifying(true);
 
-      const res = await api.post("/payment/scan/confirm", {
+      await api.post("/payment/scan/confirm", {
         qrToken: token,
-        eventId: selectedEvent,
+        eventId: selectedEventId,
       });
       
-      setData((prev => ({
+      setData((prev) => ({
         ...prev,
-        events: res.data.events,
-      })));
+        items: prev.items.map(item => 
+          String(item.eventId) === String(selectedEventId) 
+            ? { ...item, used: true } 
+            : item
+        ),
+      }));
 
-      setSelectedEvent("");
+      setSelectedEventId("");
     } catch (err) {
       setError(err.response?.data?.message || "Verification failed");
     } finally {
@@ -78,77 +79,61 @@ const ScanPage = () => {
     );
   }
 
-  const remainingEvents = data.events.filter(
-    (event) => !event.used
-  );
+  const pendingItems = data.items.filter(i => !i.used);
 
 
   return (
-    <div className="relative z-20 min-h-screen flex items-center justify-center bg-black text-white p-6">
-      <div className="bg-gray-900 border border-green-500 rounded-xl p-8 max-w-md w-full text-center shadow-lg">
-        <h2 className="text-2xl font-bold mb-6 text-green-400">
-          Participant Details
-        </h2>
+    <div className="min-h-screen bg-black text-white flex justify-center items-center p-4">
+      <div className="bg-gray-900 border border-green-500 rounded-xl p-6 w-full max-w-md">
+        <h2 className="text-xl font-bold text-green-400 mb-4 text-center">Ticket Valid</h2>
+        
+        <div className="space-y-2 text-sm text-gray-300 mb-6">
+          <p>User: <span className="text-white">{data.email || "N/A"}</span></p>
+          <p>Order: <span className="text-white">{data.orderId}</span></p>
+        </div>
 
-        <p className="mb-2">
-          <strong>Email:</strong> {data?.email}
-        </p>
-
-        <p className="mb-2">
-          <strong>Order ID:</strong> {data?.orderId}
-        </p>
-
-        <p className="mb-4">
-          <strong>Amount:</strong> ₹{data?.amount}
-        </p>
-
-        <div className="mt-4 text-left">
-          <p className="mb-2 font-semibold">Events:</p>
-
-          {data.events.map((event) => (
-            <div key={event.id} className="flex justify-between mb-1">
-              <span>{event.title}</span>
-              {event.used ? (
-                <span className="text-green-400">✔ Verified</span>
+        <div className="space-y-3">
+          <h3 className="font-semibold text-white border-b border-gray-700 pb-2">Events in Ticket</h3>
+          {data.items.map((item, idx) => (
+            <div key={idx} className="flex justify-between items-center bg-black/50 p-3 rounded">
+              <span>{item.title}</span>
+              {item.used ? (
+                <span className="text-green-500 text-xs font-bold border border-green-500 px-2 py-1 rounded">VERIFIED</span>
               ) : (
-                <span className="text-yellow-400">Pending</span>
+                <span className="text-yellow-500 text-xs font-bold">PENDING</span>
               )}
             </div>
           ))}
         </div>
 
-        {remainingEvents.length > 0 && (
-          <>
+        {pendingItems.length > 0 ? (
+          <div className="mt-8 pt-4 border-t border-gray-700">
+            <label className="block text-sm mb-2 text-gray-400">Verify Entry For:</label>
             <select
-              value={selectedEvent}
-              onChange={(e) => setSelectedEvent(e.target.value)}
-              className="mt-4 w-full p-2 rounded bg-black border border-green-500"
+              value={selectedEventId}
+              onChange={(e) => setSelectedEventId(e.target.value)}
+              className="w-full bg-black border border-gray-600 rounded p-3 mb-4 focus:border-green-500 outline-none"
             >
-              <option value="">Select event to verify</option>
-              
-              {data.events
-                .filter((event) => !event.used)
-                .map((event) => (
-                  <option key={event.id} value={event.id}>
-                    {event.title}
-                  </option>
+              <option value="">-- Select Event --</option>
+              {pendingItems.map((item) => (
+                <option key={item.eventId} value={item.eventId}>
+                  {item.title}
+                </option>
               ))}
             </select>
-
+            
             <button
               onClick={handleVerify}
-              disabled={verifying}
-              className="mt-4 px-6 py-2 bg-green-500 text-black rounded-lg font-semibold hover:bg-green-400 transition"
+              disabled={!selectedEventId || verifying}
+              className="w-full bg-green-600 hover:bg-green-500 text-black font-bold py-3 rounded transition disabled:opacity-50"
             >
-              {verifying ? "Verifying..." : "VERIFY EVENT"}
+              {verifying ? "Processing..." : "CONFIRM ENTRY"}
             </button>
-          </>
-        )}
-
-        {remainingEvents.length === 0 && (
-          <p className="text-green-400 font-bold mt-4 text-lg">
-            All Events Verified ✔
-          </p>
+          </div>
+        ) : (
+          <div className="mt-8 text-center bg-green-900/20 p-4 rounded border border-green-900">
+            <p className="text-green-500 font-bold">All events verified!</p>
+          </div>
         )}
       </div>
     </div>

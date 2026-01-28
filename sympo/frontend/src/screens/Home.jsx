@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const dateText = "FEBRUARY   21 ,   2026   ·   MIT ,   CHENNAI";
@@ -109,7 +109,7 @@ const Home = () => {
     />
  
     <img
-      src="/76.png"
+      src="/MIT75 (1).png"
       alt="Logo 3"
       className="h-16 sm:h-16 md:h-20 rounded-full  object-contain"
     />
