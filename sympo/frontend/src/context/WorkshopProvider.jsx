@@ -11,6 +11,8 @@ function WorkshoProvider({ children }) {
       backside: './assets/Billy.webp',
       description: 'This is Hackathon',
       category: 'Technical',
+      miniTeamSize: '2',
+      teamSize: '4',
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
