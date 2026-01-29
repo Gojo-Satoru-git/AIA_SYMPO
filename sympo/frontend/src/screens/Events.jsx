@@ -177,6 +177,7 @@ const Events = () => {
                     setCardclicked({ id: events.id, category: events.category });
                   }}
                   backside={events.backside}
+                  fallbackImage={events.fallbackImage}
                 />
               </div>
             ))}
@@ -222,6 +223,7 @@ const Events = () => {
                     setCardclicked({ id: workshop.id, category: 'workshop' });
                   }}
                   backside={workshop.backside}
+                  fallbackImage={workshop.fallbackImage}
                 />
               </div>
             ))}

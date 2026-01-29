@@ -21,6 +21,7 @@ function Eventprovider({ children }) {
         name2: 'Joel',
         phone2: '6381165383',
       },
+      fallbackImage: './assets/fall_back/ipl_auction.webp',
     },
     {
       title: 'Call Of Query',
@@ -40,6 +41,7 @@ function Eventprovider({ children }) {
         name2: 'Jayasree',
         phone2: '8072064228',
       },
+      fallbackImage: './assets/fall_back/call_of_query.webp',
     },
     {
       title: 'Connextions',
@@ -59,6 +61,7 @@ function Eventprovider({ children }) {
         name2: 'Karthikeyan',
         phone2: '8825535520',
       },
+      fallbackImage: './assets/fall_back/connextions.webp',
     },
     {
       title: 'Tournament of strategies',
@@ -78,6 +81,7 @@ function Eventprovider({ children }) {
         name2: 'Mirsha',
         phone2: '9940358967',
       },
+      fallbackImage: './assets/fall_back/tos.webp',
     },
     {
       title: 'Treasure Hunt',
@@ -97,6 +101,7 @@ function Eventprovider({ children }) {
         name2: 'Nivetha',
         phone2: '9840077658',
       },
+      fallbackImage: './assets/fall_back/treasure_hunt.webp',
     },
     {
       title: 'Ninja Coding',
@@ -116,6 +121,7 @@ function Eventprovider({ children }) {
         name2: 'Rasheen Fahmi',
         phone2: '7867896416',
       },
+      fallbackImage: './assets/fall_back/ninja_coding.webp',
     },
     {
       title: 'ADZAP',
@@ -135,6 +141,7 @@ function Eventprovider({ children }) {
         name2: 'Karthik Raja',
         phone2: '9361139648',
       },
+      fallbackImage: './assets/fall_back/adzap.webp',
     },
     {
       title: 'coding with AI',
@@ -154,6 +161,7 @@ function Eventprovider({ children }) {
         name2: 'Rakshitha',
         phone2: '8610209696',
       },
+      fallbackImage: './assets/fall_back/coding_with_ai.webp',
     },
     {
       title: 'Fandom Quiz',
@@ -173,6 +181,7 @@ function Eventprovider({ children }) {
         name2: 'Ganesh',
         phone2: '7339532544',
       },
+      fallbackImage: './assets/fall_back/fandom_quiz.webp',
     },
   ];
 

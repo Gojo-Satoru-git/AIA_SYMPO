@@ -22,6 +22,7 @@ function WorkshoProvider({ children }) {
         name2: 'Rahul',
         phone2: '9159812736',
       },
+      fallbackImage: './assets/fall_back/hackathon.webp',
     },
     {
       title: 'Workshop1',
@@ -40,6 +41,7 @@ function WorkshoProvider({ children }) {
         name2: 'Ramkumar',
         phone2: '8825538554',
       },
+      fallbackImage: './assets/fall_back/workshop.webp',
     },
     {
       title: 'Workshop2',
@@ -58,6 +60,7 @@ function WorkshoProvider({ children }) {
         name2: 'Albin Joseph',
         phone2: '9566322365',
       },
+      fallbackImage: './assets/fall_back/workshop.webp',
     },
     {
       title: 'Paper Presentation',
@@ -76,6 +79,7 @@ function WorkshoProvider({ children }) {
         name2: 'Nitin Pranav',
         phone2: '9123591494',
       },
+      fallbackImage: './assets/fall_back/paper_presentation.webp',
     },
   ];
   return <workshopcontext.Provider value={OtherEvents}>{children}</workshopcontext.Provider>;
