@@ -10,7 +10,6 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
   const [showAdd, setShowAdd] = useState(card.title == 'Hackathon');
   const { isEventCoveredByPass } = useCart();
 
-
   const [showForm, SetshowForm] = useState(false);
 
   const scrollRef = useRef(null);
@@ -115,7 +114,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
                   if (checkPurchase(card)) {
                     showToast(`${card.title} already in your purchase`, 'info');
                   } else if (!checkCart(card)) {
-                    addToCart(card,card.category)
+                    addToCart(card, card.category);
                     showToast(`${card.title} added check the registration`, 'success');
                   } else {
                     showToast(`${card.title} is already in your cart`, 'info');

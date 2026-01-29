@@ -42,11 +42,7 @@ const MainPage = () => {
         <About />
       </div>
       <div ref={EventsRef} id="Events">
-        
-          <WorkshoProvider>
-            <Events />
-          </WorkshoProvider>
- 
+        <Events />
       </div>
       <div ref={RegisterRef}>
         <Register />
@@ -55,12 +51,7 @@ const MainPage = () => {
         <FAQs />
       </div>
       <div ref={ContactRef}>
-        <Eventprovider>
-           <WorkshoProvider>
-              <Contact />
-           </WorkshoProvider>
-          
-        </Eventprovider>
+        <Contact />
       </div>
 
       <Footer />

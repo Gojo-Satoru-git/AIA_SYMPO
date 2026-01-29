@@ -1,7 +1,18 @@
 /* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 
-function Eventcard({ title, desc, image, date, time, index, category, backside, onClick , fallbackImage }) {
+function Eventcard({
+  title,
+  desc,
+  image,
+  date,
+  time,
+  index,
+  category,
+  backside,
+  onClick,
+  fallbackImage,
+}) {
   const [hasAppeared, setHasAppeared] = useState(false);
   const [Flipped, setFlipped] = useState(true);
   const cardRef = useRef(null);
@@ -42,8 +53,8 @@ function Eventcard({ title, desc, image, date, time, index, category, backside, 
   }, [hasAppeared, index]);
   const sizeClasses =
     category === 'workshop'
-      ? 'w-[70vw] sm:w-72 h-96' // Larger for workshops
-      : 'w-[70vw] sm:w-72 h-96';
+      ? 'w-[70vw] sm:w-72 aspect-[4/5]' // Larger for workshops
+      : 'w-[70vw] sm:w-72 aspect-[4/5]';
 
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses}  m-2 sm:m-1`}>
@@ -57,12 +68,16 @@ function Eventcard({ title, desc, image, date, time, index, category, backside, 
           onClick={onClick}
           className="absolute inset-0 w-full h-full backface-hidden rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
         >
-          <img src={image || fallbackImage} alt={title} className="w-full h-full object-cover mx-auto" 
-          onError={(e) => {
-            if (! fallbackImage) return;
-            e.currentTarget.src = fallbackImage;
-            e.currentTarget.onerror = null;
-          }} />
+          <img
+            src={image || fallbackImage}
+            alt={title}
+            className="w-full h-full object-cover mx-auto"
+            onError={(e) => {
+              if (!fallbackImage) return;
+              e.currentTarget.src = fallbackImage;
+              e.currentTarget.onerror = null;
+            }}
+          />
           <div className="flex-shrink-0 w-full">
             <p className="text-primary text-center p-2 mt-1 text-sm font-bold">
               {date} · {time}
