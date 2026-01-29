@@ -80,13 +80,15 @@ const Events = () => {
   };
   const handleCart = (item, type) => {
     const price = Number(item.fees);
-    addToCart({
+    const cartItem = {
       id: item.id,
       title: item.title,
       price: Number.isFinite(price) ? price : 0,
       type,
       isSignature: item.isSignature == true,
-    });
+    };
+    console.log(cartItem);
+    addToCart(cartItem);
   };
   useEffect(() => {
     const timer = setTimeout(() => checkScroll2(), 50);

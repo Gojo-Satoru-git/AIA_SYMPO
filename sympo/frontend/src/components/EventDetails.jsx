@@ -10,10 +10,6 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
   const [showAdd, setShowAdd] = useState(card.title == 'Hackathon');
   const { isEventCoveredByPass } = useCart();
 
-  const determineType = () => {
-    if (itemCategory) return itemCategory === 'workshop' ? 'workshop' : 'event';
-    return card.category ? 'event' : 'workshop';
-  };
 
   const [showForm, SetshowForm] = useState(false);
 
@@ -119,14 +115,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
                   if (checkPurchase(card)) {
                     showToast(`${card.title} already in your purchase`, 'info');
                   } else if (!checkCart(card)) {
-                    const price = Number(card.fees);
-                    addToCart({
-                      id: card.id,
-                      title: card.title,
-                      price: Number.isFinite(price) ? price : 0,
-                      type: determineType(),
-                      isSignature: card.isSignature === true,
-                    });
+                    addToCart(card,card.category)
                     showToast(`${card.title} added check the registration`, 'success');
                   } else {
                     showToast(`${card.title} is already in your cart`, 'info');
