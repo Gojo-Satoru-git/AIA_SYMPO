@@ -42,11 +42,11 @@ const MainPage = () => {
         <About />
       </div>
       <div ref={EventsRef} id="Events">
-        <Eventprovider>
+        
           <WorkshoProvider>
             <Events />
           </WorkshoProvider>
-        </Eventprovider>
+ 
       </div>
       <div ref={RegisterRef}>
         <Register />

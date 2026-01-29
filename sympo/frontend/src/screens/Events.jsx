@@ -4,11 +4,12 @@ import EventDetails from '../components/EventDetails';
 import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
+import useCart from '../context/useCart';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
   const [Selected, SetSelected] = useState('All');
-
+  const { addToCart } = useCart();
   const { checkPurchases } = usePurchases();
 
   const [clicked, setClicked] = useState(false);
@@ -77,7 +78,16 @@ const Events = () => {
       setshowWRight(true);
     }
   };
-
+  const handleCart = (item, type) => {
+    const price = Number(item.fees);
+    addToCart({
+      id: item.id,
+      title: item.title,
+      price: Number.isFinite(price) ? price : 0,
+      type,
+      isSignature: item.isSignature == true,
+    });
+  };
   useEffect(() => {
     const timer = setTimeout(() => checkScroll2(), 50);
     return () => clearTimeout(timer);
@@ -115,8 +125,10 @@ const Events = () => {
         >
           <EventDetails
             card={detail}
+            itemCategory={cardclicked.category}
             onClose={() => setClicked(false)}
             checkPurchase={checkPurchases}
+            addToCart={handleCart}
           />
         </div>
       )}

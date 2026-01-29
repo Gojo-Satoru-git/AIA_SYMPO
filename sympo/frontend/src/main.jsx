@@ -11,18 +11,24 @@ import 'react-toastify/dist/ReactToastify.css';
 import CartProvider from './context/cart.provider';
 import { PurchaseProvider } from './context/PurchaseContext';
 import { SeatAvalProvider } from './context/SeatAvalProvider.jsx';
+import WorkshoProvider from './context/WorkshopProvider.jsx';
+import Eventprovider from './context/Eventprovider.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <ThemeProvider theme={theme}>
       <ToastProvider>
         <AuthProvider>
-          <CartProvider>
-            <PurchaseProvider>
-              <SeatAvalProvider>
-                <App />
-              </SeatAvalProvider>
-            </PurchaseProvider>
-          </CartProvider>
+          <Eventprovider>
+            <WorkshoProvider>
+              <CartProvider>
+                <PurchaseProvider>
+                  <SeatAvalProvider>
+                    <App />
+                  </SeatAvalProvider>
+                </PurchaseProvider>
+              </CartProvider>
+            </WorkshoProvider>
+          </Eventprovider>
         </AuthProvider>
       </ToastProvider>
     </ThemeProvider>
