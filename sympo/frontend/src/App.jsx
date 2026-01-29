@@ -58,7 +58,10 @@ const MainPage = () => {
       </div>
       <div ref={ContactRef}>
         <Eventprovider>
-          <Contact />
+           <WorkshoProvider>
+              <Contact />
+           </WorkshoProvider>
+          
         </Eventprovider>
         
       </div>

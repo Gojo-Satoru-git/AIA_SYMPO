@@ -6,7 +6,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { eventcontext } from '../context/event.context';
 import { useContext, useEffect, useRef, useState } from "react";
-
+import { workshopcontext } from '../context/workshop.context';
 
 
 
@@ -17,15 +17,21 @@ const Contacts = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [Selected, SetSelected] = useState("All");
    const eventext = useContext(eventcontext);
+  const Workshops = useContext(workshopcontext);
+  const normalizeEvents = (data) =>
+  data.map(item => ({
+    eventName: item.title,
+    category: item.category,
+    coordinators: [
+      { name: item.contact?.name1, phone: item.contact?.phone1 },
+      { name: item.contact?.name2, phone: item.contact?.phone2 },
+    ],
+  }));
 
-const formattedEvents = eventext.map(event => ({
-  eventName: event.title,
-  category: event.category,
-  coordinators: [
-    { name: event.contact.name1, phone: event.contact.phone1 },
-    { name: event.contact.name2, phone: event.contact.phone2 }
-  ]
-}));
+const formattedEvents =[
+  ...normalizeEvents(Workshops),
+  ...normalizeEvents(eventext),
+];
 
   useEffect(() => {
     const checkMobile = () => {
