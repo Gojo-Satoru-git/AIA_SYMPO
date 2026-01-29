@@ -31,8 +31,7 @@ export const createOrder = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Create Order Error:", err);
-    return res.status(500).json({ message: err.message || "Order failed" });
+    return res.status(500).json({ message: err.message || "Order failed" , eventId : err.eventId});
   }
 };
 

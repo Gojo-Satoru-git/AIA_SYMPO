@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';
@@ -23,7 +23,6 @@ const Registration = () => {
 
   const { addPurchase } = usePurchases();
 
-
   const selectedPass = cart.find((item) => item.type == 'pass');
 
   if (authLoading) {
@@ -40,24 +39,23 @@ const Registration = () => {
   // Validate cart items
   const validateCart = () => {
     if (!Array.isArray(cart) || cart.length === 0) {
-      showToast("Cart is empty", "error");
+      showToast('Cart is empty', 'error');
       return false;
     }
 
     for (const item of cart) {
       if (!item.id || !item.title || item.price === undefined) {
-        showToast("Invalid item in cart. Please refresh and try again.", "error");
+        showToast('Invalid item in cart. Please refresh and try again.', 'error');
         return false;
       }
       if (typeof item.price !== 'number' || item.price <= 0) {
-        showToast(`Invalid price for ${item.title}`, "error");
+        showToast(`Invalid price for ${item.title}`, 'error');
         return false;
       }
     }
 
     return true;
   };
-
 
   // 1. Helper to load Razorpay Script
   const loadRazorpay = () => {
@@ -79,7 +77,7 @@ const Registration = () => {
   };
 
   const handlePayment = async () => {
-    if (!user) return showToast("Please login first", "error");
+    if (!user) return showToast('Please login first', 'error');
     if (!validateCart()) return;
 
     setPaymentLocked(true);
@@ -87,19 +85,19 @@ const Registration = () => {
 
     try {
       const isLoaded = await loadRazorpay();
-      if (!isLoaded) throw new Error("Razorpay SDK failed to load");
+      if (!isLoaded) throw new Error('Razorpay SDK failed to load');
 
       // Create order
       const { data: order } = await createPaymentOrder(cart);
-      
+
       setBackendAmount(order.amount);
-      
+
       const options = {
         key: order.keyId,
         amount: order.amount,
         currency: order.currency,
         name: "TEKHORA'26",
-        description: "Event Registration",
+        description: 'Event Registration',
         order_id: order.orderId,
 
         handler: async function (response) {
@@ -111,29 +109,27 @@ const Registration = () => {
             });
 
             if (verifyRes.data.success) {
-
-              const paymentData = verifyRes.data.data; 
+              const paymentData = verifyRes.data.data;
 
               addPurchase({
                 orderId: response.razorpay_payment_id,
                 amount: order.amount / 100,
-                events: cart.map(item => ({ eventId: item.id, title: item.title })),
-                qrToken: verifyRes.data.qrToken || paymentData?.qrToken
+                events: cart.map((item) => ({ eventId: item.id, title: item.title })),
+                qrToken: verifyRes.data.qrToken || paymentData?.qrToken,
               });
-              
+
               const token = verifyRes.data.qrToken;
               const scanUrl = `${window.location.origin}/scan/${token}`;
 
               setQrCode(scanUrl);
               setQrVisible(true);
 
-              
               clearCart();
-              showToast("Payment Successful!", "success");
-              trackEvent("payment_success", { amount: order.amount });
+              showToast('Payment Successful!', 'success');
+              trackEvent('payment_success', { amount: order.amount });
             }
           } catch (err) {
-            showToast("Verification failed. Contact support.", "error");
+            showToast('Verification failed. Contact support.', 'error');
           }
         },
         prefill: {
@@ -146,16 +142,18 @@ const Registration = () => {
       };
 
       const rzp = new window.Razorpay(options);
-      
+
       rzp.on('payment.failed', (res) => {
-        showToast("Payment Failed", "error");
+        showToast('Payment Failed', 'error');
         console.error(res.error);
       });
       rzp.open();
-
     } catch (error) {
-      console.error(error);
-      showToast(error.message || "Payment init failed", "error");
+      const errData = error?.response?.data || error;
+
+      const eventName = cart?.find((e) => e.id === errData.eventId)?.title || 'Unknown Event';
+
+      showToast(`${errData.message || 'Payment init failed'} for ${eventName}`, 'error');
     } finally {
       setPaymentLoading(false);
       setPaymentLocked(false);
@@ -209,6 +207,7 @@ const Registration = () => {
                     cart.forEach((item) => {
                       if (
                         item.type !== 'pass' &&
+                        !item.isSignature &&
                         (pass.includes === 'ALL' || pass.includes.includes(item.id))
                       ) {
                         removeFromCart(item.id);
@@ -241,7 +240,10 @@ const Registration = () => {
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
                 return (
-                  <div key={item.id} className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}>
+                  <div
+                    key={item.id}
+                    className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}
+                  >
                     <div>
                       <p className="uppercase tracking-widest text-sm font-semibold">
                         {item.title}
@@ -288,8 +290,6 @@ const Registration = () => {
                 >
                   {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
-
-                
               </div>
             </div>
           </>

@@ -11,6 +11,7 @@ import errorHandler from "./middlewares/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import eventRoutes from "./routes/event.routes.js";
 
 import { FRONTEND_URL } from "./config/env1.js";
 
@@ -34,6 +35,9 @@ app.get("/", (req, res) => res.status(200).json({ status: "Backend OK" }));
 app.use("/auth", authLimiter, authRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/user", userRoutes);
+app.use("/events", eventRoutes);
+
+// 404 Handler and Error Middleware
 
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 app.use(errorHandler);

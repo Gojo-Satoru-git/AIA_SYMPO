@@ -2,12 +2,15 @@ import { db } from "../config/firebase.js";
 import admin from "firebase-admin";
 
 export const createOrderRecord = async (userId, items) => {
+
   let totalAmount = 0;
   const validatedItems = [];
 
   for (const item of items) {
     if (!item.eventId || item.quantity <= 0) {
-      throw new Error("Invalid item format");
+      const error = new Error("Invalid item in order");
+      error.eventId = item.eventId;
+      throw error;
     }
 
     const eventSnap = await db.collection("events")
@@ -15,13 +18,25 @@ export const createOrderRecord = async (userId, items) => {
       .get();
 
     if (!eventSnap.exists) {
-      throw new Error(`Event not found: ${item.eventId}`);
+       const error = new Error("Event not found");
+       error.eventId = item.eventId;
+       throw error;
     }
 
     const event = eventSnap.data();
 
     if (!event.isActive) {
-      throw new Error(`Event not active: ${item.eventId}`);
+      const error = new Error("Event is not active");
+      error.eventId = item.eventId;
+      throw error;
+    }
+
+    const ids=['10', '11', '12', '13'];
+
+    if ( ids.includes(item.eventId) && event.capacity - event.booked <= 0) {
+      const error = new Error("Not enough seats available");
+      error.eventId = item.eventId;
+      throw error;
     }
 
     const itemTotal = event.price * item.quantity;

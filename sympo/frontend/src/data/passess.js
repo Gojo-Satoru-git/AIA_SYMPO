@@ -19,6 +19,6 @@ export const passes = [
     title: 'Non-Tech Pass',
     price: 189,
     image: '/passes/nontech.png',
-    includes: ['6', '7', '8', '9'],
+    includes: ['5', '6', '7', '8', '9'],
   },
 ];

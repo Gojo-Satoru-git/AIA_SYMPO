@@ -1,6 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useRef } from 'react';
-import BackgroundEffect from './components/Bgeffect';
 import Home from './screens/Home';
 import About from './screens/About';
 import Events from './screens/Events';
@@ -14,8 +13,7 @@ import AppShell from './components/AppShell';
 import Eventprovider from './context/Eventprovider';
 import WorkshoProvider from './context/WorkshopProvider';
 
-import { AuthProvider } from './context/AuthContext';
-import AdminRoute from "./components/AdminRoute";
+import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
 
 const MainPage = () => {
@@ -44,11 +42,11 @@ const MainPage = () => {
         <About />
       </div>
       <div ref={EventsRef} id="Events">
-        <Eventprovider>
+        
           <WorkshoProvider>
             <Events />
           </WorkshoProvider>
-        </Eventprovider>
+ 
       </div>
       <div ref={RegisterRef}>
         <Register />
@@ -63,7 +61,6 @@ const MainPage = () => {
            </WorkshoProvider>
           
         </Eventprovider>
-        
       </div>
 
       <Footer />
@@ -84,7 +81,15 @@ const App = () => {
           <Route path="/signup" element={<Auth mode="signup" />} />
 
           {/* QR Routes */}
-          <Route path="/scan/:token" element= { <AdminRoute> <ScanPage /> </AdminRoute>}/>
+          <Route
+            path="/scan/:token"
+            element={
+              <AdminRoute>
+                {' '}
+                <ScanPage />{' '}
+              </AdminRoute>
+            }
+          />
         </Routes>
       </>
     </AppShell>

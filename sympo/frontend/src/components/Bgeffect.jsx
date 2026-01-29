@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import{ useMemo } from 'react';
 
 const BackgroundEffect = () => {
   const particles = useMemo(
@@ -54,7 +54,7 @@ const BackgroundEffect = () => {
       })}
 
       {/* Vignette */}
-     
+    
     </div>
   );
 };
