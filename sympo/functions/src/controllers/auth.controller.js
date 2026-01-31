@@ -15,6 +15,12 @@ export const signup = async (req, res) => {
     console.log("Signup Request Body:", req.body);
     const { name, phone, institute, year } = req.body;
 
+    const verified = await db.collection("verifiedEmails").doc(email).get();
+
+    if (!verified.exists) {
+      return res.status(400).json({ message: "Email not verified" });
+    }
+
     if (!name || !phone || !institute || !year) return error(res, "Missing fields", 400);
     if (!validatePhone(phone)) return error(res, "Invalid phone", 400);
 
