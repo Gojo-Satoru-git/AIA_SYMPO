@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import eventRoutes from "./routes/event.routes.js";
+import collegeRoutes from './routes/college.routes.js';
 
 import { FRONTEND_URL } from "./config/env1.js";
 
@@ -36,6 +37,7 @@ app.use("/auth", authLimiter, authRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/user", userRoutes);
 app.use("/events", eventRoutes);
+app.use("/colleges", collegeRoutes);
 
 // 404 Handler and Error Middleware
 

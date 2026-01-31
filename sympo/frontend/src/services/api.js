@@ -73,4 +73,15 @@ api.interceptors.response.use(
   }
 );
 
+export const searchColleges = async (search) => {
+  if (!search || search.length < 3) return [];
+
+  const response = await api.get("/colleges/search", {
+    params: { search }
+  });
+
+  return response.data;
+};
+
+
 export default api;

@@ -3,6 +3,7 @@ import api from "./api";
 export const registerUser = async (userData, token) => {
   const response = await api.post("/auth/signup", userData, {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     }
   });

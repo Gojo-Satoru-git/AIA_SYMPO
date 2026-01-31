@@ -1,11 +1,16 @@
 import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import useToast from "../context/useToast";
+import { useState, useEffect, useRef } from 'react';
 import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { registerUser } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
+import { searchColleges } from "../services/api"; 
+
+import useToast from "../context/useToast";
+import Autocomplete from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
+import debounce from "lodash/debounce";
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -93,6 +98,13 @@ const AuthForm = ({ mode }) => {
   });
   
   const [match, setMatch] = useState(false);
+
+  const [collegeOptions, setCollegeOptions] = useState([]);
+  const [selectedCollege, setSelectedCollege] = useState(null);
+  const [collegeLoading, setCollegeLoading] = useState(false);
+  const [manualInstitute, setManualInstitute] = useState("");
+
+  const collegeCache = useRef({});
   
   useEffect(() => {
     setPassValid({
@@ -104,6 +116,28 @@ const AuthForm = ({ mode }) => {
     });
     setMatch(password && confirmPassword && password === confirmPassword);
   }, [password, confirmPassword]);
+
+  const fetchColleges = async (search) => {
+    if (!search || search.length < 3) return;
+
+    if (collegeCache.current[search]) {
+      setCollegeOptions(collegeCache.current[search]);
+      return;
+    }
+
+    try {
+      setCollegeLoading(true);
+      const results = await searchColleges(search);
+      collegeCache.current[search] = results;
+      setCollegeOptions(results);
+    } catch (error) {
+      console.error("College search failed:", error);
+    } finally {
+      setCollegeLoading(false);
+    }
+  };
+
+  const debouncedFetchColleges = debounce(fetchColleges, 400);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,6 +151,24 @@ const AuthForm = ({ mode }) => {
       setLoading(true);
 
       if (mode === "signup") {
+        let finalInstitute;
+
+        if (selectedCollege?.name === "OTHER") {
+          if (!manualInstitute.trim()) {
+            showToast("Please enter your institute name", "error");
+            setLoading(false);
+            return;
+          }
+          finalInstitute = manualInstitute.trim();
+        } else {
+          if (!selectedCollege) {
+            showToast("Please select a valid institute", "error");
+            setLoading(false);
+            return;
+          }
+          finalInstitute = selectedCollege.name;
+        }
+
         if(!Object.values(passValid).every(Boolean)){
           showToast("Password does not meet requirements", "error");
           setLoading(false);
@@ -141,12 +193,21 @@ const AuthForm = ({ mode }) => {
 
         const token = await cred.user.getIdToken();
 
+        console.log("REGISTER DATA:", {
+          uid: cred.user.uid,
+          email: data.email,
+          name: data.name,
+          phone: data.phone,
+          institute: finalInstitute,
+          year: year,
+        });
+
         await registerUser({
           uid: cred.user.uid,
           email: data.email,
           name: data.name,
           phone: data.phone,
-          institute: data.institute,
+          institute: finalInstitute,
           year: year,
         }, token);
 
@@ -213,8 +274,59 @@ const AuthForm = ({ mode }) => {
           </div>
 
           {/* INSTITUTE */}
-          <div className="sm:col-span-2">
-            <TextField name="institute" label="Institute Name" required fullWidth sx={inputStyle} />
+          <div className="sm:col-span-2 flex flex-col gap-4">
+            <Autocomplete
+              options={[
+                ...collegeOptions,
+                {name: "Other (My college not listed)", isOther: true}
+              ]}
+              getOptionLabel={(option) => {
+                if (!option) return "";
+                if (option.isOther) return option.name;
+                return `${option.name} (${option.state})`;
+              }}
+              loading={collegeLoading}
+              freeSolo={false}
+              onInputChange={(event, value) => {
+                debouncedFetchColleges(value);
+              }}
+              onChange={(event, value) => {
+                if(value?.isOther){
+                  setSelectedCollege({name:"OTHER"});
+                } else{
+                  setSelectedCollege(value);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Institute Name"
+                  required
+                  fullWidth
+                  sx={inputStyle}
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {collegeLoading && <CircularProgress size={20} />}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            {selectedCollege?.name === "OTHER" && (
+              <TextField
+                label="Enter Your Institute Name"
+                required
+                fullWidth
+                sx={inputStyle}
+                value={manualInstitute}
+                onChange={(e) => setManualInstitute(e.target.value)}
+              />
+            )}
           </div>
 
           {/* PHONE */}

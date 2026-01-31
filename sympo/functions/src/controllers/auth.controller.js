@@ -12,6 +12,7 @@ const sanitizeInput = (input) => input ? String(input).trim() : "";
 export const signup = async (req, res) => {
   try {
     const { uid, email } = req.user;
+    console.log("Signup Request Body:", req.body);
     const { name, phone, institute, year } = req.body;
 
     if (!name || !phone || !institute || !year) return error(res, "Missing fields", 400);
