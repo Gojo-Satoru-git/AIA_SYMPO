@@ -9,6 +9,7 @@ const PurchaseContext = createContext({
   setAllPurchases: () => {},
   clearPurchases: () => {},
   checkPurchases: () => {},
+  checkPassPurchases: () => {},
 });
 
 export const PurchaseProvider = ({ children }) => {
@@ -37,6 +38,17 @@ export const PurchaseProvider = ({ children }) => {
           return false;
         }
 
+        return event.eventId == item.id;
+      });
+    });
+    return exists ? true : false;
+  };
+
+  const checkPassPurchases = (item) => {
+    if (!item || !item.id) return false;
+    const exists = purchases.some((order) => {
+      if (!order.events) return false;
+      return order.events.some((event) => {
         return event.eventId == item.id;
       });
     });
@@ -118,7 +130,7 @@ export const PurchaseProvider = ({ children }) => {
 
   return (
     <PurchaseContext.Provider
-      value={{ purchases, addPurchase, setAllPurchases, clearPurchases, checkPurchases }}
+      value={{ purchases, addPurchase, setAllPurchases, clearPurchases, checkPurchases  , checkPassPurchases}}
     >
       {children}
     </PurchaseContext.Provider>
