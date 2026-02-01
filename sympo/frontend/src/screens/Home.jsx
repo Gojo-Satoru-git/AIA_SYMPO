@@ -68,26 +68,47 @@ const Home = () => {
         `}
       >
         <img
-          src="/AIA.png"
+          src="/tekhora.jpeg"
           alt="AIA Logo"
-          className="h-10 sm:h-12 md:h-16 object-contain"
+          className="h-10 sm:h-12 rounded-full md:h-16 object-contain"
         />
-        <span className="text-white font-bold tracking-[0.3em] ml-2 text-sm sm:text-base md:text-xl lg:text-3xl uppercase">
-          AIA
+        <span className="text-white  font-bold tracking-[0.3em] ml-2 text-sm sm:text-base md:text-xl lg:text-3xl uppercase">
+          TEKHORA
         </span>
      </div>
-      
+      <div
+  className={`absolute z-40 transition-all duration-1000 ease-out
+    top-[70px] sm:top-[120px] md:top-[110px]
+    left-16
+        ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}
+  `}
+>
+  <div className="flex gap-2">
+    <img
+      src="/AU.png"
+      alt="Logo 1"
+      className="h-16 sm:h-14 md:h-20 object-contain"
+    />
+    <img
+      src="/MIT.png"
+      alt="Logo 2"
+      className="h-16 sm:h-16 md:h-20 object-contain"
+    />
+  </div>
+</div>
+
 
  <div
   className={`absolute z-40 transition-all duration-1000 ease-out
     top-[70px] sm:top-[120px] md:top-[110px]
     left-1/2 transform -translate-x-1/2
-    md:left-auto md:right-8 md:translate-x-0
+    md:left-auto md:right-16 md:translate-x-0 m=
     ${showLogos ? "opacity-100 scale-100" : "opacity-0 scale-90"}
     w-full max-w-lg
     px-4
   `}
 >
+
 
 <div
   className="flex flex-wrap justify-center gap-2
@@ -96,17 +117,6 @@ const Home = () => {
 >
 
     
-    <img
-      src="/AU.png"
-      alt="Logo 1"
-      className="h-16 sm:h-14 md:h-20 lg:h-30 object-contain"
-    />
-    
-    <img
-      src="/MIT.png"
-      alt="Logo 2"
-      className="h-16 sm:h-16 md:h-20 object-contain"
-    />
  
     <img
       src="/MIT75 (1).png"
