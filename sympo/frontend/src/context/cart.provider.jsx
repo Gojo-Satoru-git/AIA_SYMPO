@@ -52,25 +52,25 @@ const CartProvider = ({ children }) => {
     setCart((prev) => {
       const exists = prev.some((p) => p.id === item.id);
       if (exists) return prev;
+
       if (item.type !== 'pass' && isEventCoveredByPass(item.id)) {
         return prev;
       }
-      if (item.type === 'pass') {
-        const filtered = prev.filter((p) => {
-          // Don't keep existing passes
-          if (p.type === 'pass') return false;
 
-          // Always keep workshops/signature events - they have no relationship to passes
+      // Enforce ONE pass only
+      if (item.type === 'pass') {
+        const alreadyHasPass = prev.some((p) => p.type === 'pass');
+        if (alreadyHasPass) {
+          return prev; // UI should show toast
+        }
+
+        const filtered = prev.filter((p) => {
+          // Keep workshops / signature events
           if (p.type === 'workshop' || isWorkshop(p.id)) return true;
 
-          // For regular events: apply pass rules
-          if (item.includes === 'ALL') {
-            // Global pass removes all regular events
-            return false;
-          }
-
+          // Remove regular events covered by this pass
+          if (item.includes === 'ALL') return false;
           if (Array.isArray(item.includes)) {
-            // Specific pass removes only events in its includes list
             return !item.includes.includes(p.id);
           }
 

@@ -22,7 +22,7 @@ const Registration = () => {
   const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
 
-  const { addPurchase } = usePurchases();
+  const { addPurchase, checkPassPurchases } = usePurchases();
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -103,11 +103,14 @@ const Registration = () => {
 
         handler: async function (response) {
           try {
-            const verifyRes = await verifyPaymentOrder({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            } , cart);
+            const verifyRes = await verifyPaymentOrder(
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              cart
+            );
 
             if (verifyRes.data.success) {
               const qrToken = verifyRes.data.qrToken;
@@ -137,14 +140,14 @@ const Registration = () => {
         modal: {
           ondismiss: async function () {
             try {
-              await api.post("/payment/cancel", {
-                orderId: order.dbOrderId,   // IMPORTANT: use DB order id
+              await api.post('/payment/cancel', {
+                orderId: order.dbOrderId, // IMPORTANT: use DB order id
               });
-              showToast("Payment cancelled", "error");
+              showToast('Payment cancelled', 'error');
             } catch (err) {
-              console.error("Cancel API failed", err);
+              console.error('Cancel API failed', err);
             }
-          }
+          },
         },
         prefill: {
           name: user.displayName || 'Participant',
@@ -195,40 +198,49 @@ const Registration = () => {
         {/* ================= PASSES ================= */}
         <div className="flex flex-col gap-6">
           <p className="text-center text-white/60 text-sm">Choose a pass (optional)</p>
-
           <div className="grid md:grid-cols-3 gap-6">
             {passes.map((pass) => {
               const isSelected = selectedPass?.id === pass.id;
+              const alreadyPurchased = checkPassPurchases(pass);
 
               return (
                 <PassPosterCard
                   key={pass.id}
                   pass={pass}
                   selected={isSelected}
+                  disabled={alreadyPurchased}
                   onToggle={() => {
+                    if (alreadyPurchased) {
+                      showToast('You have already purchased a pass', 'info');
+                      return;
+                    }
+
+                    //  user already selected a pass in cart
+                    if (
+                      (selectedPass && selectedPass.id !== pass.id) ||
+                      passes.some((order) => checkPassPurchases(order))
+                    ) {
+                      showToast('Only one pass can be Purchased', 'error');
+                      return;
+                    }
+
                     // deselect
                     if (isSelected) {
                       removeFromCart(pass.id);
                       return;
                     }
 
-                    // remove any existing pass
-                    if (selectedPass) {
-                      removeFromCart(selectedPass.id);
-                    }
-
                     // remove covered events
                     cart.forEach((item) => {
                       if (
                         item.type !== 'pass' &&
-                        !item.isSignature &&
                         (pass.includes === 'ALL' || pass.includes.includes(item.id))
                       ) {
                         removeFromCart(item.id);
                       }
                     });
 
-                    // add new pass
+                    // add pass
                     addToCart({
                       id: pass.id,
                       title: pass.title,
@@ -236,6 +248,8 @@ const Registration = () => {
                       type: 'pass',
                       includes: pass.includes,
                     });
+
+                    showToast(`${pass.title} applied`, 'success');
                   }}
                 />
               );
