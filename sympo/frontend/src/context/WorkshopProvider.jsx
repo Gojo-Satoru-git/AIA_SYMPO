@@ -16,7 +16,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
-      fees: 2,
+      fees: 499,
       contact: {
         name1: 'Sandheep',
         phone1: '9884793806',
@@ -36,7 +36,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
-      fees: 2,
+      fees: 499,
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -56,7 +56,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
-      fees: 2,
+      fees: 499,
       contact: {
         name1: 'Kamalnath',
         phone1: '9150580147',
@@ -78,7 +78,7 @@ function WorkshoProvider({ children }) {
       rules: 'Rules',
       miniTeamSize: '2',
       teamSize: '2',
-      fees: 2,
+      fees: 199,
       contact: {
         name1: 'Poorna Prakash',
         phone1: '8838730894',

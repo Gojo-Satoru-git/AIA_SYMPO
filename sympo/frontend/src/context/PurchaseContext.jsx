@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import api from '../services/api';
+import {passes} from '../data/passess';
 
 const PurchaseContext = createContext({
   purchases: [],
@@ -26,6 +27,16 @@ export const PurchaseProvider = ({ children }) => {
     const exists = purchases.some((order) => {
       if (!order.events) return false;
       return order.events.some((event) => {
+
+        if (event.eventId == 'pass-global' || event.eventId == 'pass-tech' || event.eventId == 'pass-nontech') {
+          const pass = passes.find((p) => p.id === event.eventId);
+
+          if (pass && pass.includes.includes(item.id)) {
+            return true;
+          }
+          return false;
+        }
+
         return event.eventId == item.id;
       });
     });
