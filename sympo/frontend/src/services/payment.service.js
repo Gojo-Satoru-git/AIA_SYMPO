@@ -23,7 +23,7 @@ export const createPaymentOrder = async (cartItems) => {
   }
 };
 
-export const verifyPaymentOrder = async (paymentData) => {
+export const verifyPaymentOrder = async (paymentData , cartItems) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
 
@@ -31,11 +31,21 @@ export const verifyPaymentOrder = async (paymentData) => {
       throw new Error("Missing required payment verification data");
     }
 
-    const response = await api.post("/payment/verify", paymentData);
+    const teamsPayload = cartItems
+      .filter(item => item.id === "12" || item.id === "13")
+      .map(item => ({
+        id: item.id,
+        teamData: localStorage.getItem(`${item.title}-teamData`)
+      }));
+
+    const response = await api.post("/payment/verify", { ...paymentData, teams: teamsPayload });
     
     if (!response.data.success) {
       throw new Error("Payment verification failed");
     }
+
+    
+
 
     return response;
   } catch (error) {

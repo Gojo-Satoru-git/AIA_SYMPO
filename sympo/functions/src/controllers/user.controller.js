@@ -39,3 +39,28 @@ export const getPurchases = async (req, res) => {
 };
 
 
+export const getTeams = async (req, res) => {
+  try {
+    const uid = req.user.uid;
+
+    const teamsSnap = await db.collection("teams")
+      .where("uid", "==", uid)
+      .get();
+    const teams = [];
+
+    teamsSnap.forEach((doc) => {
+      const teamData = doc.data();
+      teams.push({
+        teamId: doc.id, 
+        eventId: teamData.eventId,
+        teamData: teamData.teamData
+      });
+    });
+    return success(res, { teams });
+
+  } catch (err) {
+    console.error("Get teams error: ", err);
+    return error(res, err.message);
+  }
+};
+

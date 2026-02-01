@@ -12,7 +12,7 @@ function WorkshoProvider({ children }) {
       category: 'Technical',
       isSignature: true,
       miniTeamSize: '2',
-      teamSize: '4',
+      teamSize: '4',  
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
@@ -76,6 +76,8 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '11:00 AM',
       rules: 'Rules',
+      miniTeamSize: '2',
+      teamSize: '2',
       fees: 2,
       contact: {
         name1: 'Poorna Prakash',

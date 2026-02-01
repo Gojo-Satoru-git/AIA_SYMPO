@@ -107,7 +107,7 @@ const Registration = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-            });
+            } , cart);
 
             if (verifyRes.data.success) {
               const qrToken = verifyRes.data.qrToken;

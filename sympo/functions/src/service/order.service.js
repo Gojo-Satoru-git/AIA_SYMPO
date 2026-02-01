@@ -7,6 +7,12 @@ export const createOrderRecord = async (userId, items) => {
   const orderRef = db.collection("orders").doc();
 
   await db.runTransaction(async (tx) => {
+
+    const eventCache = []; // 🔴 CHANGED: store reads first
+
+    /* =======================
+       🔹 STEP 1: READ ONLY
+       ======================= */
     for (const item of items) {
       if (!item.eventId || item.quantity <= 0) {
         const err = new Error("Invalid item");
@@ -15,7 +21,7 @@ export const createOrderRecord = async (userId, items) => {
       }
 
       const eventRef = db.collection("events").doc(String(item.eventId));
-      const eventSnap = await tx.get(eventRef);
+      const eventSnap = await tx.get(eventRef); // ✅ READ ONLY
 
       if (!eventSnap.exists) {
         const err = new Error("Event not found");
@@ -40,9 +46,21 @@ export const createOrderRecord = async (userId, items) => {
           err.eventId = item.eventId;
           throw err;
         }
+      }
 
+      eventCache.push({ eventRef, event, item }); // 🔴 CHANGED
+    }
+
+    /* =======================
+       🔹 STEP 2: WRITE ONLY
+       ======================= */
+    for (const e of eventCache) {
+      const { eventRef, event, item } = e;
+      const ids = ["10", "11", "12", "13"];
+
+      if (ids.includes(item.eventId)) {
         tx.update(eventRef, {
-          booked: event.booked + item.quantity,
+          booked: event.booked + item.quantity, // ✅ WRITE AFTER ALL READS
         });
       }
 
@@ -58,6 +76,9 @@ export const createOrderRecord = async (userId, items) => {
       });
     }
 
+    /* =======================
+       🔹 STEP 3: CREATE ORDER
+       ======================= */
     tx.set(orderRef, {
       userId,
       amount: totalAmount,
@@ -80,19 +101,26 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
 
   await db.runTransaction(async (tx) => {
     const orderSnap = await tx.get(orderRef);
-    if (!orderSnap.exists) return; 
+    if (!orderSnap.exists) return;
 
     const order = orderSnap.data();
+    if (order.status === "PAID") return;
 
-    if (order.status === "PAID") return; 
+    const eventCache = []; // 🔴 CHANGED
 
+    /* READ FIRST */
     for (const item of order.items) {
       const eventRef = db.collection("events").doc(String(item.eventId));
       const eventSnap = await tx.get(eventRef);
-      if (!eventSnap.exists) continue; 
+      if (!eventSnap.exists) continue;
 
-      const event = eventSnap.data();
-      const ids = ["10","11","12","13"]; 
+      eventCache.push({ eventRef, event: eventSnap.data(), item }); // 🔴 CHANGED
+    }
+
+    /* WRITE AFTER */
+    for (const e of eventCache) {
+      const { eventRef, event, item } = e;
+      const ids = ["10", "11", "12", "13"];
 
       if (ids.includes(item.eventId)) {
         tx.update(eventRef, {
@@ -104,4 +132,3 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
     tx.update(orderRef, { status: "CANCELLED" });
   });
 };
-

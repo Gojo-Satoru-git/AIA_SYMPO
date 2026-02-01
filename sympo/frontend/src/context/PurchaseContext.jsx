@@ -50,7 +50,53 @@ export const PurchaseProvider = ({ children }) => {
     const fetchPurchases = async () => {
       try {
         const res = await api.get('/user/purchases');
-        setAllPurchases(res.data.data.purchases);
+
+        const fetchedPurchases = res.data.data.purchases;
+        setPurchases(fetchedPurchases);
+
+
+        let needsFetch = false;
+
+        for (const purchase of fetchedPurchases) {
+          for (const event of purchase.events || []) {
+            if (event.eventId === "12" || event.eventId === "13") {
+              const key = `${event.title}-teamData`;
+              if (!localStorage.getItem(key)) {
+                needsFetch = true;
+                break;
+              }
+            }
+          }
+          if (needsFetch) break;
+        }
+
+        if (!needsFetch) return;
+
+        const teamRes = await api.get("/user/teams");
+        const teams = teamRes.data.data.teams;
+
+        for (const purchase of fetchedPurchases) {
+          for (const event of purchase.events || []) {
+            if (event.eventId === "12" || event.eventId === "13") {
+              const key = `${event.title}-teamData`;
+
+              if (!localStorage.getItem(key)) {
+                const teamForEvent = teams.find(
+                  (team) => team.eventId === event.eventId
+                );
+
+                if (teamForEvent) {
+                  localStorage.setItem(
+                    key,
+                    JSON.stringify(teamForEvent.teamData)
+                  );
+                }
+              }
+            }
+          }
+        }
+
+
       } catch (err) {
         console.error('Failed to fetch purchases:', err);
       }

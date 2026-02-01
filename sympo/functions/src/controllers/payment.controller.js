@@ -1,11 +1,11 @@
-import { db } from "../config/firebase.js";
+import admin, { db } from "../config/firebase.js";
 import { createOrderRecord } from "../service/order.service.js";
 import { createRazorpayOrder, verifyRazorpayPayment } from "../service/razorpay.service.js";
 import crypto from "crypto";
 
 export const createOrder = async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items , teams } = req.body;
 
     const { totalAmount, orderId } = await createOrderRecord(req.user.uid, items);
     const razorpayOrder = await createRazorpayOrder(totalAmount);
@@ -28,13 +28,14 @@ export const createOrder = async (req, res) => {
 
 export const verifyOrder = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature , teams } = req.body;
 
     const valid = verifyRazorpayPayment(
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature
     );
+
     if (!valid) return res.status(400).json({ message: "Invalid signature" });
 
     const snap = await db.collection("orders")
@@ -47,7 +48,6 @@ export const verifyOrder = async (req, res) => {
     const orderDoc = snap.docs[0];
     const order = orderDoc.data();
 
-    // 🔒 STATUS GUARD
     if (order.status === "PAID") {
       return res.json({ success: true, qrToken: order.qrToken });
     }
@@ -62,8 +62,23 @@ export const verifyOrder = async (req, res) => {
       status: "PAID",
       razorpay_payment_id,
       qrToken,
-      updatedAt: new Date(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+
+    if (teams && teams.length > 0) {
+      for (const team of teams) {
+        const teamDoc = await db.collection("teams").add({
+          teamData: JSON.parse(team.teamData),
+          eventId: team.id,
+          uid: req.user.uid,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+
+      }
+    }
+
+
 
     res.json({ success: true, qrToken });
   } catch (err) {
@@ -77,7 +92,6 @@ import { cancelOrderAndReleaseSeats } from "../service/order.service.js";
 export const cancelPayment = async (req, res) => {
   const { orderId } = req.body;
 
-  console.log("Cancel request for orderId:", orderId);
 
   if (!orderId) return res.status(400).json({ message: "Missing orderId" });
 
