@@ -8,6 +8,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import PassPosterCard from '../components/PassCard';
 import { passes } from '../data/passess';
 import { usePurchases } from '../context/PurchaseContext';
+import api from '../services/api';
 
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
@@ -109,13 +110,13 @@ const Registration = () => {
             });
 
             if (verifyRes.data.success) {
-              const paymentData = verifyRes.data.data;
+              const qrToken = verifyRes.data.qrToken;
 
               addPurchase({
                 orderId: response.razorpay_payment_id,
                 amount: order.amount / 100,
                 events: cart.map((item) => ({ eventId: item.id, title: item.title })),
-                qrToken: verifyRes.data.qrToken || paymentData?.qrToken,
+                qrToken: qrToken,
               });
 
               const token = verifyRes.data.qrToken;
@@ -130,6 +131,19 @@ const Registration = () => {
             }
           } catch (err) {
             showToast('Verification failed. Contact support.', 'error');
+          }
+        },
+
+        modal: {
+          ondismiss: async function () {
+            try {
+              await api.post("/payment/cancel", {
+                orderId: order.dbOrderId,   // IMPORTANT: use DB order id
+              });
+              showToast("Payment cancelled", "error");
+            } catch (err) {
+              console.error("Cancel API failed", err);
+            }
           }
         },
         prefill: {
