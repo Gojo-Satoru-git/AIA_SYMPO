@@ -227,6 +227,7 @@ const Events = () => {
                 <Eventcard
                   title={workshop.title}
                   desc={workshop.description}
+                  image={workshop.image}
                   index={index}
                   category="workshop"
                   date={workshop.date}

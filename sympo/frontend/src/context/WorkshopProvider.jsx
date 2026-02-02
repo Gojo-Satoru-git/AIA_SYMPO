@@ -6,7 +6,7 @@ function WorkshoProvider({ children }) {
     {
       title: 'Hackathon',
       id: '13',
-      image: '/workshop2.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4b4072c9-7ea6-439e-825b-19c86e85c3fb',
       backside: './assets/Billy.webp',
       description: 'This is Hackathon',
       category: 'Technical',
@@ -23,7 +23,7 @@ function WorkshoProvider({ children }) {
         name2: 'Rahul',
         phone2: '9159812736',
       },
-      fallbackImage: './assets/fall_back/hackathon.webp',
+      //fallbackImage: './assets/fall_back/hackathon.webp',
     },
     {
       title: 'Workshop1',
@@ -68,7 +68,7 @@ function WorkshoProvider({ children }) {
     {
       title: 'Paper Presentation',
       id: '12',
-      image: '/workshop2.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/paper_presentation.webp?alt=media&token=0cb3bc8a-db71-48c1-bf5b-81c95e6f2530',
       backside: './assets/Robin.webp',
       description: 'This is Paper presentation',
       category: 'Technical',
@@ -85,7 +85,7 @@ function WorkshoProvider({ children }) {
         name2: 'Nitin Pranav',
         phone2: '9123591494',
       },
-      fallbackImage: './assets/fall_back/paper_presentation.webp',
+      //fallbackImage: './assets/fall_back/paper_presentation.webp',
     },
   ];
   return <workshopcontext.Provider value={OtherEvents}>{children}</workshopcontext.Provider>;

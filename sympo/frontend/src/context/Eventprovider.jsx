@@ -6,7 +6,7 @@ function Eventprovider({ children }) {
     {
       title: 'IPL Auction',
       id: '6',
-      image: './assets/IPL_AUCTION.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/ipl_auction.webp?alt=media&token=35d881d0-8af5-410f-8904-e3907d53d5bb',
       backside: './assets/Hopper.webp',
       description: 'This is event B',
       category: 'Non-Technical',
@@ -26,7 +26,7 @@ function Eventprovider({ children }) {
     {
       title: 'Call Of Query',
       id: '3',
-      image: '/event3.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/call_of_query.webp?alt=media&token=0208b6a6-a17b-45b5-b805-2f1b924afb15',
       backside: './assets/Eleven.webp',
       description: 'This is event 3',
       teamSize: '4',
@@ -46,7 +46,7 @@ function Eventprovider({ children }) {
     {
       title: 'Connextions',
       id: '8',
-      image: '/eventC.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/connexions.webp?alt=media&token=6511287b-6f91-4931-acb5-d3aaaf928afe',
       backside: './assets/steve.webp',
       teamSize: '6',
       description: 'This is event C',
@@ -66,7 +66,7 @@ function Eventprovider({ children }) {
     {
       title: 'Tournament of strategies',
       id: '1',
-      image: '/event1.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/tos.webp?alt=media&token=0278cd22-331f-49a2-b762-25c7a28d7175',
       backside: './assets/Mike.webp',
       description: 'This is event 1',
       category: 'Technical',
@@ -86,7 +86,7 @@ function Eventprovider({ children }) {
     {
       title: 'Treasure Hunt',
       id: '9',
-      image: '/eventC.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/treasure_hunt.webp?alt=media&token=f96788da-66df-4d17-b387-16ad8aaf3225',
       backside: './assets/will.webp',
       teamSize: '7',
       description: 'This is event C',
@@ -106,7 +106,7 @@ function Eventprovider({ children }) {
     {
       title: 'Ninja Coding',
       id: '4',
-      image: '/event3.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/ninja_coding.webp?alt=media&token=4a712ea2-965f-4283-9948-3def7732ddfe',
       backside: './assets/Dustin.webp',
       description: 'This is event 3',
       teamSize: '4',
@@ -126,7 +126,7 @@ function Eventprovider({ children }) {
     {
       title: 'ADZAP',
       id: '5',
-      image: '/eventA.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/adzap.webp?alt=media&token=6bb6ec19-4fa6-4103-bf62-aa7bd89a08a0',
       backside: './assets/Max.webp',
       description: 'This is event A',
       category: 'Non-Technical',
@@ -146,7 +146,7 @@ function Eventprovider({ children }) {
     {
       title: 'coding with AI',
       id: '2',
-      image: '/event2.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/coding_with_ai.webp?alt=media&token=f028c37d-c8ad-43c4-b411-baf0c6bc9104',
       backside: './assets/vecna.webp',
       description: 'This is event 2',
       category: 'Technical',
@@ -166,7 +166,7 @@ function Eventprovider({ children }) {
     {
       title: 'Fandom Quiz',
       id: '7',
-      image: '/eventC.png',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/fandom_quiz.webp?alt=media&token=407abbd8-f32b-43ce-8533-374a937cf20c',
       backside: './assets/Nancy.webp',
       teamSize: '6',
       description: 'This is event C',
