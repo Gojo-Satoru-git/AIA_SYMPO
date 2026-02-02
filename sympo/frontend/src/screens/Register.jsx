@@ -9,6 +9,8 @@ import PassPosterCard from '../components/PassCard';
 import { passes } from '../data/passess';
 import { usePurchases } from '../context/PurchaseContext';
 import api from '../services/api';
+import PassSuggestionModal from '../components/PassSuggestionModal';
+
 
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
@@ -23,6 +25,10 @@ const Registration = () => {
   const [qrVisible, setQrVisible] = useState(false);
 
   const { addPurchase, checkPassPurchases } = usePurchases();
+
+  const [showPassPopup, setShowPassPopup] = useState(false);
+  const [passSuggestion, setPassSuggestion] = useState(null);
+
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -77,7 +83,94 @@ const Registration = () => {
     });
   };
 
-  const handlePayment = async () => {
+  const analyzeCart = (cart) => {
+  let techCount = 0;
+  let nonTechCount = 0;
+  let techAmount = 0;
+  let nonTechAmount = 0;
+  let activePass = null;
+
+  cart.forEach(item => {
+    if (item.type === 'pass') {
+      activePass = item.id;
+      return;
+    }
+
+    if (passes[0].includes.includes(item.id)) {
+      techCount++;
+      techAmount += item.price;
+    }
+
+    if (passes[2].includes.includes(item.id)) {
+      nonTechCount++;
+      nonTechAmount += item.price;
+    }
+  });
+
+  return { techCount, nonTechCount, techAmount, nonTechAmount, activePass };
+};
+
+
+  const getRecommendation = (data) => {
+  const { techCount, nonTechCount, techAmount, nonTechAmount, activePass } = data;
+
+  // 🔒 If user already purchased a pass → no recommendation
+  if (passes.some(p => checkPassPurchases(p))) return null;
+
+  // 🆙 Upgrade case → Global Pass
+  if (
+    (activePass === passes[0].id && nonTechCount >= 2) ||
+    (activePass === passes[2].id && techCount >= 2)
+  ) {
+    return {
+      passId: passes[1].id,
+      title: passes[1].title,
+      price: passes[1].price,
+      includes: passes[1].includes,
+      message: `You already selected a pass and added events from the other category.
+Global Pass at ₹${passes[1].price} covers EVERYTHING and saves money.`,
+    };
+  }
+
+  // Normal suggestions
+  if (techCount >= 2 && nonTechCount >= 2) {
+    return {
+      passId: passes[1].id,
+      title: passes[1].title,
+      price: passes[1].price,
+      includes: passes[1].includes,
+      message: `You added ${techCount} Technical and ${nonTechCount} Non-Technical events.
+Global Pass at ₹${passes[1].price} gives access to ALL events and saves money.`,
+    };
+  }
+
+  if (techCount >= 2 && !activePass) {
+    return {
+      passId: passes[0].id,
+      title: passes[0].title,
+      price: passes[0].price,
+      includes: passes[0].includes,
+      message: `You added ${techCount} Technical events (₹${techAmount}).
+Tech Pass at ₹${passes[0].price} gives access to ALL Tech events and saves money.`,
+    };
+  }
+
+  if (nonTechCount >= 2 && !activePass) {
+    return {
+      passId: passes[2].id,
+      title: passes[2].title,
+      price: passes[2].price,
+      includes: passes[2].includes,
+      message: `You added ${nonTechCount} Non-Technical events (₹${nonTechAmount}).
+Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and saves money.`,
+    };
+  }
+
+  return null;
+};
+
+
+  const proceedToPayment  = async () => {
     if (!user) return showToast('Please login first', 'error');
     if (!validateCart()) return;
 
@@ -129,9 +222,9 @@ const Registration = () => {
               setQrVisible(true);
 
               clearCart();
+              setBackendAmount(null);
               showToast('Payment Successful!', 'success');
               trackEvent('payment_success', { amount: order.amount });
-              setBackendAmount(null);
             }
           } catch (err) {
             showToast('Verification failed. Contact support.', 'error');
@@ -144,6 +237,7 @@ const Registration = () => {
               await api.post('/payment/cancel', {
                 orderId: order.dbOrderId, // IMPORTANT: use DB order id
               });
+              setBackendAmount(null);
               showToast('Payment cancelled', 'error');
             } catch (err) {
               console.error('Cancel API failed', err);
@@ -177,6 +271,24 @@ const Registration = () => {
       setPaymentLocked(false);
     }
   };
+
+  const handlePayment = async () => {
+    if (!user) return showToast('Please login first', 'error');
+    if (!validateCart()) return;
+
+    const analysis = analyzeCart(cart);
+    const recommendation = getRecommendation(analysis);
+
+    if (recommendation) {
+      setPassSuggestion(recommendation);
+      setShowPassPopup(true);
+      return; 
+    }
+
+    proceedToPayment();
+    
+  };
+
 
   const handleRemoveItem = (itemId, itemTitle) => {
     setRemovingId(itemId);
@@ -369,6 +481,34 @@ const Registration = () => {
             </div>
           </div>
         )}
+
+        {/* Pass Suggestion Modal */}
+        { showPassPopup && passSuggestion && (
+                <PassSuggestionModal
+              open={showPassPopup}
+              suggestion={passSuggestion}
+              onClose={() => {
+                setShowPassPopup(false);
+                proceedToPayment();
+              }}
+              onAccept={() => {
+
+                if (selectedPass) {
+                  removeFromCart(selectedPass.id);
+                }
+                addToCart({
+                  id: passSuggestion.passId,
+                  title: passSuggestion.title,
+                  price: passSuggestion.price,
+                  type: 'pass',
+                  includes: passSuggestion.includes,
+                });
+                setShowPassPopup(false);
+              }}
+            />)
+
+        }
+
       </div>
     </section>
   );
