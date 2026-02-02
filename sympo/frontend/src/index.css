@@ -1,57 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* --- FONTS --- */
 @font-face {
   font-family: 'StrangerThings';
   src: url('/fonts/ITC-Benguiat-Bold.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'StrangerRegular';
   src: url('/fonts/ITCBenguiatStdBookCn.OTF') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
+
+/* Default Font Application */
 * {
   font-family: 'StrangerThings';
 }
+
+/* --- GLOBAL STYLES & SCROLLBAR REMOVAL --- */
 @layer base {
-  html, body {
+  html,
+  body {
     @apply bg-black text-white;
     margin: 0;
     padding: 0;
+    overscroll-behavior: none; /* Prevents "bounce" effect on Mac/Mobile */
+
+    /* Hide Scrollbar (Firefox, IE, Edge) */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-}
-html, body {
-  overscroll-behavior: none;
-}
 
-
-.perspective {
-  perspective: 1000px;
-}
-
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-}
-@layer utilities {
-  /* For Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
+  /* Hide Scrollbar (Chrome, Safari, Opera) */
+  ::-webkit-scrollbar {
     display: none;
   }
+}
 
-  /* For IE, Edge and Firefox */
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+/* --- UTILITIES --- */
+@layer utilities {
+  .perspective {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
   }
 }
 
+/* --- ANIMATIONS --- */
 @keyframes toastSlide {
   from {
     opacity: 0;
@@ -78,14 +84,14 @@ html, body {
   }
 }
 
-
+/* Spore Floating Animation */
 @keyframes float {
-  0%, 100% {
+  0% {
     transform: translateY(0px) translateX(0px);
     opacity: 0;
   }
-  50% {
-    opacity: 1;
+  20% {
+    opacity: 0.8;
   }
   100% {
     transform: translateY(-100vh) translateX(20px);

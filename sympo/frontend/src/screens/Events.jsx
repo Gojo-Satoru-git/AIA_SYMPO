@@ -1,255 +1,237 @@
-import { useState, useRef, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Contexts & Components
 import Eventcard from '../components/Eventcard';
 import EventDetails from '../components/EventDetails';
 import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
 import useCart from '../context/useCart';
+
+// --- HELPER: GLITCH TEXT ---
+const GlitchText = ({ text }) => {
+  return (
+    <div className="relative inline-block group">
+      <span className="relative z-10">{text}</span>
+      <span className="absolute top-0 left-0 -z-10 w-full h-full text-red-600 opacity-0 group-hover:opacity-70 group-hover:animate-pulse translate-x-[2px]">
+        {text}
+      </span>
+      <span className="absolute top-0 left-0 -z-10 w-full h-full text-blue-600 opacity-0 group-hover:opacity-70 group-hover:animate-pulse translate-x-[-2px]">
+        {text}
+      </span>
+    </div>
+  );
+};
+
 const Events = () => {
-  const scrollRef2 = useRef(null);
-  const scrollRef3 = useRef(null);
-  const [Selected, SetSelected] = useState('All');
+  // --- STATE ---
+  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCardData, setSelectedCardData] = useState({ id: null, category: null });
+
+  // Context Data
   const { addToCart } = useCart();
   const { checkPurchases } = usePurchases();
+  const eventList = useContext(eventcontext);
+  const workshopList = useContext(workshopcontext);
 
-  const [clicked, setClicked] = useState(false);
-  const [showLeft, setshowLeft] = useState(false);
-  const [showRight, setshowRight] = useState(false);
-  const [showWRight, setshowWRight] = useState(true);
-  const [cardclicked, setCardclicked] = useState({
-    id: null,
-    category: null,
-  });
+  // --- LOGIC ---
 
-  const scroll = (directions, scrollRef) => {
-    const { current } = scrollRef;
-    if (current) {
-      const firstCard = current.firstElementChild;
-      const scrollSize = firstCard ? firstCard.clientWidth + 16 : 200;
-      const scrollAmount = directions === 'left' ? -scrollSize : scrollSize;
-      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-  const eventext = useContext(eventcontext);
-  const Workshops = useContext(workshopcontext);
-
-  let detail;
-
+  // Modal Body Lock
   useEffect(() => {
-    if (clicked) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = modalOpen ? 'hidden' : 'unset';
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [clicked]);
+  }, [modalOpen]);
 
-  useEffect(() => {
-    if (scrollRef2.current) {
-      scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
-  }, [Selected]);
+  // Data Filtering
+  const displayedEvents =
+    selectedFilter === 'All' ? eventList : eventList.filter((e) => e.category === selectedFilter);
 
-  const checkScroll = () => {
-    const el = scrollRef2.current;
-    if (!el) return;
-    const { scrollLeft, clientWidth, scrollWidth } = el;
-    if (scrollLeft > 0) {
-      setshowLeft(true);
-    } else if (scrollLeft == 0) {
-      setshowLeft(false);
-    }
-    if (scrollLeft + clientWidth >= scrollWidth - 20) {
-      setshowRight(false);
-    } else {
-      setshowRight(true);
-    }
+  // Resolve Modal Details
+  let activeDetail = null;
+  if (selectedCardData.id !== null) {
+    activeDetail =
+      selectedCardData.category === 'workshop'
+        ? workshopList.find((w) => w.id === selectedCardData.id)
+        : eventList.find((e) => e.id === selectedCardData.id);
+  }
+
+  const openModal = (id, category) => {
+    setSelectedCardData({ id, category });
+    setModalOpen(true);
   };
 
-  const checkScroll2 = () => {
-    const el = scrollRef3.current;
-    if (!el) return;
-    const { scrollLeft, clientWidth, scrollWidth } = el;
-    if (scrollLeft + clientWidth >= scrollWidth - 20) {
-      setshowWRight(false);
-    } else {
-      setshowWRight(true);
-    }
-  };
-  const handleCart = (item, type) => {
+  const handleAddToCart = (item, type) => {
     const price = Number(item.fees);
-    const cartItem = {
+    addToCart({
       id: item.id,
       title: item.title,
       price: Number.isFinite(price) ? price : 0,
       type,
-      isSignature: item.isSignature == true,
-    };
-    console.log(cartItem);
-    addToCart(cartItem);
+      isSignature: item.isSignature === true,
+    });
   };
-  useEffect(() => {
-    const timer = setTimeout(() => checkScroll2(), 50);
-    return () => clearTimeout(timer);
-  }, [Workshops]);
-  useEffect(() => {
-    if (scrollRef2.current) {
-      scrollRef2.current.scroll({ left: 0, behavior: 'smooth' });
-      const timer = setTimeout(() => {
-        checkScroll();
-      }, 50);
 
-      return () => clearTimeout(timer);
-    }
-  }, [Selected]);
-
-  if (cardclicked !== null) {
-    detail =
-      cardclicked.category === 'workshop'
-        ? Workshops.find((w) => w.id === cardclicked.id)
-        : eventext.find((e) => e.id === cardclicked.id);
-  }
-  const display =
-    Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
   return (
-    <>
-      {clicked && (
-        <div
-          className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setClicked(false);
-              setCardclicked({ id: null, category: null });
-            }
-          }}
-        >
-          <EventDetails
-            card={detail}
-            itemCategory={cardclicked.category}
-            onClose={() => setClicked(false)}
-            checkPurchase={checkPurchases}
-            addToCart={handleCart}
-          />
-        </div>
-      )}
-      <div className={`flex flex-col p-10 sm:justify-start  min-h-screen`}>
-        <div
-          className={`flex  justify-center items-center py-10 text-primary mt-10 md:mt-10 sm:mt-10 `}
-        >
-          <ul className="flex flex-shrink-0 lg:justify-center gap-5 md:gap-8 text-primary">
-            <li
-              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('All')}
-            >
-              All
-            </li>
-            <li
-              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('Technical')}
-            >
-              Technical
-            </li>
-            <li
-              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
-              onClick={() => SetSelected('Non-Technical')}
-            >
-              Non-Technical
-            </li>
-          </ul>
+    <div className="relative min-h-screen bg-transparent text-red-500 overflow-x-hidden selection:bg-red-900 selection:text-white pb-24">
+      {/* --- CONTENT --- */}
+      <div className="relative z-10 flex flex-col p-6 md:p-10 max-w-[1600px] mx-auto">
+        {/* 1. HEADER & NAVIGATION (CENTERED) */}
+        <div className="flex flex-col items-center justify-center mb-16 mt-12 gap-8 text-center">
+          <div>
+            <h3 className="text-xs font-mono text-red-400/50 tracking-[0.4em] uppercase mb-4">
+              Tekhora // Archive
+            </h3>
+            <h1 className="text-5xl md:text-7xl font-[StrangerThings] text-transparent bg-clip-text bg-gradient-to-b from-red-700 to-red-800">
+              EVENTS
+            </h1>
+          </div>
+
+          {/* Filter Panel */}
+          <div className="p-1 bg-black/80 border border-red-900/40 rounded-full shadow-[0_0_30px_rgba(220,38,38,0.15)] backdrop-blur-md">
+            <div className="flex relative">
+              {['All', 'Technical', 'Non-Technical'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedFilter(tab)}
+                  className={`
+                                relative px-6 md:px-8 py-2 md:py-3 text-sm md:text-base font-bold uppercase tracking-widest transition-all duration-300 z-10 rounded-full
+                                ${selectedFilter === tab ? 'text-white text-shadow-glow' : 'text-red-800/70 hover:text-red-500'}
+                            `}
+                >
+                  {tab}
+                  {selectedFilter === tab && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-red-600/80 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] -z-10 border border-red-500/50"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="relative w-full max-w-8xl flex items-center group">
-          {showLeft && (
-            <button
-              onClick={() => scroll('left', scrollRef2)}
-              className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
-            >
-              <span className="mb-auto">‹</span>
-            </button>
-          )}
+        {/* 2. MAIN EVENT GRID */}
+        <section className="min-h-[500px]">
+          {/* FLEX GRID SYSTEM: 
+               - flex-wrap: Allows wrapping.
+               - justify-center: Centers the last row if it has few items.
+               - -m-2: Negative margin on container counteracts padding on items.
+            */}
+          <motion.div layout className="flex flex-wrap justify-center gap-4">
+            <AnimatePresence mode="popLayout">
+              {displayedEvents.map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-2"
+                >
+                  <div className="transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(220,38,38,0.1)] transition-all duration-300 h-full">
+                    <Eventcard
+                      {...event}
+                      index={index}
+                      onClick={() => openModal(event.id, event.category)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
-          <div
-            ref={scrollRef2}
-            onScroll={checkScroll}
-            className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
-          >
-            {display.map((events, index) => (
-              <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
-                <Eventcard
-                  title={events.title}
-                  desc={events.description}
-                  image={events.image}
-                  date={events.date}
-                  time={events.time}
-                  category={events.category}
-                  index={index}
-                  id={events.id}
-                  onClick={() => {
-                    setClicked(!clicked);
-                    setCardclicked({ id: events.id, category: events.category });
-                  }}
-                  backside={events.backside}
-                  fallbackImage={events.fallbackImage}
-                />
-              </div>
-            ))}
-          </div>
-          {showRight && (
-            <button
-              onClick={() => scroll('right', scrollRef2)}
-              className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
-            >
-              <span className="mb-auto">›</span>
-            </button>
+          {displayedEvents.length === 0 && (
+            <div className="w-full text-center py-32 text-red-500/40 font-mono border-2 border-dashed border-red-900/20 rounded-lg mt-10">
+              [ ERROR: DATA NOT FOUND IN ARCHIVE ]
+            </div>
           )}
-        </div>
-        {showRight && (
-          <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
-            →
-          </span>
-        )}
-        <div className="relative text-primary mt-0">
-          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
-            Signature Events
-          </h2>
-          <div
-            className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
-            ref={scrollRef3}
-            onScroll={checkScroll2}
-          >
-            {Workshops.map((workshop, index) => (
-              <div
-                key={`${Selected}-${workshop.id}`}
-                className="flex justify-center mt-8 sm:mt-5 snap-center"
-              >
-                <Eventcard
-                  title={workshop.title}
-                  desc={workshop.description}
-                  index={index}
-                  category="workshop"
-                  date={workshop.date}
-                  time={workshop.time}
-                  id={workshop.id}
-                  onClick={() => {
-                    setClicked(!clicked);
-                    setCardclicked({ id: workshop.id, category: 'workshop' });
-                  }}
-                  backside={workshop.backside}
-                  fallbackImage={workshop.fallbackImage}
-                />
-              </div>
-            ))}
+        </section>
+
+        {/* 3. SIGNATURE WORKSHOPS (Same Grid Structure) */}
+        <section className="relative border-t border-red-900/20 pt-20 mt-24">
+          {/* Section Header */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent px-8 py-2">
+            <h2 className="text-2xl md:text-4xl font-[StrangerThings] text-gray-300 tracking-wide drop-shadow-md">
+              Signature <span className="text-red-700">Events</span>
+            </h2>
           </div>
-          {showWRight && (
-            <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
-              →
-            </span>
-          )}
-        </div>
+
+          <div className="relative group mt-12">
+            {/* Applied the exact same Flexbox Grid structure here 
+                   to ensure 4 columns and centered last row 
+                */}
+            <motion.div layout className="flex flex-wrap justify-center align-center">
+              {workshopList.map((workshop, index) => (
+                <motion.div
+                  key={workshop.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-2"
+                >
+                  <div className="transform hover:-translate-y-2 transition-all duration-300 h-full">
+                    <Eventcard
+                      {...workshop}
+                      index={index}
+                      category="workshop"
+                      onClick={() => openModal(workshop.id, 'workshop')}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
       </div>
-    </>
+
+      {/* --- MODAL --- */}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 overflow-y-auto"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setModalOpen(false);
+                setSelectedCardData({ id: null, category: null });
+              }
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-7xl rounded-xl border border-red-900/30 bg-transparent shadow-[0_0_40px_rgba(0,0,0,0.8)] relative my-auto"
+            >
+              <EventDetails
+                card={activeDetail}
+                itemCategory={selectedCardData.category}
+                onClose={() => setModalOpen(false)}
+                checkPurchase={checkPurchases}
+                addToCart={handleAddToCart}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <style jsx>{`
+        .text-shadow-glow {
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+      `}</style>
+    </div>
   );
 };
+
 export default Events;
