@@ -131,6 +131,7 @@ const Registration = () => {
               clearCart();
               showToast('Payment Successful!', 'success');
               trackEvent('payment_success', { amount: order.amount });
+              setBackendAmount(null);
             }
           } catch (err) {
             showToast('Verification failed. Contact support.', 'error');
