@@ -51,10 +51,7 @@ function Eventcard({
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses =
-    category === 'workshop'
-      ? 'w-[70vw] sm:w-72 aspect-[4/5]' // Larger for workshops
-      : 'w-[70vw] sm:w-72 aspect-[4/5]';
+  const sizeClasses = 'w-[70vw] sm:w-72 h-96';
 
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses}  m-2 sm:m-1`}>
@@ -68,16 +65,18 @@ function Eventcard({
           onClick={onClick}
           className="absolute inset-0 w-full h-full backface-hidden rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
         >
-          <img
-            src={image || fallbackImage}
-            alt={title}
-            className="w-full h-full object-cover mx-auto"
-            onError={(e) => {
-              if (!fallbackImage) return;
-              e.currentTarget.src = fallbackImage;
-              e.currentTarget.onerror = null;
-            }}
-          />
+          <div className="flex-1 min-h-0 w-full">
+            <img
+              src={image || fallbackImage}
+              alt={title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                if (!fallbackImage) return;
+                e.currentTarget.src = fallbackImage;
+                e.currentTarget.onerror = null;
+              }}
+            />
+          </div>
           <div className="flex-shrink-0 w-full">
             <p className="text-primary text-center p-2 mt-1 text-sm font-bold">
               {date} · {time}
