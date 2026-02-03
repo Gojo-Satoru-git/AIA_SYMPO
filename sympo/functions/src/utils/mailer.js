@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendOtpEmail = async (email, otp) => {
     try {
         const info = await resend.emails.send({
-            from: `"Symposium'26" <${process.env.FROM_EMAIL}>`,
+            from: "Tekhora <noreply@tekhora26.live>",
             to: email,
             subject: "Symposium '26 Email Verification",
             html: `
@@ -17,7 +17,6 @@ const sendOtpEmail = async (email, otp) => {
                 </div>
             `,
         });
-        console.log("Email sent:", info);
         return info;
     } catch (error) {
         console.error("Error sending an OTP", error);
