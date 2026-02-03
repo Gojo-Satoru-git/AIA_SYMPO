@@ -1,82 +1,85 @@
-import { TextField, Button, MenuItem, Box, Typography } from "@mui/material";
+import { TextField, Button, MenuItem, Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
-import { registerUser } from "../services/auth.service";
-import { useAuth } from "../context/AuthContext";
-import { searchColleges } from "../services/api"; 
+import {
+  updateProfile,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import { auth } from '../firebase';
+import { registerUser } from '../services/auth.service';
+import { useAuth } from '../context/AuthContext';
+import { searchColleges } from '../services/api';
 
-import useToast from "../context/useToast";
-import Autocomplete from "@mui/material/Autocomplete";
-import CircularProgress from "@mui/material/CircularProgress";
-import debounce from "lodash/debounce";
+import useToast from '../context/useToast';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
+import debounce from 'lodash/debounce';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const menuItemStyle = {
-  color: "#e5e5e5",
-  fontSize: "0.95rem",
+  color: '#e5e5e5',
+  fontSize: '0.95rem',
   fontWeight: 500,
-  padding: "12px 18px",
-  borderRadius: "8px",
-  margin: "4px 6px",
-  "&:hover": {
-    backgroundColor: "rgba(229,9,20,0.15)",
+  padding: '12px 18px',
+  borderRadius: '8px',
+  margin: '4px 6px',
+  '&:hover': {
+    backgroundColor: 'rgba(229,9,20,0.15)',
   },
-  "&.Mui-selected": {
-    backgroundColor: "#e50914",
-    color: "white",
+  '&.Mui-selected': {
+    backgroundColor: '#e50914',
+    color: 'white',
     fontWeight: 600,
   },
 };
 
 const menuPaperStyle = {
-  backgroundColor: "#0b0b0b",
-  borderRadius: "14px",
-  border: "1px solid #2a2a2a",
+  backgroundColor: '#0b0b0b',
+  borderRadius: '14px',
+  border: '1px solid #2a2a2a',
 };
 
 /* ================= INPUT STYLE ================= */
 
 const inputStyle = {
   input: {
-    color: "white",
+    color: 'white',
   },
 
   label: {
-    color: "#b0b0b0",
+    color: '#b0b0b0',
     fontWeight: 500,
   },
 
-  "& label.Mui-focused": {
-    color: "#e50914", // 🔥 red instead of blue
+  '& label.Mui-focused': {
+    color: '#e50914', // 🔥 red instead of blue
   },
 
-  "& label .MuiFormLabel-asterisk": {
-    color: "#e50914", // 🔥 required *
+  '& label .MuiFormLabel-asterisk': {
+    color: '#e50914', // 🔥 required *
   },
 
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#0b0b0b",
-    borderRadius: "12px",
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: '#0b0b0b',
+    borderRadius: '12px',
 
-    "& fieldset": {
-      borderColor: "#444",
+    '& fieldset': {
+      borderColor: '#444',
     },
 
-    "&:hover fieldset": {
-      borderColor: "#e50914",
+    '&:hover fieldset': {
+      borderColor: '#e50914',
     },
 
-    "&.Mui-focused fieldset": {
-      borderColor: "#e50914",
-      boxShadow: "0 0 8px rgba(229,9,20,0.6)",
+    '&.Mui-focused fieldset': {
+      borderColor: '#e50914',
+      boxShadow: '0 0 8px rgba(229,9,20,0.6)',
     },
   },
 };
-
 
 /* ================= COMPONENT ================= */
 
@@ -85,34 +88,58 @@ const AuthForm = ({ mode }) => {
   const { showToast } = useToast();
 
   const { fetchProfile } = useAuth();
-  
-  const [loading, setLoading] = useState(false);
-  const [year, setYear] = useState("");
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [year, setYear] = useState('');
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [emailValue, setEmailValue] = useState('');
+  const [otp, setOtp] = useState('');
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+  const isOtpValid = true;
 
   const [passValid, setPassValid] = useState({
-    upper: false, lower: false, num: false, special: false, length: false
+    upper: false,
+    lower: false,
+    num: false,
+    special: false,
+    length: false,
   });
-  
+
   const [match, setMatch] = useState(false);
 
   const [collegeOptions, setCollegeOptions] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
   const [collegeLoading, setCollegeLoading] = useState(false);
-  const [manualInstitute, setManualInstitute] = useState("");
+  const [manualInstitute, setManualInstitute] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
+  const [canResend, setCanResend] = useState(true);
 
   const collegeCache = useRef({});
-  
+
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else {
+      setCanResend(true);
+    }
+    clearInterval(interval);
+  }, [resendTimer]);
+
   useEffect(() => {
     setPassValid({
       upper: /[A-Z]/.test(password),
       lower: /[a-z]/.test(password),
       num: /[0-9]/.test(password),
       special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-      length: password.length >= 8
+      length: password.length >= 8,
     });
     setMatch(password && confirmPassword && password === confirmPassword);
   }, [password, confirmPassword]);
@@ -131,7 +158,7 @@ const AuthForm = ({ mode }) => {
       collegeCache.current[search] = results;
       setCollegeOptions(results);
     } catch (error) {
-      console.error("College search failed:", error);
+      console.error('College search failed:', error);
     } finally {
       setCollegeLoading(false);
     }
@@ -139,53 +166,59 @@ const AuthForm = ({ mode }) => {
 
   const debouncedFetchColleges = debounce(fetchColleges, 400);
 
+  const handleOtp = async () => {
+    if (!emailValue || !canResend) return;
+    try {
+      showToast(`OTP sent to your mail ${emailValue}`, 'success');
+      setShowOtp(true);
+      setCanResend(false);
+      setResendTimer(30);
+    } catch (err) {
+      showToast('Unable to send OTP try again', 'error');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
 
-    const data = Object.fromEntries(
-      new FormData(e.currentTarget).entries()
-    );
+    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
 
     try {
       setLoading(true);
 
-      if (mode === "signup") {
+      if (mode === 'signup') {
         let finalInstitute;
 
-        if (selectedCollege?.name === "OTHER") {
+        if (selectedCollege?.name === 'OTHER') {
           if (!manualInstitute.trim()) {
-            showToast("Please enter your institute name", "error");
+            showToast('Please enter your institute name', 'error');
             setLoading(false);
             return;
           }
           finalInstitute = manualInstitute.trim();
         } else {
           if (!selectedCollege) {
-            showToast("Please select a valid institute", "error");
+            showToast('Please select a valid institute', 'error');
             setLoading(false);
             return;
           }
           finalInstitute = selectedCollege.name;
         }
 
-        if(!Object.values(passValid).every(Boolean)){
-          showToast("Password does not meet requirements", "error");
-          setLoading(false);
-          return;         
-        }
-
-        if (!match) {
-          showToast("Passwords do not match", "error");
+        if (!Object.values(passValid).every(Boolean)) {
+          showToast('Password does not meet requirements', 'error');
           setLoading(false);
           return;
         }
 
-        const cred = await createUserWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
+        if (!match) {
+          showToast('Passwords do not match', 'error');
+          setLoading(false);
+          return;
+        }
+
+        const cred = await createUserWithEmailAndPassword(auth, data.email, data.password);
 
         await updateProfile(cred.user, {
           displayName: data.name,
@@ -193,7 +226,7 @@ const AuthForm = ({ mode }) => {
 
         const token = await cred.user.getIdToken();
 
-        console.log("REGISTER DATA:", {
+        console.log('REGISTER DATA:', {
           uid: cred.user.uid,
           email: data.email,
           name: data.name,
@@ -202,44 +235,43 @@ const AuthForm = ({ mode }) => {
           year: year,
         });
 
-        await registerUser({
-          uid: cred.user.uid,
-          email: data.email,
-          name: data.name,
-          phone: data.phone,
-          institute: finalInstitute,
-          year: year,
-        }, token);
+        await registerUser(
+          {
+            uid: cred.user.uid,
+            email: data.email,
+            name: data.name,
+            phone: data.phone,
+            institute: finalInstitute,
+            year: year,
+          },
+          token
+        );
 
-        localStorage.setItem("authToken", token);
+        localStorage.setItem('authToken', token);
 
         if (fetchProfile) {
-           await fetchProfile();
+          await fetchProfile();
         } else {
-           console.error("fetchProfile function not found in context");
+          console.error('fetchProfile function not found in context');
         }
 
-        showToast("Account created successfully", "success");
-        navigate("/", { replace: true });
+        showToast('Account created successfully', 'success');
+        navigate('/', { replace: true });
       }
 
-      if (mode === "signin") {
-        const cred = await signInWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
+      if (mode === 'signin') {
+        const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
         const token = await cred.user.getIdToken();
-        localStorage.setItem("authToken", token);
+        localStorage.setItem('authToken', token);
 
         if (fetchProfile) await fetchProfile();
 
-        showToast("Login successful", "success");
-        navigate("/", { replace: true });
+        showToast('Login successful', 'success');
+        navigate('/', { replace: true });
       }
     } catch (err) {
       console.error(err);
-      showToast(err?.response?.data?.message || err.message || "Something went wrong", "error");    
+      showToast(err?.response?.data?.message || err.message || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
@@ -247,17 +279,20 @@ const AuthForm = ({ mode }) => {
 
   const ValidationItem = ({ valid, text }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-      {valid ? 
-        <CheckCircleIcon sx={{ color: '#e50914', fontSize: 16 }} /> : 
+      {valid ? (
+        <CheckCircleIcon sx={{ color: '#e50914', fontSize: 16 }} />
+      ) : (
         <CancelIcon sx={{ color: '#333', fontSize: 16 }} />
-      }
-      <Typography sx={{ 
-        color: valid ? '#ffffff' : '#555', 
-        fontSize: '0.75rem', 
-        letterSpacing: "1px",
-        fontFamily: "StrangerRegular",
-        transition: 'all 0.3s ease' 
-      }}>
+      )}
+      <Typography
+        sx={{
+          color: valid ? '#ffffff' : '#555',
+          fontSize: '0.75rem',
+          letterSpacing: '1px',
+          fontFamily: 'StrangerRegular',
+          transition: 'all 0.3s ease',
+        }}
+      >
         {text}
       </Typography>
     </Box>
@@ -266,7 +301,7 @@ const AuthForm = ({ mode }) => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {/* ================= SIGN UP ================= */}
-      {mode === "signup" && (
+      {mode === 'signup' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* FULL NAME */}
           <div className="grid grid-cols-1 sm:col-span-2">
@@ -278,10 +313,10 @@ const AuthForm = ({ mode }) => {
             <Autocomplete
               options={[
                 ...collegeOptions,
-                {name: "Other (My college not listed)", isOther: true}
+                { name: 'Other (My college not listed)', isOther: true },
               ]}
               getOptionLabel={(option) => {
-                if (!option) return "";
+                if (!option) return '';
                 if (option.isOther) return option.name;
                 return `${option.name} (${option.state})`;
               }}
@@ -291,9 +326,9 @@ const AuthForm = ({ mode }) => {
                 debouncedFetchColleges(value);
               }}
               onChange={(event, value) => {
-                if(value?.isOther){
-                  setSelectedCollege({name:"OTHER"});
-                } else{
+                if (value?.isOther) {
+                  setSelectedCollege({ name: 'OTHER' });
+                } else {
                   setSelectedCollege(value);
                 }
               }}
@@ -317,7 +352,7 @@ const AuthForm = ({ mode }) => {
               )}
             />
 
-            {selectedCollege?.name === "OTHER" && (
+            {selectedCollege?.name === 'OTHER' && (
               <TextField
                 label="Enter Your Institute Name"
                 required
@@ -331,7 +366,7 @@ const AuthForm = ({ mode }) => {
 
           {/* PHONE */}
           <TextField name="phone" label="Phone Number" type="tel" required sx={inputStyle} />
-           
+
           {/* YEAR */}
           <TextField
             select
@@ -342,8 +377,8 @@ const AuthForm = ({ mode }) => {
             onChange={(e) => setYear(e.target.value)}
             sx={{
               ...inputStyle,
-              "& .MuiSelect-select": { color: "white" },
-              "& .MuiSelect-icon": { color: "#e50914" },
+              '& .MuiSelect-select': { color: 'white' },
+              '& .MuiSelect-icon': { color: '#e50914' },
             }}
             SelectProps={{
               MenuProps: {
@@ -353,28 +388,115 @@ const AuthForm = ({ mode }) => {
               },
             }}
           >
-            <MenuItem value="1" sx={menuItemStyle}>1st Year</MenuItem>
-            <MenuItem value="2" sx={menuItemStyle}>2nd Year</MenuItem>
-            <MenuItem value="3" sx={menuItemStyle}>3rd Year</MenuItem>
-            <MenuItem value="4" sx={menuItemStyle}>4th Year</MenuItem>
+            <MenuItem value="1" sx={menuItemStyle}>
+              1st Year
+            </MenuItem>
+            <MenuItem value="2" sx={menuItemStyle}>
+              2nd Year
+            </MenuItem>
+            <MenuItem value="3" sx={menuItemStyle}>
+              3rd Year
+            </MenuItem>
+            <MenuItem value="4" sx={menuItemStyle}>
+              4th Year
+            </MenuItem>
           </TextField>
 
           {/* EMAIL */}
-          <div className="sm:col-span-2">
-            <TextField name="email" label="Email" type="email" required fullWidth sx={inputStyle} />
+          <div className="flex sm:col-span-2 gap-2">
+            <TextField
+              name="email"
+              label="Email"
+              type="email"
+              value={emailValue}
+              onChange={(e) => {
+                setEmailValue(e.target.value);
+              }}
+              required
+              fullWidth
+              sx={inputStyle}
+            />
+            <Button
+              type="button"
+              onClick={handleOtp}
+              disabled={!isEmailValid || !canResend}
+              sx={{
+                mt: 0,
+                py: 1.4,
+                px: 3,
+                backgroundColor: '#e50914',
+                color: 'white',
+                fontWeight: 500,
+                letterSpacing: '0.1em',
+                borderRadius: '999px',
+                boxShadow: `0 0 20px #e50914`,
+                whiteSpace: 'nowrap',
+                '&.Mui-disabled': {
+                  backgroundColor: '#555',
+                  color: '#aaa',
+                },
+                '&:hover': {
+                  backgroundColor: '#ff1a1a',
+                  boxShadow: `0 0 30px #e50914`,
+                  transform: 'scale(1.05)',
+                },
+                transition: 'all 0.25s ease',
+              }}
+            >
+              {!showOtp ? 'Verify email' : canResend ? 'Resend' : `Resend in ${resendTimer}`}
+            </Button>
           </div>
+          {showOtp && (
+            <>
+              <TextField
+                name="otp"
+                label="Enter OTP"
+                required
+                fullWidth
+                sx={inputStyle}
+                autoFocus
+                value={otp}
+                onChange={(e) => {
+                  setOtp(e.target.value);
+                }}
+              />
+              <Button
+                type="button"
+                onClick={() => setShowOtp(true)}
+                disabled={!isOtpValid}
+                sx={{
+                  mt: 0,
+                  py: 1.4,
+                  px: 3,
+                  backgroundColor: '#e50914',
+                  color: 'white',
+                  fontWeight: 500,
+                  letterSpacing: '0.1em',
+                  borderRadius: '999px',
+                  boxShadow: `0 0 20px #e50914`,
+                  whiteSpace: 'nowrap',
+                  '&.Mui-disabled': {
+                    backgroundColor: '#555',
+                    color: '#aaa',
+                  },
+                  '&:hover': {
+                    backgroundColor: '#ff1a1a',
+                    boxShadow: `0 0 30px #e50914`,
+                    transform: 'scale(1.05)',
+                  },
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                Verify OTP
+              </Button>
+            </>
+          )}
         </div>
       )}
 
       {/* ================= SIGN IN ================= */}
-      {mode === "signin" && (
-        <TextField
-          name="email"
-          label="Email"
-          type="email"
-          required
-          sx={inputStyle}
-        />
+      {mode === 'signin' && (
+        <TextField name="email" label="Email" type="email" required sx={inputStyle} />
       )}
 
       {/* PASSWORD */}
@@ -390,20 +512,22 @@ const AuthForm = ({ mode }) => {
       />
 
       {/* PASSWORD STRENGTH INDICATOR (Only on Signup) */}
-      {mode === "signup" && (passwordFocused || password.length > 0) && (
-        <Box sx={{ 
-          p: 2,
-          bgcolor: 'rgba(229,9,20,0.05)',
-          borderRadius: "14px",
-          border: `1px solid rgba(229,9,20,0.4)`,
-          backdropFilter: "blur(6px)",
-          boxShadow: `
+      {mode === 'signup' && (passwordFocused || password.length > 0) && (
+        <Box
+          sx={{
+            p: 2,
+            bgcolor: 'rgba(229,9,20,0.05)',
+            borderRadius: '14px',
+            border: `1px solid rgba(229,9,20,0.4)`,
+            backdropFilter: 'blur(6px)',
+            boxShadow: `
             0 0 20px rgba(229,9,20,0.35),
             inset 0 0 25px rgba(229,9,20,0.2)
           `,
-          transition: "all 0.3s ease",
-          animation: "fadeIn 0.2s ease-in-out"
-        }}>
+            transition: 'all 0.3s ease',
+            animation: 'fadeIn 0.2s ease-in-out',
+          }}
+        >
           <div className="grid grid-cols-2 gap-x-4">
             <ValidationItem valid={passValid.length} text="Min 8 Characters" />
             <ValidationItem valid={passValid.upper} text="1 Uppercase (A-Z)" />
@@ -415,69 +539,71 @@ const AuthForm = ({ mode }) => {
       )}
 
       {/* CONFIRM PASSWORD */}
-      {mode === "signup" && (
+      {mode === 'signup' && (
         <div className="flex flex-col gap-2">
-            <TextField
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                required
-                sx={inputStyle}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-              {/* MATCH INDICATOR */}
-              {confirmPassword && (
-              <Typography sx={{
-                fontSize: "0.8rem",
-                color: match ? "#e50914" : "#555",
-                letterSpacing: "1px",
-                transition: "all 0.3s ease"
-              }}>
-                {match ? "Passwords Match" : "Passwords do not match"}
-              </Typography>
-            )}
+          <TextField
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            required
+            sx={inputStyle}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          {/* MATCH INDICATOR */}
+          {confirmPassword && (
+            <Typography
+              sx={{
+                fontSize: '0.8rem',
+                color: match ? '#e50914' : '#555',
+                letterSpacing: '1px',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              {match ? 'Passwords Match' : 'Passwords do not match'}
+            </Typography>
+          )}
         </div>
       )}
 
       {/* ================= SUBMIT ================= */}
       <Button
-  type="submit"
-  fullWidth
-  disabled={loading || (mode === "signup" && (!match || !Object.values(passValid).every(Boolean)))}
-  sx={{
-    mt: 2,
-    py: 1.4,
-    backgroundColor: "#e50914",
-    color: "white",
-    fontWeight: 700,
-    letterSpacing: "0.2em",
-    borderRadius: "999px",
-    boxShadow: `0 0 20px #e50914`,
-    "&.Mui-disabled": {
-      backgroundColor: "#555",
-      color: "#aaa",
-    },
-    "&:hover": {
-      backgroundColor: "#ff1a1a",
-      boxShadow: `0 0 30px #e50914`,
-      transform: "scale(1.03)",
-    },
-    transition: "all 0.25s ease",
-  }}
->
-    { loading ? (
-      <span className="flex items-center justify-center gap-2">
-        <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-        PROCESSING...
-      </span>
-    ) : mode === "signin" ? (
-      "SIGN IN"
-    ) : (
-      "CREATE ACCOUNT"
-    )}
-
-</Button>
-
+        type="submit"
+        fullWidth
+        disabled={
+          loading || (mode === 'signup' && (!match || !Object.values(passValid).every(Boolean)))
+        }
+        sx={{
+          mt: 2,
+          py: 1.4,
+          backgroundColor: '#e50914',
+          color: 'white',
+          fontWeight: 700,
+          letterSpacing: '0.2em',
+          borderRadius: '999px',
+          boxShadow: `0 0 20px #e50914`,
+          '&.Mui-disabled': {
+            backgroundColor: '#555',
+            color: '#aaa',
+          },
+          '&:hover': {
+            backgroundColor: '#ff1a1a',
+            boxShadow: `0 0 30px #e50914`,
+            transform: 'scale(1.03)',
+          },
+          transition: 'all 0.25s ease',
+        }}
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+            PROCESSING...
+          </span>
+        ) : mode === 'signin' ? (
+          'SIGN IN'
+        ) : (
+          'CREATE ACCOUNT'
+        )}
+      </Button>
     </form>
   );
 };
