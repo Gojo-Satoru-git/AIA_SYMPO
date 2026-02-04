@@ -22,6 +22,7 @@ const ScanPage = () => {
           setError("Invalid QR Code");
         }
       } catch (err) {
+        console.error(err);
         setError(err.response?.data?.message || "QR validation failed");
       } finally {
         setLoading(false);
@@ -79,8 +80,8 @@ const ScanPage = () => {
     );
   }
 
-  const pendingItems = data.items.filter(i => !i.used);
-
+  const items = data?.items || [];
+  const pendingItems = items.filter(i => !i.used);
 
   return (
     <div className="min-h-screen bg-black text-white flex justify-center items-center p-4">
@@ -88,13 +89,16 @@ const ScanPage = () => {
         <h2 className="text-xl font-bold text-green-400 mb-4 text-center">Ticket Valid</h2>
         
         <div className="space-y-2 text-sm text-gray-300 mb-6">
-          <p>User: <span className="text-white">{data.email || "N/A"}</span></p>
-          <p>Order: <span className="text-white">{data.orderId}</span></p>
+          <p>User: <span className="text-white font-semibold">
+              {data?.userName && data.userName !== "Guest" ? data.userName : (data?.email || "N/A")}
+            </span>
+          </p>
+          <p>Order: <span className="text-white">{data?.orderId}</span></p>
         </div>
 
         <div className="space-y-3">
           <h3 className="font-semibold text-white border-b border-gray-700 pb-2">Events in Ticket</h3>
-          {data.items.map((item, idx) => (
+          {items.map((item, idx) => (
             <div key={idx} className="flex justify-between items-center bg-black/50 p-3 rounded">
               <span>{item.title}</span>
               {item.used ? (
