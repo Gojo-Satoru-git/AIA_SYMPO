@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
   const fetchProfile = async () => {
     try {
       const res = await api.get("/auth/profile");
-      setRole(res.data.role);
+      const userRole = res.data.data?.role || res.data.role || "PARTICIPANT"; 
+      setRole(userRole);
       return res.data;
     } catch (err) {
       console.warn("Manual profile fetch failed:", err);
@@ -32,13 +33,15 @@ export const AuthProvider = ({ children }) => {
 
         try {
           const res = await api.get("/auth/profile");
-          setRole(res.data.role);
+          const userRole = res.data.data?.role || res.data.role || "PARTICIPANT";
+          setRole(userRole);
         } catch (err) {
           if (err.response && err.response.status === 404) {
             console.log("User not found in DB yet (Signup in progress)");
           } else {
             console.error("Auth Profile Error:", err);
           }
+          setRole("PARTICIPANT");
         }
       } else {
         setCurrentUser(null);
