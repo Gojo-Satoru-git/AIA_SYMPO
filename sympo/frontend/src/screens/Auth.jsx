@@ -57,7 +57,7 @@ const Auth = ({ mode: initialMode }) => {
             sx={{
               color: '#e50914',
               fontWeight: 800,
-              letterSpacing: '0.35em',
+              letterSpacing: '0.25em',
               textTransform: 'uppercase',
               fontSize: {
                 xs: '1.3rem', // mobile
@@ -68,7 +68,7 @@ const Auth = ({ mode: initialMode }) => {
             }}
             className="text-center"
           >
-            SYMPOSIUM'26
+            TEKHORA'26
           </Typography>
 
           {/* TITLE */}
@@ -77,7 +77,7 @@ const Auth = ({ mode: initialMode }) => {
               color: '#e50914',
               textAlign: 'center',
               fontWeight: 700,
-              letterSpacing: '0.3em',
+              letterSpacing: '0.2em',
               mb: 3,
               fontSize: {
                 xs: '1.1rem',

@@ -40,7 +40,7 @@ const menuPaperStyle = {
   backgroundColor: '#0b0b0b',
   borderRadius: '14px',
   border: '1px solid #2a2a2a',
-  boxShadow: '0 10px 30px rgba(0,0,0,0.6)'
+  boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
 };
 
 /* ================= INPUT STYLE ================= */
@@ -120,6 +120,8 @@ const AuthForm = ({ mode }) => {
   const [manualInstitute, setManualInstitute] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
 
   const collegeCache = useRef({});
 
@@ -132,7 +134,7 @@ const AuthForm = ({ mode }) => {
     } else {
       setCanResend(true);
     }
-    clearInterval(interval);
+    return () => clearInterval(interval);
   }, [resendTimer]);
 
   useEffect(() => {
@@ -171,7 +173,7 @@ const AuthForm = ({ mode }) => {
   const handleOtp = async () => {
     if (!emailValue || !canResend) return;
 
-    setLoading(true);
+    setIsSendingOtp(true);
 
     try {
       await sendOtpApi(emailValue);
@@ -179,31 +181,33 @@ const AuthForm = ({ mode }) => {
       showToast(`OTP sent to your mail ${emailValue}`, 'success');
       setShowOtp(true);
       setCanResend(false);
-      setResendTimer(30);
+      setResendTimer(60);
     } catch (error) {
       console.error(error);
-      const msg = error.response?.data?.message || "Unable to send OTP";
+      const msg = error.response?.data?.message || 'Unable to send OTP';
       showToast(msg, 'error');
     } finally {
-      setLoading(false);
+      setIsSendingOtp(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-    if(!otp) return;
-
+    if (!otp) return;
+    setVerifyingOtp(true);
     try {
       await verifyOtpApi(emailValue, otp);
 
       setIsEmailVerified(true);
       setShowOtp(false);
-      showToast("Email verified successfully!", "success");
+      showToast('Email verified successfully!', 'success');
     } catch (error) {
       console.error(error);
-      const msg = err.response?.data?.message || 'Invalid OTP';
+      const msg = error.response?.data?.message || 'Invalid OTP';
       showToast(msg, 'error');
+    } finally {
+      setVerifyingOtp(false);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -246,9 +250,9 @@ const AuthForm = ({ mode }) => {
         }
 
         if (!isEmailVerified) {
-            showToast('Please verify your email first', 'error');
-            setLoading(false);
-            return;
+          showToast('Please verify your email first', 'error');
+          setLoading(false);
+          return;
         }
 
         const cred = await createUserWithEmailAndPassword(auth, emailValue, data.password);
@@ -442,79 +446,47 @@ const AuthForm = ({ mode }) => {
               label="Email"
               type="email"
               value={emailValue}
-              onChange={(e) => {
-                setEmailValue(e.target.value);
-              }}
+              onChange={(e) => setEmailValue(e.target.value)}
               required
               fullWidth
-              disabled={isEmailVerified}
+              disabled={isEmailVerified} // Keep it visible but locked
               sx={inputStyle}
             />
 
             {isEmailVerified ? (
-              <Button 
-               disabled
-               sx={{
-                ...inputStyle,
-                backgroundColor: '#2e7d32',
-                boxShadow: '0 0 14px rgba(46,125,50,0.6)',
-                '&:hover': {
-                  backgroundColor: '#2e7d32',
-                  transform: 'none',
-                },
-               }}
-              > Verified
+              <Button
+                disabled
+                sx={{
+                  mt: 0,
+                  py: 1.4,
+                  px: 3,
+                  backgroundColor: '#2e7d32 !important', // Solid Success Green
+                  color: 'white !important',
+                  fontWeight: 500,
+                  letterSpacing: '0.1em',
+                  borderRadius: '999px',
+                  boxShadow: `0 0 20px #e50914`,
+                  whiteSpace: 'nowrap',
+                  '&.Mui-disabled': {
+                    backgroundColor: '#555',
+                    color: '#aaa',
+                  },
+                  '&:hover': {
+                    backgroundColor: '#ff1a1a',
+                    boxShadow: `0 0 30px #e50914`,
+                    transform: 'scale(1.05)',
+                  },
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                {' '}
+                Verified
               </Button>
             ) : (
-            <Button
-              type="button"
-              onClick={handleOtp}
-              disabled={!isEmailValid || !canResend || loading}
-              sx={{
-                mt: 0,
-                py: 1.4,
-                px: 3,
-                backgroundColor: '#e50914',
-                color: 'white',
-                fontWeight: 500,
-                letterSpacing: '0.1em',
-                borderRadius: '999px',
-                boxShadow: `0 0 20px #e50914`,
-                whiteSpace: 'nowrap',
-                '&.Mui-disabled': {
-                  backgroundColor: '#555',
-                  color: '#aaa',
-                },
-                '&:hover': {
-                  backgroundColor: '#ff1a1a',
-                  boxShadow: `0 0 30px #e50914`,
-                  transform: 'scale(1.05)',
-                },
-                transition: 'all 0.25s ease',
-              }}
-            >
-              {!showOtp ? 'Verify email' : canResend ? 'Resend' : `Resend in ${resendTimer}`}
-            </Button>
-            )}
-          </div>
-          {showOtp && !isEmailVerified && (
-            <>
-              <TextField
-                name="otp"
-                label="Enter OTP"
-                required
-                fullWidth
-                sx={inputStyle}
-                autoFocus
-                value={otp}
-                onChange={(e) => {
-                  setOtp(e.target.value);
-                }}
-              />
               <Button
                 type="button"
-                onClick={handleVerifyOtp}
-                disabled={otp.length < 6}
+                onClick={handleOtp}
+                disabled={!isEmailValid || !canResend || isSendingOtp}
                 sx={{
                   mt: 0,
                   py: 1.4,
@@ -538,9 +510,62 @@ const AuthForm = ({ mode }) => {
                   transition: 'all 0.25s ease',
                 }}
               >
-                Verify OTP
+                {isSendingOtp
+                  ? 'Sending...'
+                  : !showOtp
+                    ? 'Verify email'
+                    : canResend
+                      ? 'Resend'
+                      : `Resend in ${resendTimer}s`}
               </Button>
-            </>
+            )}
+          </div>
+          {showOtp && !isEmailVerified && (
+            <div className="flex sm:col-span-2 gap-3 items-end">
+              <TextField
+                name="otp"
+                label="Enter OTP"
+                required
+                fullWidth
+                sx={{ ...inputStyle, minWidth: 0 }}
+                autoFocus
+                value={otp}
+                onChange={(e) => {
+                  setOtp(e.target.value);
+                }}
+              />
+              <Button
+                type="button"
+                onClick={handleVerifyOtp}
+                disabled={otp.length < 6 || verifyingOtp}
+                sx={{
+                  mt: 0,
+                  py: 1.4,
+                  px: 1,
+                  backgroundColor: '#e50914',
+                  color: 'white',
+                  fontWeight: 500,
+                  letterSpacing: '0.1em',
+                  borderRadius: '999px',
+                  boxShadow: `0 0 20px #e50914`,
+                  whiteSpace: 'nowrap',
+                  '&.Mui-disabled': {
+                    backgroundColor: '#555',
+                    color: '#aaa',
+                  },
+                  '&:hover': {
+                    backgroundColor: '#ff1a1a',
+                    boxShadow: `0 0 30px #e50914`,
+                    transform: 'scale(1.05)',
+                  },
+                  transition: 'all 0.25s ease',
+                  minWidth: '140px', // Keeps "Verify OTP" on one line
+                  flexShrink: 0,
+                }}
+              >
+                {verifyingOtp ? 'Checking...' : 'Verify OTP'}
+              </Button>
+            </div>
           )}
         </div>
       )}
@@ -621,7 +646,9 @@ const AuthForm = ({ mode }) => {
         type="submit"
         fullWidth
         disabled={
-          loading || (mode === 'signup' && (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified ))
+          loading ||
+          (mode === 'signup' &&
+            (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified))
         }
         sx={{
           mt: 2,
