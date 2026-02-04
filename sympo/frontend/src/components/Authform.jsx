@@ -9,7 +9,7 @@ import {
 import { auth } from '../firebase';
 import { registerUser } from '../services/auth.service';
 import { useAuth } from '../context/AuthContext';
-import { searchColleges } from '../services/api';
+import { searchColleges, sendOtpApi, verifyOtpApi } from '../services/api';
 
 import useToast from '../context/useToast';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -40,6 +40,7 @@ const menuPaperStyle = {
   backgroundColor: '#0b0b0b',
   borderRadius: '14px',
   border: '1px solid #2a2a2a',
+  boxShadow: '0 10px 30px rgba(0,0,0,0.6)'
 };
 
 /* ================= INPUT STYLE ================= */
@@ -98,6 +99,7 @@ const AuthForm = ({ mode }) => {
   const [showOtp, setShowOtp] = useState(false);
   const [emailValue, setEmailValue] = useState('');
   const [otp, setOtp] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
   const isOtpValid = true;
@@ -168,15 +170,40 @@ const AuthForm = ({ mode }) => {
 
   const handleOtp = async () => {
     if (!emailValue || !canResend) return;
+
+    setLoading(true);
+
     try {
+      await sendOtpApi(emailValue);
+
       showToast(`OTP sent to your mail ${emailValue}`, 'success');
       setShowOtp(true);
       setCanResend(false);
       setResendTimer(30);
-    } catch (err) {
-      showToast('Unable to send OTP try again', 'error');
+    } catch (error) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Unable to send OTP";
+      showToast(msg, 'error');
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleVerifyOtp = async () => {
+    if(!otp) return;
+
+    try {
+      await verifyOtpApi(emailValue, otp);
+
+      setIsEmailVerified(true);
+      setShowOtp(false);
+      showToast("Email verified successfully!", "success");
+    } catch (error) {
+      console.error(error);
+      const msg = err.response?.data?.message || 'Invalid OTP';
+      showToast(msg, 'error');
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -218,7 +245,13 @@ const AuthForm = ({ mode }) => {
           return;
         }
 
-        const cred = await createUserWithEmailAndPassword(auth, data.email, data.password);
+        if (!isEmailVerified) {
+            showToast('Please verify your email first', 'error');
+            setLoading(false);
+            return;
+        }
+
+        const cred = await createUserWithEmailAndPassword(auth, emailValue, data.password);
 
         await updateProfile(cred.user, {
           displayName: data.name,
@@ -238,7 +271,7 @@ const AuthForm = ({ mode }) => {
         await registerUser(
           {
             uid: cred.user.uid,
-            email: data.email,
+            email: emailValue,
             name: data.name,
             phone: data.phone,
             institute: finalInstitute,
@@ -299,7 +332,7 @@ const AuthForm = ({ mode }) => {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {/* ================= SIGN UP ================= */}
       {mode === 'signup' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -403,7 +436,7 @@ const AuthForm = ({ mode }) => {
           </TextField>
 
           {/* EMAIL */}
-          <div className="flex sm:col-span-2 gap-2">
+          <div className="flex sm:col-span-2 gap-3 items-end">
             <TextField
               name="email"
               label="Email"
@@ -414,12 +447,29 @@ const AuthForm = ({ mode }) => {
               }}
               required
               fullWidth
+              disabled={isEmailVerified}
               sx={inputStyle}
             />
+
+            {isEmailVerified ? (
+              <Button 
+               disabled
+               sx={{
+                ...inputStyle,
+                backgroundColor: '#2e7d32',
+                boxShadow: '0 0 14px rgba(46,125,50,0.6)',
+                '&:hover': {
+                  backgroundColor: '#2e7d32',
+                  transform: 'none',
+                },
+               }}
+              > Verified
+              </Button>
+            ) : (
             <Button
               type="button"
               onClick={handleOtp}
-              disabled={!isEmailValid || !canResend}
+              disabled={!isEmailValid || !canResend || loading}
               sx={{
                 mt: 0,
                 py: 1.4,
@@ -445,8 +495,9 @@ const AuthForm = ({ mode }) => {
             >
               {!showOtp ? 'Verify email' : canResend ? 'Resend' : `Resend in ${resendTimer}`}
             </Button>
+            )}
           </div>
-          {showOtp && (
+          {showOtp && !isEmailVerified && (
             <>
               <TextField
                 name="otp"
@@ -462,8 +513,8 @@ const AuthForm = ({ mode }) => {
               />
               <Button
                 type="button"
-                onClick={() => setShowOtp(true)}
-                disabled={!isOtpValid}
+                onClick={handleVerifyOtp}
+                disabled={otp.length < 6}
                 sx={{
                   mt: 0,
                   py: 1.4,
@@ -570,7 +621,7 @@ const AuthForm = ({ mode }) => {
         type="submit"
         fullWidth
         disabled={
-          loading || (mode === 'signup' && (!match || !Object.values(passValid).every(Boolean)))
+          loading || (mode === 'signup' && (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified ))
         }
         sx={{
           mt: 2,
