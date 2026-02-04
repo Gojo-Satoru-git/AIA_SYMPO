@@ -1,12 +1,35 @@
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, MenuItem } from '@mui/material';
 import useToast from '../context/useToast';
 import { useEffect, useState } from 'react';
 
-function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}) {
-
+function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll }) {
   const { showToast } = useToast();
 
   const [savedData, setSavedData] = useState({});
+  const [domain, setDomain] = useState('');
+
+  const menuPaperStyle = {
+    backgroundColor: '#0b0b0b',
+    borderRadius: '14px',
+    border: '1px solid #2a2a2a',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.6)',
+  };
+  const menuItemStyle = {
+    color: '#e5e5e5',
+    fontSize: '0.95rem',
+    fontWeight: 500,
+    padding: '12px 18px',
+    borderRadius: '8px',
+    margin: '4px 6px',
+    '&:hover': {
+      backgroundColor: 'rgba(229,9,20,0.15)',
+    },
+    '&.Mui-selected': {
+      backgroundColor: '#e50914',
+      color: 'white',
+      fontWeight: 600,
+    },
+  };
 
   useEffect(() => {
     const data = localStorage.getItem(`${title}-teamData`);
@@ -47,15 +70,13 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
     return null;
   };
 
-
-
   const inputStyle = {
     label: {
       color: '#b0b0b0',
       fontWeight: 500,
     },
     '& .MuiInputBase-input': {
-      color:  'white',
+      color: 'white',
     },
 
     '& label.Mui-focused': {
@@ -63,7 +84,7 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
     },
 
     '& label .MuiFormLabel-asterisk': {
-      color: '#e50914', 
+      color: '#e50914',
     },
 
     '& .MuiOutlinedInput-root': {
@@ -107,26 +128,48 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
           showToast('Team details submitted successfully!', 'success');
           setShowAdd(false);
         }}
-
         className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
-          Problem statement
+          Problem domain
         </h1>
         <TextField
-          name="problem_statement"
-          label="Explain your problem"
-          multiline
-          type="text"
-          rows={4}
-          required
+          select
+          name="Domain"
+          label="Problem domain"
           fullWidth
-          sx={inputStyle}
-          defaultValue={savedData.problem_statement || ""}
-          InputProps={{
-              readOnly: isDisabledAll,
-            }}
-        />
+          required
+          value={domain}
+          onChange={(e) => setDomain(e.target.value)}
+          sx={{
+            ...inputStyle,
+            '& .MuiSelect-select': { color: 'white' },
+            '& .MuiSelect-icon': { color: '#e50914' },
+          }}
+          SelectProps={{
+            MenuProps: {
+              PaperProps: {
+                sx: menuPaperStyle,
+              },
+            },
+          }}
+        >
+          <MenuItem value="1" sx={menuItemStyle}>
+            Generative AI
+          </MenuItem>
+          <MenuItem value="2" sx={menuItemStyle}>
+            Healthcare Technology
+          </MenuItem>
+          <MenuItem value="3" sx={menuItemStyle}>
+            FinTech
+          </MenuItem>
+          <MenuItem value="4" sx={menuItemStyle}>
+            Agriculture
+          </MenuItem>
+          <MenuItem value="5" sx={menuItemStyle}>
+            Logistics
+          </MenuItem>
+        </TextField>
 
         <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
           Team details
@@ -146,7 +189,7 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
                   required={index < mini}
                   fullWidth // Ensures it fills the grid cell
                   sx={inputStyle}
-                  defaultValue={savedData[`member_${index}_name`] || ""}
+                  defaultValue={savedData[`member_${index}_name`] || ''}
                   InputProps={{
                     readOnly: isDisabledAll,
                   }}
@@ -158,7 +201,7 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
                   required={index < mini}
                   fullWidth
                   sx={inputStyle}
-                  defaultValue={savedData[`member_${index}_phone`] || ""}
+                  defaultValue={savedData[`member_${index}_phone`] || ''}
                   InputProps={{
                     readOnly: isDisabledAll,
                   }}
@@ -171,15 +214,15 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
                   required={index < mini}
                   fullWidth
                   sx={inputStyle}
-                  defaultValue={savedData[`member_${index}_email`] || ""}
-                  dInputProps={{
+                  defaultValue={savedData[`member_${index}_email`] || ''}
+                  InputProps={{
                     readOnly: isDisabledAll,
                   }}
                 />
               </div>
             </div>
           ))}
-           {(isDisabledAll)? null:
+          {isDisabledAll ? null : (
             <Button
               type="submit"
               name="Submit"
@@ -206,7 +249,7 @@ function TeamForm({ title , onclose, teamSize, mini, setShowAdd , isDisabledAll}
             >
               Submit
             </Button>
-          }
+          )}
         </div>
       </form>
     </>
