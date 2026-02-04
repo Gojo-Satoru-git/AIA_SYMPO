@@ -440,7 +440,7 @@ const AuthForm = ({ mode }) => {
           </TextField>
 
           {/* EMAIL */}
-          <div className="flex sm:col-span-2 gap-3 items-end">
+          <div className="flex sm:col-span-2 gap-2 items-center">
             <TextField
               name="email"
               label="Email"
@@ -449,7 +449,7 @@ const AuthForm = ({ mode }) => {
               onChange={(e) => setEmailValue(e.target.value)}
               required
               fullWidth
-              disabled={isEmailVerified} // Keep it visible but locked
+              disabled={isEmailVerified}
               sx={inputStyle}
             />
 
@@ -457,30 +457,18 @@ const AuthForm = ({ mode }) => {
               <Button
                 disabled
                 sx={{
-                  mt: 0,
-                  py: 1.4,
-                  px: 3,
-                  backgroundColor: '#2e7d32 !important', // Solid Success Green
-                  color: 'white !important',
-                  fontWeight: 500,
-                  letterSpacing: '0.1em',
-                  borderRadius: '999px',
-                  boxShadow: `0 0 20px #e50914`,
-                  whiteSpace: 'nowrap',
+                  mb: 0.5,
+                  minWidth: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  color: '#e50914 !important',
+                  opacity: 1,
                   '&.Mui-disabled': {
-                    backgroundColor: '#555',
-                    color: '#aaa',
+                    color: 'white',
                   },
-                  '&:hover': {
-                    backgroundColor: '#ff1a1a',
-                    boxShadow: `0 0 30px #e50914`,
-                    transform: 'scale(1.05)',
-                  },
-                  transition: 'all 0.25s ease',
                 }}
               >
-                {' '}
-                Verified
+                <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
               </Button>
             ) : (
               <Button
@@ -489,8 +477,9 @@ const AuthForm = ({ mode }) => {
                 disabled={!isEmailValid || !canResend || isSendingOtp}
                 sx={{
                   mt: 0,
-                  py: 1.4,
-                  px: 3,
+                  py: 1.5,
+                  px: 1,
+                  fontSize: '0.75rem',
                   backgroundColor: '#e50914',
                   color: 'white',
                   fontWeight: 500,
@@ -508,6 +497,7 @@ const AuthForm = ({ mode }) => {
                     transform: 'scale(1.05)',
                   },
                   transition: 'all 0.25s ease',
+                  flexShrink: 0,
                 }}
               >
                 {isSendingOtp
@@ -521,7 +511,7 @@ const AuthForm = ({ mode }) => {
             )}
           </div>
           {showOtp && !isEmailVerified && (
-            <div className="flex sm:col-span-2 gap-3 items-end">
+            <div className="flex sm:col-span-2 gap-3 items-center">
               <TextField
                 name="otp"
                 label="Enter OTP"
@@ -540,8 +530,9 @@ const AuthForm = ({ mode }) => {
                 disabled={otp.length < 6 || verifyingOtp}
                 sx={{
                   mt: 0,
-                  py: 1.4,
+                  py: 1.5,
                   px: 1,
+                  fontSize: '0.75rem',
                   backgroundColor: '#e50914',
                   color: 'white',
                   fontWeight: 500,
@@ -559,7 +550,6 @@ const AuthForm = ({ mode }) => {
                     transform: 'scale(1.05)',
                   },
                   transition: 'all 0.25s ease',
-                  minWidth: '140px', // Keeps "Verify OTP" on one line
                   flexShrink: 0,
                 }}
               >
