@@ -57,7 +57,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   }, [card]);
   return (
     <>
-      {showForm && (card.id === '12' || card.id === '13') ? (
+      {showForm && (card.id === '17' || card.id === '16') ? (
         <TeamForm
           title={card.title}
           teamSize={card.teamSize}
@@ -147,7 +147,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
               >
                 {buttonText}
               </button>
-              {card.id === '12' || card.id === '13' ? (
+              {card.id === '16' || card.id === '17' ? (
                 <button
                   className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
                   onClick={() => {

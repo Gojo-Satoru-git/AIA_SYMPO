@@ -130,46 +130,67 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
         }}
         className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
-          Problem domain
-        </h1>
-        <TextField
-          select
-          name="Domain"
-          label="Problem domain"
-          fullWidth
-          required
-          value={domain}
-          onChange={(e) => setDomain(e.target.value)}
-          sx={{
-            ...inputStyle,
-            '& .MuiSelect-select': { color: 'white' },
-            '& .MuiSelect-icon': { color: '#e50914' },
-          }}
-          SelectProps={{
-            MenuProps: {
-              PaperProps: {
-                sx: menuPaperStyle,
-              },
-            },
-          }}
-        >
-          <MenuItem value="1" sx={menuItemStyle}>
-            Generative AI
-          </MenuItem>
-          <MenuItem value="2" sx={menuItemStyle}>
-            Healthcare Technology
-          </MenuItem>
-          <MenuItem value="3" sx={menuItemStyle}>
-            FinTech
-          </MenuItem>
-          <MenuItem value="4" sx={menuItemStyle}>
-            Agriculture
-          </MenuItem>
-          <MenuItem value="5" sx={menuItemStyle}>
-            Logistics
-          </MenuItem>
-        </TextField>
+        {title === 'Hackathon' && (
+          <>
+            <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
+              Problem domain
+            </h1>
+            <TextField
+              select
+              name="Domain"
+              label="Problem domain"
+              fullWidth
+              required
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              sx={{
+                ...inputStyle,
+                '& .MuiSelect-select': { color: 'white' },
+                '& .MuiSelect-icon': { color: '#e50914' },
+              }}
+              SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    sx: menuPaperStyle,
+                  },
+                },
+              }}
+            >
+              <MenuItem value="1" sx={menuItemStyle}>
+                Generative AI
+              </MenuItem>
+              <MenuItem value="2" sx={menuItemStyle}>
+                Healthcare Technology
+              </MenuItem>
+              <MenuItem value="3" sx={menuItemStyle}>
+                FinTech
+              </MenuItem>
+              <MenuItem value="4" sx={menuItemStyle}>
+                Agriculture
+              </MenuItem>
+              <MenuItem value="5" sx={menuItemStyle}>
+                Logistics
+              </MenuItem>
+            </TextField>
+            <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
+              Problem statement
+            </h1>
+            <TextField
+              name="problem_statement"
+              label="Explain your problem"
+              multiline
+              type="text"
+              rows={4}
+              required
+              fullWidth
+              sx={inputStyle}
+              defaultValue={savedData.problem_statement || ''}
+              InputProps={{
+                readOnly: isDisabledAll,
+              }}
+            />
+          </>
+        )}
 
         <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
           Team details
@@ -187,7 +208,7 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
                   label="Name"
                   type="text"
                   required={index < mini}
-                  fullWidth // Ensures it fills the grid cell
+                  fullWidth
                   sx={inputStyle}
                   defaultValue={savedData[`member_${index}_name`] || ''}
                   InputProps={{
