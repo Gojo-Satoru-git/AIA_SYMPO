@@ -5,9 +5,12 @@ import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
 import useCart from '../context/useCart';
+import { Signeventscontext } from '../context/SEvents.context';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
+  const scrollRef4 = useRef(null);
+
   const [Selected, SetSelected] = useState('All');
   const { addToCart } = useCart();
   const { checkPurchases } = usePurchases();
@@ -15,7 +18,10 @@ const Events = () => {
   const [clicked, setClicked] = useState(false);
   const [showLeft, setshowLeft] = useState(false);
   const [showRight, setshowRight] = useState(false);
-  const [showWRight, setshowWRight] = useState(true);
+  const [showWLeft, setshowWLeft] = useState(false);
+  const [showWRight, setshowWRight] = useState(false);
+  const [showSELeft, setshowSELeft] = useState(false);
+  const [showSERight, setshowSERight] = useState(false);
   const [cardclicked, setCardclicked] = useState({
     id: null,
     category: null,
@@ -32,6 +38,7 @@ const Events = () => {
   };
   const eventext = useContext(eventcontext);
   const Workshops = useContext(workshopcontext);
+  const SEvents = useContext(Signeventscontext);
 
   let detail;
 
@@ -46,36 +53,19 @@ const Events = () => {
     };
   }, [clicked]);
 
-  useEffect(() => {
-    if (scrollRef2.current) {
-      scrollRef2.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
-  }, [Selected]);
-
-  const checkScroll = () => {
-    const el = scrollRef2.current;
+  const checkScroll = (ref, setLeft, setRight) => {
+    const el = ref.current;
     if (!el) return;
     const { scrollLeft, clientWidth, scrollWidth } = el;
-    if (scrollLeft > 0) {
-      setshowLeft(true);
-    } else if (scrollLeft == 0) {
-      setshowLeft(false);
+    if (scrollLeft > 20) {
+      setLeft(true);
+    } else {
+      setLeft(false);
     }
     if (scrollLeft + clientWidth >= scrollWidth - 20) {
-      setshowRight(false);
+      setRight(false);
     } else {
-      setshowRight(true);
-    }
-  };
-
-  const checkScroll2 = () => {
-    const el = scrollRef3.current;
-    if (!el) return;
-    const { scrollLeft, clientWidth, scrollWidth } = el;
-    if (scrollLeft + clientWidth >= scrollWidth - 20) {
-      setshowWRight(false);
-    } else {
-      setshowWRight(true);
+      setRight(true);
     }
   };
   const handleCart = (item, type) => {
@@ -90,15 +80,34 @@ const Events = () => {
     console.log(cartItem);
     addToCart(cartItem);
   };
+
   useEffect(() => {
-    const timer = setTimeout(() => checkScroll2(), 50);
-    return () => clearTimeout(timer);
+    if (scrollRef3.current) {
+      scrollRef3.current.scroll({ left: 0, behavior: 'smooth' });
+      const timer = setTimeout(() => {
+        checkScroll(scrollRef3, setshowSELeft, setshowSERight);
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, [SEvents]);
+
+  useEffect(() => {
+    if (scrollRef4.current) {
+      scrollRef4.current.scroll({ left: 0, behavior: 'smooth' });
+      const timer = setTimeout(() => {
+        checkScroll(scrollRef2, setshowLeft, setshowRight);
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
   }, [Workshops]);
+
   useEffect(() => {
     if (scrollRef2.current) {
       scrollRef2.current.scroll({ left: 0, behavior: 'smooth' });
       const timer = setTimeout(() => {
-        checkScroll();
+        checkScroll(scrollRef2, setshowLeft, setshowRight);
       }, 50);
 
       return () => clearTimeout(timer);
@@ -164,7 +173,7 @@ const Events = () => {
           {showLeft && (
             <button
               onClick={() => scroll('left', scrollRef2)}
-              className="hidden md:block absolute mb-auto -left-2 lg:-left-5 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
+              className=" absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
             >
               <span className="mb-auto">‹</span>
             </button>
@@ -172,7 +181,7 @@ const Events = () => {
 
           <div
             ref={scrollRef2}
-            onScroll={checkScroll}
+            onScroll={() => checkScroll(scrollRef2, setshowLeft, setshowRight)}
             className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
           >
             {display.map((events, index) => (
@@ -199,55 +208,114 @@ const Events = () => {
           {showRight && (
             <button
               onClick={() => scroll('right', scrollRef2)}
-              className="hidden md:block absolute mb-auto -right-2  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+              className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
             >
               <span className="mb-auto">›</span>
             </button>
           )}
         </div>
-        {showRight && (
-          <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
-            →
-          </span>
-        )}
+
         <div className="relative text-primary mt-0">
-          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5">
+          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5 mb-4">
             Signature Events
           </h2>
-          <div
-            className="flex flex-nowrap justify- sm:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
-            ref={scrollRef3}
-            onScroll={checkScroll2}
-          >
-            {Workshops.map((workshop, index) => (
-              <div
-                key={`${Selected}-${workshop.id}`}
-                className="flex justify-center mt-8 sm:mt-5 snap-center"
+          <div className="relative w-full max-w-8xl flex  items-center group">
+            {showSELeft && (
+              <button
+                onClick={() => scroll('left', scrollRef3)}
+                className="absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform"
               >
-                <Eventcard
-                  title={workshop.title}
-                  desc={workshop.description}
-                  image={workshop.image}
-                  index={index}
-                  category="workshop"
-                  date={workshop.date}
-                  time={workshop.time}
-                  id={workshop.id}
-                  onClick={() => {
-                    setClicked(!clicked);
-                    setCardclicked({ id: workshop.id, category: 'workshop' });
-                  }}
-                  backside={workshop.backside}
-                  fallbackImage={workshop.fallbackImage}
-                />
-              </div>
-            ))}
+                <span className="mb-auto">‹</span>
+              </button>
+            )}
+            <div
+              className="flex flex-nowrap md:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x px-4 w-full"
+              ref={scrollRef3}
+              onScroll={() => {
+                checkScroll(scrollRef3, setshowSELeft, setshowSERight);
+              }}
+            >
+              {SEvents.map((event, index) => (
+                <div key={`${Selected}-${event.id}`} className="flex-shrink-0 snap-center">
+                  <Eventcard
+                    title={event.title}
+                    desc={event.description}
+                    image={event.image}
+                    index={index}
+                    category="workshop"
+                    date={event.date}
+                    time={event.time}
+                    id={event.id}
+                    onClick={() => {
+                      setClicked(!clicked);
+                      setCardclicked({ id: event.id, category: 'workshop' });
+                    }}
+                    backside={event.backside}
+                    fallbackImage={event.fallbackImage}
+                  />
+                </div>
+              ))}
+            </div>
+            {showSERight && (
+              <button
+                onClick={() => scroll('right', scrollRef3)}
+                className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+              >
+                <span className="mb-auto">›</span>
+              </button>
+            )}
           </div>
-          {showWRight && (
-            <span className="  lg:hidden text-red-600 text-2xl animate-bounce flex justify-end">
-              →
-            </span>
-          )}
+        </div>
+        <div className="relative text-primary mt-0">
+          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5  mb-4">
+            Workshops
+          </h2>
+          <div className="relative w-full max-w-8xl flex  items-center group">
+            {showWLeft && (
+              <button
+                onClick={() => scroll('left', scrollRef4)}
+                className="absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform"
+              >
+                <span className="mb-auto">‹</span>
+              </button>
+            )}
+            <div
+              className="flex flex-nowrap justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x px-4"
+              ref={scrollRef4}
+              onScroll={() => {
+                checkScroll(scrollRef4, setshowWLeft, setshowWRight);
+              }}
+            >
+              {Workshops.map((workshop, index) => (
+                <div key={`${Selected}-${workshop.id}`} className="flex-shrink-0 snap-center">
+                  <Eventcard
+                    title={workshop.title}
+                    desc={workshop.description}
+                    image={workshop.image}
+                    index={index}
+                    category="workshop"
+                    date={workshop.date}
+                    time={workshop.time}
+                    id={workshop.id}
+                    onClick={() => {
+                      setClicked(!clicked);
+                      setCardclicked({ id: workshop.id, category: 'workshop' });
+                    }}
+                    backside={workshop.backside}
+                    fallbackImage={workshop.fallbackImage}
+                  />
+                </div>
+              ))}
+            </div>
+            {showWRight && (
+              <button
+                onClick={() => scroll('right', scrollRef4)}
+                className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+              >
+                <span className="mb-auto">›</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>

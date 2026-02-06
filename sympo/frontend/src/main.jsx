@@ -12,6 +12,7 @@ import CartProvider from './context/cart.provider';
 import { PurchaseProvider } from './context/PurchaseContext';
 import { SeatAvalProvider } from './context/SeatAvalProvider.jsx';
 import WorkshoProvider from './context/WorkshopProvider.jsx';
+import SignEventProvider from './context/SEventsProvider.jsx';
 import Eventprovider from './context/Eventprovider.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -20,13 +21,15 @@ createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <Eventprovider>
             <WorkshoProvider>
-              <CartProvider>
-                <PurchaseProvider>
-                  <SeatAvalProvider>
-                    <App />
-                  </SeatAvalProvider>
-                </PurchaseProvider>
-              </CartProvider>
+              <SignEventProvider>
+                <CartProvider>
+                  <PurchaseProvider>
+                    <SeatAvalProvider>
+                      <App />
+                    </SeatAvalProvider>
+                  </PurchaseProvider>
+                </CartProvider>
+              </SignEventProvider>
             </WorkshoProvider>
           </Eventprovider>
         </AuthProvider>
