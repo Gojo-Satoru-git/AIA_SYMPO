@@ -115,10 +115,13 @@ const Events = () => {
   }, [Selected]);
 
   if (cardclicked !== null) {
-    detail =
-      cardclicked.category === 'workshop'
-        ? Workshops.find((w) => w.id === cardclicked.id)
-        : eventext.find((e) => e.id === cardclicked.id);
+    if (cardclicked.category === 'workshop') {
+      detail = Workshops.find((w) => w.id === cardclicked.id);
+    } else if (cardclicked.category === 'Signature Events') {
+      detail = SEvents.find((e) => e.id === cardclicked.id);
+    } else {
+      detail = eventext.find((e) => e.id === cardclicked.id);
+    }
   }
   const display =
     Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
@@ -242,13 +245,13 @@ const Events = () => {
                     desc={event.description}
                     image={event.image}
                     index={index}
-                    category="workshop"
+                    category="Signature Events"
                     date={event.date}
                     time={event.time}
                     id={event.id}
                     onClick={() => {
                       setClicked(!clicked);
-                      setCardclicked({ id: event.id, category: 'workshop' });
+                      setCardclicked({ id: event.id, category: 'Signature Events' });
                     }}
                     backside={event.backside}
                     fallbackImage={event.fallbackImage}

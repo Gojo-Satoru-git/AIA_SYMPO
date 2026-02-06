@@ -3,32 +3,33 @@ import TeamForm from './teamForm';
 import useCart from '../context/useCart';
 import { useEffect, useRef, useState } from 'react';
 
-function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory }) {
+function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const { showToast } = useToast();
   const { checkCart } = useCart();
   const [showArrow, SetshowArrow] = useState(false);
-  const [showAdd, setShowAdd] = useState(card.id === '12' || card.id === '13');
+  const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17');
   const { isEventCoveredByPass } = useCart();
+
+  console.log(card);
 
   const [showForm, SetshowForm] = useState(false);
 
   const isPurchased = checkPurchase(card);
   const isInCart = checkCart(card);
 
-  let buttonText = "Add";
-  let buttonClass = "bg-primary text-black";
+  let buttonText = 'Add';
+  let buttonClass = 'bg-primary text-black';
   let isDisabled = false;
 
   if (isPurchased) {
-    buttonText = "Purchased";
-    buttonClass = "bg-black-600 text-white cursor-not-allowed";
+    buttonText = 'Purchased';
+    buttonClass = 'bg-black-600 text-white cursor-not-allowed';
     isDisabled = true;
   } else if (isInCart) {
-    buttonText = "In Cart";
-    buttonClass = "bg-orange-500 text-black cursor-not-allowed";
+    buttonText = 'In Cart';
+    buttonClass = 'bg-orange-500 text-black cursor-not-allowed';
     isDisabled = true;
   }
-
 
   const scrollRef = useRef(null);
   const checkoverflow = () => {
@@ -131,12 +132,12 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
                   if (isEventCoveredByPass(card.id)) {
                     showToast('Already included in the pass');
                     return;
-                  }
-                  else if ((card.id === '12' || card.id === '13' ) && localStorage.getItem(`${card.title}-teamData`) === null) {
-
+                  } else if (
+                    (card.id === '12' || card.id === '13') &&
+                    localStorage.getItem(`${card.title}-teamData`) === null
+                  ) {
                     showToast('Please add team details first', 'info');
-                  }
-                  else if (!checkCart(card)) {
+                  } else if (!checkCart(card)) {
                     addToCart(card, card.category);
                     showToast(`${card.title} added check the registration`, 'success');
                   } else {
@@ -153,7 +154,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart, itemCategory })
                     SetshowForm(true);
                   }}
                 >
-                  {isPurchased ? "View Team" : 'Add Team Details'}
+                  {isPurchased ? 'View Team' : 'Add Team Details'}
                 </button>
               ) : null}
             </div>
