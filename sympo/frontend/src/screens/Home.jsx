@@ -16,7 +16,7 @@ const Home = () => {
 
   
   useEffect(() => {
-    const timer = setTimeout(() => setShowLine(true), 2000);
+    const timer = setTimeout(() => setShowLine(true), 1000);
     return () => clearTimeout(timer);
   }, []);
  
@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     if (showLine) {
-      const timer = setTimeout(() => setStartTyping(true), 2000);
+      const timer = setTimeout(() => setStartTyping(true), 1000);
       return () => clearTimeout(timer);
     }
   }, [showLine]);
@@ -35,7 +35,7 @@ const Home = () => {
       const timer = setTimeout(() => {
         setTypedText(prev => prev + dateText[charIndex]);
         setCharIndex(prev => prev + 1);
-      }, 100);
+      }, 20);
       return () => clearTimeout(timer);
     }
   }, [startTyping, charIndex]);
@@ -171,7 +171,7 @@ const Home = () => {
         Intercollegiate tech symposium, hosted by MIT's Department of Artificial Intelligence and Data Science.
       </p>
 
-      {/* Month */}
+      
 <p
   className={`
     mt-8 text-center text-red-600
@@ -184,7 +184,6 @@ const Home = () => {
   February
 </p>
 
-{/* Dates */}
 <p
   className={`
     mt-1 text-center text-white 
