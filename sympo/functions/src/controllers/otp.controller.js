@@ -1,4 +1,4 @@
-import { generateOtp, storeOtp, verifyStoredOtp, canResendOtp, isEmailRegistered } from '../service/otp.service.js';
+import { generateOtp, storeOtp, verifyStoredOtp, canResendOtp, isEmailRegistered, checkEmailVerified } from '../service/otp.service.js';
 import { sendOtpEmail } from '../utils/mailer.js';
 
 const sendOtp = async (req, res) => {
@@ -24,11 +24,18 @@ const sendOtp = async (req, res) => {
         const otp = generateOtp();
 
         await storeOtp(email, otp);
-        await sendOtpEmail(email, otp);
-
-        res.json({message: "OTP sent successfully"});
+        try {
+            await sendOtpEmail(email, otp);
+            res.json({message: "OTP sent successfully"});
+        } catch (emailError) {
+            console.error("Email Service Failed:", emailError);
+            return res.status(424).json({ 
+                message: "Email service limit reached. Switching to backup verification." 
+            });
+        }
     } catch (error) {
-        res.status(500).json({message: error.message});
+        console.error("OTP Controller Error:", error);
+        res.status(500).json({message: error.message || "Internal Server Error"});
     }
 };
 
@@ -42,8 +49,14 @@ const verifyOtp = async (req, res) => {
 
         res.json({message: "Email verified successfully"});
     } catch (error) {
-        const status = error.message.includes("expired") || error.message.includes("Invalid") ? 400 : 500;
-        res.status(status).json({ message: error.message });
+        const msg = error.message;
+        if (msg === "OTP expired" || msg === "Invalid OTP" || msg === "OTP not found") {
+            return res.status(400).json({ message: msg });
+        }
+        if (msg === "Too many attempts") {
+            return res.status(429).json({ message: msg });
+        }
+        res.status(500).json({ message: "Verification failed" });
     }
 }
 

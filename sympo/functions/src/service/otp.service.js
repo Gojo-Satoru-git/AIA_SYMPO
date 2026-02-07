@@ -79,6 +79,8 @@ const canResendOtp = async (email) => {
     const cooldown = parseInt(process.env.OTP_RESEND_COOLDOWN_SECONDS || "60");
 
     const data = doc.data();
+
+    if (!data.createdAt) return false;
     return Date.now() - data.createdAt.toMillis() > cooldown * 1000;
 }
 

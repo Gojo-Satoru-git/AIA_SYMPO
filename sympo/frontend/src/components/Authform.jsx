@@ -137,6 +137,7 @@ const AuthForm = ({ mode }) => {
   useEffect(() => {
     let interval;
     if (resendTimer > 0) {
+      setCanResend(false);
       interval = setInterval(() => {
         setResendTimer((prev) => prev - 1);
       }, 1000);
@@ -188,31 +189,33 @@ const AuthForm = ({ mode }) => {
       const response = await sendOtpApi(emailValue);
 
       if (response.isVerified) {
-          setIsEmailVerified(true);
-          setShowOtp(false);
-          showToast('Email verified (Found in records)', 'success');
-          setBackupMode(false);
-          setIsSendingOtp(false);
-          return;
+        setIsEmailVerified(true);
+        setShowOtp(false);
+        showToast('Email verified (Found in records)', 'success');
+        setBackupMode(false);
+        return;
       }
 
       showToast(`OTP sent to your mail ${emailValue}`, 'success');
       setShowOtp(true);
-      setCanResend(false);
       setResendTimer(60);
       setBackupMode(false);
     }catch (error) {
       console.error("OTP Request Failed:", error);
 
+      const status = error.response?.status;
       const errorMessage = error.response?.data?.message || "";
 
       if (errorMessage.toLowerCase().includes("already registered")) {
-        showToast(errorMessage, "error"); 
-      } else {
+        showToast(errorMessage, "error");
+      } 
+      else if (status === 424 || status === 503 || status === 429 || status >= 500) {
         setBackupMode(true);
         setShowOtp(false);
-        showToast('OTP Service busy. We will verify your email via link AFTER signup.', 'info');
-      }  
+        showToast('Daily Email Limit Reached. Switched to Link Verification.', 'info');
+      } else {
+        showToast(errorMessage, 'error');
+      }
     }finally {
       setIsSendingOtp(false);
     }
@@ -225,7 +228,7 @@ const AuthForm = ({ mode }) => {
       await verifyOtpApi(emailValue, otp); 
       setIsEmailVerified(true); 
       setShowOtp(false); 
-      showToast('Email verified!', 'success'); 
+      showToast('Email verified successfully!', 'success'); 
     } 
     catch (e) { 
       showToast(e.response?.data?.message || 'Invalid OTP', 'error'); 
