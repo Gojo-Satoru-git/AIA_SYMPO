@@ -16,6 +16,7 @@ import ResetPassword from './screens/ResetPassword';
 
 import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
+import Scanner from './screens/Scanner';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -75,6 +76,15 @@ const App = () => {
           {/* Reset Password Route */}
           <Route path="/auth-action" element={<ResetPassword />} />
           {/* QR Routes */}
+          <Route
+            path="/qr-scanner"
+            element={
+              <AdminRoute>
+                <Scanner />
+              </AdminRoute>
+            }
+          />
+
           <Route
             path="/scan/:token"
             element={
