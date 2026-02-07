@@ -10,13 +10,12 @@ import Footer from './components/footer';
 import NavMenubar from './components/NavMenuBar';
 import Auth from './screens/Auth';
 import AppShell from './components/AppShell';
-import Eventprovider from './context/Eventprovider';
-import WorkshoProvider from './context/WorkshopProvider';
 import ResetPassword from './screens/ResetPassword';
 
 import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
 import Scanner from './screens/Scanner';
+import MaintenancePage from './screens/Maintenance';
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -68,7 +67,7 @@ const App = () => {
         <Routes>
           {/* Scroll-based landing page */}
           <Route path="/" element={<MainPage />} />
-
+          <Route path="/maintenance" element={<MaintenancePage />} />
           {/* Auth pages */}
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />

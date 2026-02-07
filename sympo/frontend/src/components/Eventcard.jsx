@@ -68,7 +68,7 @@ function Eventcard({
           <div className="flex-1 min-h-0 w-full">
             <img
               src={image || fallbackImage}
-              alt={title}
+              alt={`AIA SYMPO TEKHORA26 ${title.toUpperCase()}`}
               className="w-full h-full object-cover"
               onError={(e) => {
                 if (!fallbackImage) return;

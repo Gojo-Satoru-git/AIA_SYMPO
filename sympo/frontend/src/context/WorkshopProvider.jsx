@@ -5,6 +5,7 @@ function WorkshoProvider({ children }) {
   const OtherEvents = [
     {
       title: 'Workshop1',
+      alt: 'AIA SYMPO TEKHORA26 WORKSHOP 1',
       id: '10',
       image: '/workshop1.png',
       backside: './assets/Henry.webp',
@@ -25,6 +26,7 @@ function WorkshoProvider({ children }) {
     },
     {
       title: 'Workshop2',
+      alt : 'AIA SYMPO TEKHORA26 WORKSHOP 2',
       id: '11',
       image: '/workshop2.png',
       backside: './assets/jonathan.webp',
@@ -45,6 +47,7 @@ function WorkshoProvider({ children }) {
     },
     {
       title: 'Workshop3',
+      alt : 'AIA SYMPO TEKHORA26 WORKSHOP 3',
       id: '12',
       image: '/workshop1.png',
       backside: './assets/Henry.webp',
@@ -65,6 +68,7 @@ function WorkshoProvider({ children }) {
     },
     {
       title: 'Workshop4',
+      alt : 'AIA SYMPO TEKHORA26 WORKSHOP 4',
       id: '13',
       image: '/workshop1.png',
       backside: './assets/Henry.webp',
@@ -85,6 +89,7 @@ function WorkshoProvider({ children }) {
     },
     {
       title: 'Workshop5',
+      alt : 'AIA SYMPO TEKHORA26 WORKSHOP 5',
       id: '14',
       image: '/workshop1.png',
       backside: './assets/Henry.webp',
@@ -105,6 +110,7 @@ function WorkshoProvider({ children }) {
     },
     {
       title: 'Workshop6',
+      alt : 'AIA SYMPO TEKHORA26 WORKSHOP 6',
       id: '15',
       image: '/workshop1.png',
       backside: './assets/Henry.webp',
