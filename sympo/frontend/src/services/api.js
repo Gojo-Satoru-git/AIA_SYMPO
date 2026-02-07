@@ -84,7 +84,7 @@ export const searchColleges = async (search) => {
 };
 
 export const sendOtpApi = async (email) => {
-  const response = await api.post("/otp/send--oombu", { email });
+  const response = await api.post("/otp/send", { email });
   return response.data;
 }
 
