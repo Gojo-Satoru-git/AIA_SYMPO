@@ -31,7 +31,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
 
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
-  const checkoverflow = useCallback(()  => {
+  const checkoverflow = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
 
@@ -144,30 +144,32 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 </div>
               </div>
               <div className="flex items-center gap-8">
-                <button
-                  disabled={isDisabled}
-                  className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
-                  onClick={() => {
-                    console.log(isEventCoveredByPass(card.id));
-                    if (isEventCoveredByPass(card.id)) {
-                      showToast('Already included in the pass');
-                      return;
-                    } else if (
-                      (card.id === '12' || card.id === '13') &&
-                      localStorage.getItem(`${card.title}-teamData`) === null
-                    ) {
-                      showToast('Please add team details first', 'info');
-                    } else if (!checkCart(card)) {
-                      addToCart(card, card.category);
-                      showToast(`${card.title} added check the registration`, 'success');
-                    } else {
-                      showToast(`${card.title} is already in your cart`, 'info');
-                    }
-                  }}
-                >
-                  {buttonText}
-                </button>
-                {card.id === '16' || card.id === '17' ? (
+                {card.id >= 10 && (
+                  <button
+                    disabled={isDisabled}
+                    className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
+                    onClick={() => {
+                      console.log(isEventCoveredByPass(card.id));
+                      if (isEventCoveredByPass(card.id)) {
+                        showToast('Already included in the pass');
+                        return;
+                      } else if (
+                        (card.id === '16' || card.id === '17' || card.id == '18') &&
+                        localStorage.getItem(`${card.title}-teamData`) === null
+                      ) {
+                        showToast('Please add team details first', 'info');
+                      } else if (!checkCart(card)) {
+                        addToCart(card, card.category);
+                        showToast(`${card.title} added check the registration`, 'success');
+                      } else {
+                        showToast(`${card.title} is already in your cart`, 'info');
+                      }
+                    }}
+                  >
+                    {buttonText}
+                  </button>
+                )}
+                {card.id === '16' || card.id === '17' || card.id == '18' ? (
                   <button
                     className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
                     onClick={() => {
