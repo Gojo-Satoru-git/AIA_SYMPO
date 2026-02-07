@@ -30,6 +30,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   }
 
   const scrollRef = useRef(null);
+  const bottomRef = useRef(null);
   const checkoverflow = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -48,22 +49,27 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
     });
   }, []);
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    // Initial check
-    checkoverflow();
-
-    // 3. Use passive: true to tell the browser this listener won't cancel the scroll
-    // This significantly boosts desktop performance.
-    window.addEventListener('resize', checkoverflow);
-    el.addEventListener('scroll', checkoverflow, { passive: true });
-
-    return () => {
-      window.removeEventListener('resize', checkoverflow);
-      el.removeEventListener('scroll', checkoverflow);
+    // 1. Check if the content is actually long enough to scroll
+    const checkInitialScroll = () => {
+      if (scrollRef.current) {
+        SetshowArrow(scrollRef.current.scrollHeight > scrollRef.current.clientHeight);
+      }
     };
-  }, [card, checkoverflow]);
+
+    // 2. Observer to detect when user reaches the bottom
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // If the bottom sentinel is visible, hide arrow
+        SetshowArrow(!entry.isIntersecting);
+      },
+      { root: scrollRef.current, threshold: 0.1 }
+    );
+
+    if (bottomRef.current) observer.observe(bottomRef.current);
+    checkInitialScroll();
+
+    return () => observer.disconnect();
+  }, [card]);
   return (
     <>
       {showForm && (card.id === '17' || card.id === '16') ? (
@@ -88,7 +94,8 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
 
           <div
             ref={scrollRef}
-            className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] will-change-scroll transform-gpu isolation-auto"
+            style={{ backfaceVisibility: 'hidden' }}
           >
             <img
               src={card.image}
@@ -175,6 +182,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                   <li key={index}>{rule}</li>
                 ))}
               </ul>
+              <div ref={bottomRef} className="h-1 w-full" />
             </div>
 
             {showArrow && (
