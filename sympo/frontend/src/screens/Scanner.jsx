@@ -1,27 +1,30 @@
 import { useState } from 'react';
-import QrScanner from "react-qr-barcode-scanner";
+import { Scanner } from '@yudiel/react-qr-scanner';
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography, Box } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const Scanner = () => {
+const ScannerPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [scanned, setScanned] = useState(false);
 
-  const handleScan = (data) => {
-    if (data) {
-      const scannedText = data?.text || data;
+  const handleScan = (results) => {
+    if (results && results.length > 0 && !scanned) {
+      const rawValue = results[0].rawValue;
       
-      if (scannedText) {
+      if (rawValue) {
+        setScanned(true);
         try {
-           const parts = scannedText.split('/');
+           const parts = rawValue.split('/');
            const token = parts[parts.length - 1];
            
            if(token) {
-               navigate(`/scan/${token}`);
+               setTimeout(() => navigate(`/scan/${token}`), 200);
            }
         } catch (e) {
             setError("Invalid QR Code format");
+            setScanned(false);
         }
       }
     }
@@ -56,15 +59,23 @@ const Scanner = () => {
             overflow: 'hidden',
             position: 'relative',
             bgcolor: '#000',
-            aspectRatio: '1/1'
+            aspectRatio: '1/1',
+            boxShadow: '0 0 20px rgba(229, 9, 20, 0.2)'
         }}>
-            <QrScanner
-                delay={300}
-                onError={handleError}
+            {/* FIXED SCANNER COMPONENT */}
+            <Scanner
                 onScan={handleScan}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={handleError}
+                components={{
+                    audio: false, 
+                    finder: false
+                }}
                 constraints={{
-                    video: { facingMode: 'environment' } // Uses back camera on mobile
+                    facingMode: 'environment'
+                }}
+                styles={{
+                    container: { width: '100%', height: '100%' },
+                    video: { objectFit: 'cover' }
                 }}
             />
             
@@ -72,7 +83,7 @@ const Scanner = () => {
         </Box>
 
         {error && (
-            <Typography sx={{ color: 'red', mt: 2, textAlign: 'center' }}>
+            <Typography sx={{ color: '#ff4444', mt: 3, textAlign: 'center', background: 'rgba(255,0,0,0.1)', p: 1, borderRadius: 1 }}>
                 {error}
             </Typography>
         )}
@@ -81,4 +92,4 @@ const Scanner = () => {
   );
 };
 
-export default Scanner;
+export default ScannerPage;
