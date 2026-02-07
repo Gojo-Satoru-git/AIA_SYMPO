@@ -183,7 +183,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
             <button
               onClick={() => navigate('/qr-scanner')}
               className="
-                flex items-center justify-center gap-2 
+                flex items-center justify-center
                 px-4 py-2 
                 bg-primary 
                 text-white   
