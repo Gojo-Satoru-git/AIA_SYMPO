@@ -15,12 +15,18 @@ const PassPosterCard = ({ pass, selected, disabled = false, onToggle }) => {
         ${selected ? 'ring-2 ring-primary scale-[1.02]' : ''}
       `}
     >
-      {/* IMAGE */}
-      <img
-        src={pass.image}
-        alt={pass.title}
-        className="w-full h-[420px] object-cover"
-      />
+      {/* IMAGE WRAPPER — controls aspect ratio */}
+      <div className="w-full  bg-black">
+        <img
+          src={pass.image}
+          alt={pass.title}
+          className="
+            w-full h-full
+            object-cover
+            object-center
+          "
+        />
+      </div>
 
       {/* OWNED BADGE */}
       {disabled && (
@@ -57,7 +63,7 @@ const PassPosterCard = ({ pass, selected, disabled = false, onToggle }) => {
           <p className="text-primary text-sm">Rs. {pass.price}</p>
         </div>
 
-        {/* TOGGLE (VISUAL ONLY WHEN DISABLED) */}
+        {/* TOGGLE */}
         <div
           className={`
             w-11 h-6 rounded-full

@@ -1,24 +1,30 @@
-import useToast from '../context/useToast';
-import Toast from './Toast';
-import BackgroundEffect from './Bgeffect';
+import useToast from "../context/useToast";
+import Toast from "./Toast";
+import BackgroundEffect from "./Bgeffect";
 
 const AppShell = ({ children }) => {
-  const { toast } = useToast();
+  const { toasts, removeToast } = useToast();
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
+      
       {/* Background */}
       <BackgroundEffect />
 
       {/* App content */}
       <div className="relative z-10">{children}</div>
 
-      {/* Toast overlay */}
-      {toast && (
-        <div className="fixed top-4 right-4 z-50">
-          <Toast message={toast.message} type={toast.type} />
-        </div>
-      )}
+      {/* Toast Stack */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-3">
+        {toasts.slice(0, 2).map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

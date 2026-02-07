@@ -27,6 +27,11 @@ html, body {
   overscroll-behavior: none;
 }
 
+.will-cursor {
+  cursor: url('/cursors/will.ani'), 
+          url('/cursors/will.cur'),
+          auto;
+}
 
 .perspective {
   perspective: 1000px;
