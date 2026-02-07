@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOtpEmail = async (email, otp) => {
     try {
-        const { data, error }= await rsend.emails.send({
+        const { data, error }= await resend.emails.send({
             from: "Tekhora <noreply@tekhora26.live>",
             to: email,
             subject: "Symposium '26 Email Verification",

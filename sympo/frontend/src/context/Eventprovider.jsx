@@ -8,12 +8,21 @@ function Eventprovider({ children }) {
       id: '6',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/ipl_auction.webp?alt=media&token=35d881d0-8af5-410f-8904-e3907d53d5bb',
       backside: './assets/Hopper.webp',
-      description: 'This is event B',
+     description: `IPL Auction is a team-based strategic quiz and auction event inspired by the Indian Premier League auctions.
+Participants must answer quiz questions to qualify for the next round and then use the given budget wisely in a live player auction.
+Success depends on cricket knowledge, smart bidding, team balance, and strategy under pressure.`,
       category: 'Non-Technical',
       teamSize: '6',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+      rules: [
+    'Each team must consist of 2 participants',
+    'Use of mobile phones or internet is strictly prohibited',
+    'Any malpractice leads to immediate disqualification',
+    'Judges and coordinators’ decisions are final',
+    'Teams must report 5 minutes before the scheduled time',
+    'Rules may be modified by organizers if required'
+  ],
       fees: 50,
       contact: {
         name1: 'Abinash',
@@ -28,12 +37,19 @@ function Eventprovider({ children }) {
       id: '3',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/call_of_query.webp?alt=media&token=0208b6a6-a17b-45b5-b805-2f1b924afb15',
       backside: './assets/Eleven.webp',
-      description: 'This is event 3',
+      description: `Think fast, query smart! This event tests your proficiency in DBMS concepts including SQL, transaction management,
+and relational logic through multiple challenging rounds.`,
       teamSize: '4',
       category: 'Technical',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+       rules: [
+    'Only registered teams are allowed',
+    'Up to 2 members per team in the first round',
+    'Final round is individual participation',
+    'Prelims consist of objective questions',
+    'Finals include advanced and descriptive questions'
+  ],
       fees: 60,
       contact: {
         name1: 'Surya',
@@ -49,11 +65,18 @@ function Eventprovider({ children }) {
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/connexions.webp?alt=media&token=6511287b-6f91-4931-acb5-d3aaaf928afe',
       backside: './assets/steve.webp',
       teamSize: '6',
-      description: 'This is event C',
+       description: `Participants are given sets of images and must identify a hidden connection or common theme linking them together.`,
       category: 'Non-Technical',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+      rules: [
+    'Only registered teams are allowed',
+    'The competition has Prelims and Finals',
+    'Each round contains image-based questions',
+    'Answers must be submitted within the time limit',
+    'Finals consist of 5 segments including tie-breaker',
+    'Host decision is final'
+  ],
       fees: 50,
       contact: {
         name1: 'Itikash',
@@ -68,12 +91,20 @@ function Eventprovider({ children }) {
       id: '1',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/tos.webp?alt=media&token=0278cd22-331f-49a2-b762-25c7a28d7175',
       backside: './assets/Mike.webp',
-      description: 'This is event 1',
+       description: `A mind sport where strategy matters more than coding. Participants submit a game plan which competes in an
+organizer-designed game testing logic, creativity, and adaptability.`,
       category: 'Technical',
       date: '2026-02-21',
       teamSize: '3',
       time: '10:00 AM',
-      rules: 'Rules',
+       rules: [
+    'Participants do not code',
+    'Organizers execute the strategies',
+    'No fixed rules – creativity is encouraged',
+    'Internet usage is allowed',
+    'Strategies may exploit loopholes',
+    'Outcome depends entirely on strategic thinking'
+  ],
       fees: 60,
       contact: {
         name1: 'Chandru',
@@ -89,11 +120,17 @@ function Eventprovider({ children }) {
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/treasure_hunt.webp?alt=media&token=f96788da-66df-4d17-b387-16ad8aaf3225',
       backside: './assets/will.webp',
       teamSize: '7',
-      description: 'This is event C',
+      description: `A thrilling clue-based hunt across the college campus involving puzzles, twists, and QR challenges.`,
       category: 'Non-Technical',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+      rules: [
+    'Event duration is 1.5 hours per slot',
+    'Teams must solve clues sequentially',
+    'Mobile phones are allowed for QR scanning',
+    'Do not tamper with clues',
+    'Fastest team to finish wins'
+  ],
       fees: 50,
       contact: {
         name1: 'Jhanavi',
@@ -108,12 +145,18 @@ function Eventprovider({ children }) {
       id: '4',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/ninja_coding.webp?alt=media&token=4a712ea2-965f-4283-9948-3def7732ddfe',
       backside: './assets/Dustin.webp',
-      description: 'This is event 3',
+      description: `A competitive coding event testing aptitude, problem-solving skills, and programming ability.`,
       teamSize: '4',
       category: 'Technical',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+       rules: [
+    'On-spot registration is available',
+    'Up to 2 members per team',
+    'Prelims contain objective questions',
+    'Finals consist of competitive coding challenges'
+  ],
+
       fees: 60,
       contact: {
         name1: 'Mekesh',
@@ -128,12 +171,19 @@ function Eventprovider({ children }) {
       id: '5',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/adzap.webp?alt=media&token=6bb6ec19-4fa6-4103-bf62-aa7bd89a08a0',
       backside: './assets/Max.webp',
-      description: 'This is event A',
+      description: `Teams create creative and humorous advertisements for imaginary or bizarre products within a limited time.`,
       category: 'Non-Technical',
       teamSize: '5',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+      rules: [
+    'Teams must have 2 to 3 participants',
+    'Topics are given on the spot',
+    'Judging based on creativity, humor, and presentation',
+    'No offensive content allowed',
+    'Time limit violations lead to penalties',
+    'Judges’ decisions are final'
+  ],
       fees: 50,
       contact: {
         name1: 'Sudhahar',
@@ -148,12 +198,17 @@ function Eventprovider({ children }) {
       id: '2',
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/coding_with_ai.webp?alt=media&token=f028c37d-c8ad-43c4-b411-baf0c6bc9104',
       backside: './assets/vecna.webp',
-      description: 'This is event 2',
+       description: `Coding with AI is a two-round competition that tests AI knowledge, coding skills, and machine learning abilities. Participants solve logic questions and build ML models using datasets. Winners are decided based on ML performance.`,
       category: 'Technical',
       teamSize: '4',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+        rules: [
+    'Maximum 2 members per team',
+    'Only qualified teams move to Round 2',
+    'AI tools may be used for guidance and code generation',
+    'Final winners decided purely on Round 2 performance'
+  ],
       fees: 60,
       contact: {
         name1: 'SriLakshmi',
@@ -169,11 +224,17 @@ function Eventprovider({ children }) {
       image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/fandom_quiz.webp?alt=media&token=407abbd8-f32b-43ce-8533-374a937cf20c',
       backside: './assets/Nancy.webp',
       teamSize: '6',
-      description: 'This is event C',
+       description: `A quiz event covering movies, anime, TV shows, and pop culture to test true fandom knowledge.`,
       category: 'Non-Technical',
       date: '2026-02-21',
       time: '10:00 AM',
-      rules: 'Rules',
+      rules: [
+    'Only registered teams may participate',
+    'Prelims will be disclosed on the spot',
+    'Finals include three quiz segments',
+    'Points and buzzers handled by quizmasters',
+    'Quizmaster’s decision is final'
+  ],
       fees: 50,
       contact: {
         name1: 'Pragadheeshwaran',

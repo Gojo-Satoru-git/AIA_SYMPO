@@ -11,7 +11,6 @@ import { usePurchases } from '../context/PurchaseContext';
 import api from '../services/api';
 import PassSuggestionModal from '../components/PassSuggestionModal';
 
-
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
   const { showToast } = useToast();
@@ -29,12 +28,15 @@ const Registration = () => {
   const [showPassPopup, setShowPassPopup] = useState(false);
   const [passSuggestion, setPassSuggestion] = useState(null);
 
+<<<<<<< HEAD
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [totalOldAmount, setTotalOldAmount] = useState(null);
 
 
 
+=======
+>>>>>>> 6ee5a02f09b428ee244e6d433d45f17c11094f94
   const selectedPass = cart.find((item) => item.type == 'pass');
 
   useEffect(() => {
@@ -95,93 +97,91 @@ const Registration = () => {
   };
 
   const analyzeCart = (cart) => {
-  let techCount = 0;
-  let nonTechCount = 0;
-  let techAmount = 0;
-  let nonTechAmount = 0;
-  let activePass = null;
+    let techCount = 0;
+    let nonTechCount = 0;
+    let techAmount = 0;
+    let nonTechAmount = 0;
+    let activePass = null;
 
-  cart.forEach(item => {
-    if (item.type === 'pass') {
-      activePass = item.id;
-      return;
-    }
+    cart.forEach((item) => {
+      if (item.type === 'pass') {
+        activePass = item.id;
+        return;
+      }
 
-    if (passes[0].includes.includes(item.id)) {
-      techCount++;
-      techAmount += item.price;
-    }
+      if (passes[0].includes.includes(item.id)) {
+        techCount++;
+        techAmount += item.price;
+      }
 
-    if (passes[2].includes.includes(item.id)) {
-      nonTechCount++;
-      nonTechAmount += item.price;
-    }
-  });
+      if (passes[2].includes.includes(item.id)) {
+        nonTechCount++;
+        nonTechAmount += item.price;
+      }
+    });
 
-  return { techCount, nonTechCount, techAmount, nonTechAmount, activePass };
-};
-
+    return { techCount, nonTechCount, techAmount, nonTechAmount, activePass };
+  };
 
   const getRecommendation = (data) => {
-  const { techCount, nonTechCount, techAmount, nonTechAmount, activePass } = data;
+    const { techCount, nonTechCount, techAmount, nonTechAmount, activePass } = data;
 
-  // 🔒 If user already purchased a pass → no recommendation
-  if (passes.some(p => checkPassPurchases(p))) return null;
+    // 🔒 If user already purchased a pass → no recommendation
+    if (passes.some((p) => checkPassPurchases(p))) return null;
 
-  // 🆙 Upgrade case → Global Pass
-  if (
-    (activePass === passes[0].id && nonTechCount >= 2) ||
-    (activePass === passes[2].id && techCount >= 2)
-  ) {
-    return {
-      passId: passes[1].id,
-      title: passes[1].title,
-      price: passes[1].price,
-      includes: passes[1].includes,
-      message: `You already selected a pass and added events from the other category.
+    // 🆙 Upgrade case → Global Pass
+    if (
+      (activePass === passes[0].id && nonTechCount >= 2) ||
+      (activePass === passes[2].id && techCount >= 2)
+    ) {
+      return {
+        passId: passes[1].id,
+        title: passes[1].title,
+        price: passes[1].price,
+        includes: passes[1].includes,
+        message: `You already selected a pass and added events from the other category.
 Global Pass at ₹${passes[1].price} covers EVERYTHING and saves money.`,
-    };
-  }
+      };
+    }
 
-  // Normal suggestions
-  if (techCount >= 2 && nonTechCount >= 2) {
-    return {
-      passId: passes[1].id,
-      title: passes[1].title,
-      price: passes[1].price,
-      includes: passes[1].includes,
-      message: `You added ${techCount} Technical and ${nonTechCount} Non-Technical events.
+    // Normal suggestions
+    if (techCount >= 2 && nonTechCount >= 2) {
+      return {
+        passId: passes[1].id,
+        title: passes[1].title,
+        price: passes[1].price,
+        includes: passes[1].includes,
+        message: `You added ${techCount} Technical and ${nonTechCount} Non-Technical events.
 Global Pass at ₹${passes[1].price} gives access to ALL events and saves money.`,
-    };
-  }
+      };
+    }
 
-  if (techCount >= 2 && !activePass) {
-    return {
-      passId: passes[0].id,
-      title: passes[0].title,
-      price: passes[0].price,
-      includes: passes[0].includes,
-      message: `You added ${techCount} Technical events (₹${techAmount}).
+    if (techCount >= 2 && !activePass) {
+      return {
+        passId: passes[0].id,
+        title: passes[0].title,
+        price: passes[0].price,
+        includes: passes[0].includes,
+        message: `You added ${techCount} Technical events (₹${techAmount}).
 Tech Pass at ₹${passes[0].price} gives access to ALL Tech events and saves money.`,
-    };
-  }
+      };
+    }
 
-  if (nonTechCount >= 2 && !activePass) {
-    return {
-      passId: passes[2].id,
-      title: passes[2].title,
-      price: passes[2].price,
-      includes: passes[2].includes,
-      message: `You added ${nonTechCount} Non-Technical events (₹${nonTechAmount}).
+    if (nonTechCount >= 2 && !activePass) {
+      return {
+        passId: passes[2].id,
+        title: passes[2].title,
+        price: passes[2].price,
+        includes: passes[2].includes,
+        message: `You added ${nonTechCount} Non-Technical events (₹${nonTechAmount}).
 Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and saves money.`,
-    };
-  }
+      };
+    }
 
-  return null;
-};
+    return null;
+  };
 
-
-  const proceedToPayment  = async () => {
+  const proceedToPayment = async () => {
     if (!user) return showToast('Please login first', 'error');
     if (!validateCart()) return;
 
@@ -293,13 +293,11 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
     if (recommendation) {
       setPassSuggestion(recommendation);
       setShowPassPopup(true);
-      return; 
+      return;
     }
 
     proceedToPayment();
-    
   };
-
 
   const handleRemoveItem = (itemId, itemTitle) => {
     setRemovingId(itemId);
@@ -321,7 +319,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
         </div>
         {/* ================= PASSES ================= */}
         <div className="flex flex-col gap-6">
-          <p className="text-center text-white/60 text-sm">Choose a pass (optional)</p>
+          <p className="text-center text-white/60 text-sm">Choose a pass</p>
           <div className="grid md:grid-cols-3 gap-6">
             {passes.map((pass) => {
               const isSelected = selectedPass?.id === pass.id;
@@ -334,27 +332,34 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                   selected={isSelected}
                   disabled={alreadyPurchased}
                   onToggle={() => {
-                    if (alreadyPurchased) {
-                      showToast('You have already purchased a pass', 'info');
+                    // 🔒 If user already purchased THIS pass
+                    if (checkPassPurchases(pass)) {
+                      showToast('You already purchased this pass', 'info');
                       return;
                     }
 
-                    //  user already selected a pass in cart
-                    if (
-                      (selectedPass && selectedPass.id !== pass.id) ||
-                      passes.some((order) => checkPassPurchases(order))
-                    ) {
-                      showToast('Only one pass can be Purchased', 'error');
+                    // 🔒 If user purchased ANY pass → block switching
+                    const alreadyOwnsAnyPass = passes.some((p) => checkPassPurchases(p));
+                    if (alreadyOwnsAnyPass) {
+                      showToast('You have already purchased a pass', 'error');
                       return;
                     }
 
-                    // deselect
-                    if (isSelected) {
+                    // ✅ If clicking same pass → remove
+                    if (selectedPass?.id === pass.id) {
                       removeFromCart(pass.id);
+                      showToast(`${pass.title} removed`, 'info');
                       return;
                     }
 
-                    // remove covered events
+                    // ⭐ SWITCH PASS (AUTO REPLACE)
+
+                    // Remove existing pass if any
+                    if (selectedPass) {
+                      removeFromCart(selectedPass.id);
+                    }
+
+                    // Remove covered events
                     cart.forEach((item) => {
                       if (
                         item.type !== 'pass' &&
@@ -364,7 +369,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                       }
                     });
 
-                    // add pass
+                    // Add new pass
                     addToCart({
                       id: pass.id,
                       title: pass.title,
@@ -384,7 +389,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
         {cart.length === 0 ? (
           <div className="text-center mt-20">
             <p className="text-white/50 uppercase tracking-widest text-sm">
-              No events selected yet
+              No Passes selected yet
             </p>
           </div>
         ) : (
@@ -545,32 +550,29 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
         )}
 
         {/* Pass Suggestion Modal */}
-        { showPassPopup && passSuggestion && (
-                <PassSuggestionModal
-              open={showPassPopup}
-              suggestion={passSuggestion}
-              onClose={() => {
-                setShowPassPopup(false);
-                proceedToPayment();
-              }}
-              onAccept={() => {
-
-                if (selectedPass) {
-                  removeFromCart(selectedPass.id);
-                }
-                addToCart({
-                  id: passSuggestion.passId,
-                  title: passSuggestion.title,
-                  price: passSuggestion.price,
-                  type: 'pass',
-                  includes: passSuggestion.includes,
-                });
-                setShowPassPopup(false);
-              }}
-            />)
-
-        }
-
+        {showPassPopup && passSuggestion && (
+          <PassSuggestionModal
+            open={showPassPopup}
+            suggestion={passSuggestion}
+            onClose={() => {
+              setShowPassPopup(false);
+              proceedToPayment();
+            }}
+            onAccept={() => {
+              if (selectedPass) {
+                removeFromCart(selectedPass.id);
+              }
+              addToCart({
+                id: passSuggestion.passId,
+                title: passSuggestion.title,
+                price: passSuggestion.price,
+                type: 'pass',
+                includes: passSuggestion.includes,
+              });
+              setShowPassPopup(false);
+            }}
+          />
+        )}
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import useToast from '../context/useToast';
 import TeamForm from './teamForm';
 import useCart from '../context/useCart';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const { showToast } = useToast();
@@ -9,8 +9,6 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17');
   const { isEventCoveredByPass } = useCart();
-
-  console.log(card);
 
   const [showForm, SetshowForm] = useState(false);
 
@@ -32,28 +30,45 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   }
 
   const scrollRef = useRef(null);
-  const checkoverflow = () => {
+  const bottomRef = useRef(null);
+  const checkoverflow = useCallback(()  => {
     const el = scrollRef.current;
-    if (el) {
+    if (!el) return;
+
+    // Use requestAnimationFrame to sync with browser paint cycles
+    window.requestAnimationFrame(() => {
       const { scrollTop, scrollHeight, clientHeight } = el;
       const isScrollable = scrollHeight > clientHeight;
       const isBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
-      SetshowArrow(isScrollable && !isBottom);
-    }
-  };
-  useEffect(() => {
-    const el = scrollRef.current;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    checkoverflow();
-    window.addEventListener('resize', checkoverflow);
-    if (el) {
-      el.addEventListener('scroll', checkoverflow);
-    }
-    return () => {
-      window.removeEventListener('resize', checkoverflow);
-      if (el) el.removeEventListener('scroll', checkoverflow);
+      // 2. Only update state if the value actually changes to prevent over-rendering
+      SetshowArrow((prev) => {
+        const newValue = isScrollable && !isBottom;
+        return prev !== newValue ? newValue : prev;
+      });
+    });
+  }, []);
+  useEffect(() => {
+    // 1. Check if the content is actually long enough to scroll
+    const checkInitialScroll = () => {
+      if (scrollRef.current) {
+        SetshowArrow(scrollRef.current.scrollHeight > scrollRef.current.clientHeight);
+      }
     };
+
+    // 2. Observer to detect when user reaches the bottom
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // If the bottom sentinel is visible, hide arrow
+        SetshowArrow(!entry.isIntersecting);
+      },
+      { root: scrollRef.current, threshold: 0.1 }
+    );
+
+    if (bottomRef.current) observer.observe(bottomRef.current);
+    checkInitialScroll();
+
+    return () => observer.disconnect();
   }, [card]);
   return (
     <>
@@ -76,89 +91,104 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
           >
             ✕
           </button>
-
-          <div
-            ref={scrollRef}
-            className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-          >
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
-            />
-            <p className="text-primary text-lg text-center ">{card.description}</p>
-            <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
-              {/* Team Size */}
-              <div className="text-center">
-                <span className="block font-bold uppercase text-sm opacity-70">Team Size</span>
-                <span className="text-xl">{card.teamSize}</span>
+          <div className="relative max-w-3xl mx-auto mt-10">
+            <div
+              ref={scrollRef}
+              className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] will-change-scroll transform-gpu isolation-auto"
+              style={{ backfaceVisibility: 'hidden' }}
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
+              />
+              <div className="w-full max-w-2xl px-4">
+                <p className="text-gray-300 text-lg text-center whitespace-pre-line leading-relaxed tracking-wide">
+                  {card.description}
+                </p>
               </div>
+              <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
+                {/* Team Size */}
+                <div className="text-center">
+                  <span className="block font-bold uppercase text-sm opacity-70">Team Size</span>
+                  <span className="text-xl">{card.teamSize}</span>
+                </div>
 
-              {/* Date & Time */}
-              <div className="text-center">
-                <span className="block font-bold uppercase text-sm opacity-70">Date & Time</span>
-                <span className="text-xl">
-                  {card.date} | {card.time}
-                </span>
-              </div>
+                {/* Date & Time */}
+                <div className="text-center">
+                  <span className="block font-bold uppercase text-sm opacity-70">Date & Time</span>
+                  <span className="text-xl">
+                    {card.date} | {card.time}
+                  </span>
+                </div>
 
-              {/* Contacts Group */}
-              <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
-                <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
+                {/* Contacts Group */}
+                <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
+                  <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
 
-                <div className="flex gap-6 text-center">
-                  {/* Contact 1 */}
-                  <div>
-                    <div className="font-bold text-white">{card.contact.name1}</div>
-                    <div className="text-sm">{card.contact.phone1}</div>
-                  </div>
-
-                  {/* Contact 2 */}
-                  {card.contact.name2 && (
+                  <div className="flex gap-6 text-center">
+                    {/* Contact 1 */}
                     <div>
-                      <div className="font-bold text-white">{card.contact.name2}</div>
-                      <div className="text-sm">{card.contact.phone2}</div>
+                      <div className="font-bold text-white">{card.contact.name1}</div>
+                      <div className="text-sm">{card.contact.phone1}</div>
                     </div>
-                  )}
+
+                    {/* Contact 2 */}
+                    {card.contact.name2 && (
+                      <div>
+                        <div className="font-bold text-white">{card.contact.name2}</div>
+                        <div className="text-sm">{card.contact.phone2}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-8">
-              <button
-                disabled={isDisabled}
-                className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
-                onClick={() => {
-                  console.log(isEventCoveredByPass(card.id));
-                  if (isEventCoveredByPass(card.id)) {
-                    showToast('Already included in the pass');
-                    return;
-                  } else if (
-                    (card.id === '12' || card.id === '13') &&
-                    localStorage.getItem(`${card.title}-teamData`) === null
-                  ) {
-                    showToast('Please add team details first', 'info');
-                  } else if (!checkCart(card)) {
-                    addToCart(card, card.category);
-                    showToast(`${card.title} added check the registration`, 'success');
-                  } else {
-                    showToast(`${card.title} is already in your cart`, 'info');
-                  }
-                }}
-              >
-                {buttonText}
-              </button>
-              {card.id === '16' || card.id === '17' ? (
+              <div className="flex items-center gap-8">
                 <button
-                  className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                  disabled={isDisabled}
+                  className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
                   onClick={() => {
-                    SetshowForm(true);
+                    console.log(isEventCoveredByPass(card.id));
+                    if (isEventCoveredByPass(card.id)) {
+                      showToast('Already included in the pass');
+                      return;
+                    } else if (
+                      (card.id === '12' || card.id === '13') &&
+                      localStorage.getItem(`${card.title}-teamData`) === null
+                    ) {
+                      showToast('Please add team details first', 'info');
+                    } else if (!checkCart(card)) {
+                      addToCart(card, card.category);
+                      showToast(`${card.title} added check the registration`, 'success');
+                    } else {
+                      showToast(`${card.title} is already in your cart`, 'info');
+                    }
                   }}
                 >
-                  {isPurchased ? 'View Team' : 'Add Team Details'}
+                  {buttonText}
                 </button>
-              ) : null}
+                {card.id === '16' || card.id === '17' ? (
+                  <button
+                    className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                    onClick={() => {
+                      SetshowForm(true);
+                    }}
+                  >
+                    {isPurchased ? 'View Team' : 'Add Team Details'}
+                  </button>
+                ) : null}
+              </div>
+              <div>
+                <p className="text-primary text-lg italic mb-2">Rules:</p>
+
+                <ul className="list-disc list-inside text-gray-400 text-base">
+                  {card.rules.map((rule, index) => (
+                    <li key={index}>{rule}</li>
+                  ))}
+                </ul>
+                <div ref={bottomRef} className="h-1 w-full" />
+              </div>
             </div>
-            <p className="text-primary text-lg italic">Rules : {card.rules}</p>
             {showArrow && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
                 <span className="text-red-600 text-xl animate-bounce drop-shadow-md bg-black/50 rounded-full px-2">

@@ -1,58 +1,59 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { signOut } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { signOut } from 'firebase/auth';
 import { logoutUser } from '../services/auth.service';
-import { auth } from "../firebase";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MyPurchaseDialog from "./MyPurchase";
+import { auth } from '../firebase';
+
+import useToast from '../context/useToast';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MyPurchaseDialog from './MyPurchase';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 
 import { usePurchases } from '../context/PurchaseContext';
-
 
 const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, RegisterRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [shakeIntensity, setShakeIntensity] = useState(0);
+  const [jitterTransform, setJitterTransform] = useState('translate(0, 0)');
+
+  const registerBtnRef = useRef(null);
+  const shakeArmedRef = useRef(true);
 
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const { user, loading, role } = useAuth();
+  const { showToast } = useToast();
+  const { clearPurchases } = usePurchases();
 
-  const {clearPurchases} = usePurchases();
+  const open = Boolean(anchorEl);
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-
-
   const handleLogout = async () => {
-
-    try{
-      await logoutUser().catch(err => console.error("Server-side logout failed, proceeding with local logout"));
+    try {
+      await logoutUser().catch((err) =>
+        console.error('Server-side logout failed, proceeding with local logout')
+      );
       /// add toast notification here
-    }
-    catch(err){
-      console.error("Logout failed:", err);
+      showToast('Logout Successful!', 'success');
+    } catch (err) {
+      console.error('Logout failed:', err);
       /// add toast notification here
+      showToast('Logout failed!', 'error');
     } finally {
-        
-        await signOut(auth);
-        clearPurchases();
-        localStorage.clear();      
-        handleMenuClose();
-        navigate("/");
+      await signOut(auth);
+      clearPurchases();
+      localStorage.clear();
+      handleMenuClose();
+      navigate('/');
     }
-
   };
-
-  const registerBtnRef = useRef(null);
-  const [shakeIntensity, setShakeIntensity] = useState(0);
-  const [jitterTransform, setJitterTransform] = useState('translate(0, 0)');
-  const shakeArmedRef = useRef(true);
 
   const scrollTo = (ref) => {
     ref?.current?.scrollIntoView({ behavior: 'smooth' });
@@ -177,10 +178,30 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
         </div>
 
         {/* --- AUTH UI FOR DESKTOP --- */}
-        <div className="absolute right-10 top-1/2 -translate-y-1/2">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-3">
+          {!loading && user && role === 'ADMIN' && (
+            <button
+              onClick={() => navigate('/qr-scanner')}
+              className="
+                flex items-center justify-center
+                px-4 py-2 
+                bg-primary 
+                text-white   
+                uppercase 
+                tracking-widest 
+                text-xs font-bold rounded-full 
+                shadow-stGlow 
+                hover:scale-105 transition
+              "
+            >
+              <QrCodeScannerIcon sx={{ fontSize: 18, color: '#e50914' }} />
+              <span>Scan</span>
+            </button>
+          )}
+
           {!loading && !user && (
             <button
-              onClick={() => navigate("/signin")}
+              onClick={() => navigate('/signin')}
               className="px-6 py-4 bg-primary text-black uppercase tracking-widest text-sm font-semibold rounded-full shadow-stGlow"
             >
               Sign In
@@ -190,28 +211,29 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
             <>
               <Avatar
                 onClick={handleMenuOpen}
-                sx={{ bgcolor: "#e50914", cursor: "pointer", fontWeight: 700 }}
+                sx={{ bgcolor: '#e50914', cursor: 'pointer', fontWeight: 700 }}
               >
-                {user.displayName?.[0]?.toUpperCase() || "U"}
+                {user.displayName?.[0]?.toUpperCase() || 'U'}
               </Avatar>
               <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-                
                 <MenuItem disabled>{user.email}</MenuItem>
-                <MenuItem  onClick={() => {
-                          handleMenuClose();
-                          setPurchaseOpen(true);
-                        }}>My Purchase</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    setPurchaseOpen(true);
+                  }}
+                >
+                  My Purchase
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </>
           )}
         </div>
       </nav>
-       
-
 
       {/* mobile */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center lg:hidden">
+      <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center  lg:hidden">
         <div className="flex items-center gap-3 ">
           <button onClick={() => setIsOpen(!isOpen)} className="text-primary text-2xl">
             ☰
@@ -220,21 +242,22 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
         </div>
 
         {/* --- AUTH UI FOR MOBILE --- */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           {!loading && !user && (
             <button
-              onClick={() => navigate("/signin")}
+              onClick={() => navigate('/signin')}
               className="px-4 py-1.5 text-[11px] uppercase tracking-widest font-semibold rounded-full bg-primary text-white shadow-stGlow"
             >
               Sign In
             </button>
           )}
+
           {!loading && user && (
             <Avatar
               onClick={handleMenuOpen}
-              sx={{ bgcolor: "#e50914", cursor: "pointer", width: 32, height: 32 }}
+              sx={{ bgcolor: '#e50914', cursor: 'pointer', width: 32, height: 32 }}
             >
-              {user.displayName?.[0]?.toUpperCase() || "U"}
+              {user.displayName?.[0]?.toUpperCase() || 'U'}
             </Avatar>
           )}
         </div>
@@ -249,19 +272,37 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
 
       <aside
         className={`
-          fixed left-4 top-20
-          w-64
+          fixed left-4 right-4 top-20
           bg-black/50 backdrop-blur-md
           border border-primary
           rounded-2xl
           shadow-stGlowStrong
           z-50 md:hidden
-
           transform transition-all duration-300 ease-out
-          ${isOpen ? 'opacity-100 -translate-x-0 scale-100 pointer-events-auto visible' : 'opacity-0 -translate-x-20 scale-95 pointer-events-none invisible'}
+          ${
+            isOpen
+              ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto visible'
+              : 'opacity-0 -translate-y-5 scale-95 pointer-events-none invisible'
+          }
         `}
       >
-        <div className="flex flex-col gap-6 p-8">
+        <div className="flex flex-col items-center gap-6 p-8">
+          {!loading && user && role === 'ADMIN' && (
+            <button
+              onClick={() => {
+                navigate('/qr-scanner');
+                setIsOpen(false);
+              }}
+              className="
+                  text-white uppercase tracking-widest text-sm font-bold
+                  text-left flex items-center gap-3
+                  p-3 rounded-lg bg-white/5 border border-white/10
+                "
+            >
+              <QrCodeScannerIcon sx={{ color: '#e50914' }} />
+              SCAN TICKETS
+            </button>
+          )}
           {tabItems.map((item) =>
             item.cta ? (
               <button
@@ -292,12 +333,8 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
             )
           )}
         </div>
-        </aside>
-        <MyPurchaseDialog
-          open={purchaseOpen}
-          onClose={() => setPurchaseOpen(false)}
-          />
-
+      </aside>
+      <MyPurchaseDialog open={purchaseOpen} onClose={() => setPurchaseOpen(false)} />
     </>
   );
 };
