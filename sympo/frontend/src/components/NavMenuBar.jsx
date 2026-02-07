@@ -233,7 +233,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
       </nav>
 
       {/* mobile */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center lg:hidden">
+      <nav className="fixed top-0 left-0 w-full z-50 p-4 backdrop-blur-md flex justify-between items-center  lg:hidden">
         <div className="flex items-center gap-3 ">
           <button onClick={() => setIsOpen(!isOpen)} className="text-primary text-2xl">
             ☰
@@ -286,7 +286,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
           }
         `}
       >
-        <div className="flex flex-col gap-6 p-8">
+        <div className="flex flex-col items-center gap-6 p-8">
           {!loading && user && role === 'ADMIN' && (
             <button
               onClick={() => {

@@ -16,7 +16,7 @@ const PassPosterCard = ({ pass, selected, disabled = false, onToggle }) => {
       `}
     >
       {/* IMAGE WRAPPER — controls aspect ratio */}
-      <div className="w-full  bg-black">
+      <div className="w-full  aspect-[12/18] bg-black">
         <img
           src={pass.image}
           alt={pass.title}
