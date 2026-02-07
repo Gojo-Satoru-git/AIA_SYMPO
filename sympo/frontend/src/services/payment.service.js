@@ -1,6 +1,6 @@
 import api from "./api";
 
-export const createPaymentOrder = async (cartItems) => {
+export const createPaymentOrder = async (cartItems , promoCode) => {
   try {
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
       throw new Error("Cart is empty");
@@ -10,7 +10,7 @@ export const createPaymentOrder = async (cartItems) => {
       quantity: 1
     }));
 
-    const response = await api.post("/payment/order", { items: itemsPayload });
+    const response = await api.post("/payment/order", { items: itemsPayload , promoCode });
     
     if (!response.data.orderId || !response.data.amount) {
       throw new Error("Invalid order response from server");

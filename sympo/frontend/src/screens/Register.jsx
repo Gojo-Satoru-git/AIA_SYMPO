@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState ,useEffect  } from 'react';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';
@@ -28,7 +28,22 @@ const Registration = () => {
   const [showPassPopup, setShowPassPopup] = useState(false);
   const [passSuggestion, setPassSuggestion] = useState(null);
 
+<<<<<<< HEAD
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [totalOldAmount, setTotalOldAmount] = useState(null);
+
+
+
+=======
+>>>>>>> 6ee5a02f09b428ee244e6d433d45f17c11094f94
   const selectedPass = cart.find((item) => item.type == 'pass');
+
+  useEffect(() => {
+    setBackendAmount(null);
+    setTotalOldAmount(null);
+    setPromoApplied(false);
+  }, [cart]);
 
   if (authLoading) {
     return (
@@ -178,7 +193,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
       if (!isLoaded) throw new Error('Razorpay SDK failed to load');
 
       // Create order
-      const { data: order } = await createPaymentOrder(cart);
+      const { data: order } = await createPaymentOrder(cart , promoCode);
 
       setBackendAmount(order.amount);
 
@@ -409,30 +424,81 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
             <div className="mt-10 bg-black/60 backdrop-blur-md border border-primary rounded-2xl p-6 shadow-stGlowStrong flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
               <div className="text-center md:text-left">
                 <p className="text-white/60 text-xs uppercase tracking-widest">Total Amount</p>
-                <p className="text-primary text-2xl tracking-widest">
-                  ₹{backendAmount ? backendAmount / 100 : totalPrice}
-                </p>
+                <div className="flex flex-col">
+                  {totalOldAmount && (
+                    <span className="text-white/50 line-through text-sm">
+                      ₹{totalOldAmount}
+                    </span>
+                  )}
+                  <span className="text-primary text-2xl tracking-widest">
+                    ₹{backendAmount ? backendAmount / 100 : totalPrice}
+                  </span>
+                </div>
+
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                {/* Pay Now Button */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+  
+                {/* Promo Code Box */}
+                <div className="flex bg-black/70 border border-primary rounded-full overflow-hidden">
+                  <input
+                    type="text"
+                    value={promoCode}
+                    disabled={promoApplied}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    placeholder="PROMO CODE"
+                    className="bg-transparent px-4 py-2 text-white outline-none w-40 uppercase tracking-widest text-xs"
+                  />
+                  <button
+                    disabled={promoApplied}
+                    onClick={async () => {
+                      if (!promoCode) return showToast('Enter promo code', 'error');
+
+                      const cartItems = cart.map(item => ({ eventId: item.id, quantity: 1 }));
+
+                      console.log('Applying promo code', JSON.stringify({ code: promoCode.toUpperCase(), items: cartItems }));
+                      try {
+                        const res = await api.post('/promo/preview', {
+                            code: promoCode.toUpperCase(),
+                            items: cartItems
+                          })
+
+                        console.log('Promo preview response', res.data);
+
+                        setBackendAmount(res.data.data.totalAmount*100);
+                        setTotalOldAmount(res.data.data.totalOldAmount);
+                        setPromoApplied(res.data.data.isPromoApplied);
+                        showToast('Promo applied!', 'success');
+                      } catch(err) {
+                        const msg = err.response?.data?.message || "Something went wrong";
+                        showToast(msg, 'error');
+                      }
+                    }}
+                    className="bg-primary text-black px-4 py-2 text-xs uppercase tracking-widest font-semibold"
+                  >
+                    {promoApplied ? 'Applied' : 'Apply'}
+                  </button>
+                </div>
+
+                {/* Pay Button */}
                 <button
                   onClick={handlePayment}
                   disabled={paymentLoading || paymentLocked}
                   className="
-                          px-6 py-3
-                          rounded-full
-                          bg-primary text-black
-                          uppercase tracking-widest text-sm font-semibold
-                          shadow-stGlowStrong
-                          hover:scale-105
-                          transition
-                          disabled:opacity-50 disabled:cursor-not-allowed
-                        "
+                    px-6 py-3
+                    rounded-full
+                    bg-primary text-black
+                    uppercase tracking-widest text-sm font-semibold
+                    shadow-stGlowStrong
+                    hover:scale-105
+                    transition
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                  "
                 >
                   {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
               </div>
+
             </div>
           </>
         )}
