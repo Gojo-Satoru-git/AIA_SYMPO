@@ -79,14 +79,14 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
 
           <div
             ref={scrollRef}
-            className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
             <img
               src={card.image}
               alt={card.title}
               className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
             />
-            <p className="text-primary text-lg text-center ">{card.description}</p>
+            <p className="text-gray-400 text-lg text-center ">{card.description}</p>
             <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
               {/* Team Size */}
               <div className="text-center">
@@ -158,7 +158,16 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 </button>
               ) : null}
             </div>
-            <p className="text-primary text-lg italic">Rules : {card.rules}</p>
+           <div>
+  <p className="text-primary text-lg italic mb-2">Rules:</p>
+
+  <ul className="list-disc list-inside text-gray-400 text-base">
+    {card.rules.map((rule, index) => (
+      <li key={index}>{rule}</li>
+    ))}
+  </ul>
+</div>
+
             {showArrow && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
                 <span className="text-red-600 text-xl animate-bounce drop-shadow-md bg-black/50 rounded-full px-2">
