@@ -1,7 +1,7 @@
 import useToast from '../context/useToast';
 import TeamForm from './teamForm';
 import useCart from '../context/useCart';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const { showToast } = useToast();
@@ -9,8 +9,6 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17');
   const { isEventCoveredByPass } = useCart();
-
-  console.log(card);
 
   const [showForm, SetshowForm] = useState(false);
 
@@ -32,29 +30,40 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   }
 
   const scrollRef = useRef(null);
-  const checkoverflow = () => {
+  const checkoverflow = useCallback(() => {
     const el = scrollRef.current;
-    if (el) {
+    if (!el) return;
+
+    // Use requestAnimationFrame to sync with browser paint cycles
+    window.requestAnimationFrame(() => {
       const { scrollTop, scrollHeight, clientHeight } = el;
       const isScrollable = scrollHeight > clientHeight;
       const isBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
-      SetshowArrow(isScrollable && !isBottom);
-    }
-  };
+
+      // 2. Only update state if the value actually changes to prevent over-rendering
+      SetshowArrow((prev) => {
+        const newValue = isScrollable && !isBottom;
+        return prev !== newValue ? newValue : prev;
+      });
+    });
+  }, []);
   useEffect(() => {
     const el = scrollRef.current;
+    if (!el) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // Initial check
     checkoverflow();
+
+    // 3. Use passive: true to tell the browser this listener won't cancel the scroll
+    // This significantly boosts desktop performance.
     window.addEventListener('resize', checkoverflow);
-    if (el) {
-      el.addEventListener('scroll', checkoverflow);
-    }
+    el.addEventListener('scroll', checkoverflow, { passive: true });
+
     return () => {
       window.removeEventListener('resize', checkoverflow);
-      if (el) el.removeEventListener('scroll', checkoverflow);
+      el.removeEventListener('scroll', checkoverflow);
     };
-  }, [card]);
+  }, [card, checkoverflow]);
   return (
     <>
       {showForm && (card.id === '17' || card.id === '16') ? (
@@ -158,15 +167,15 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 </button>
               ) : null}
             </div>
-           <div>
-  <p className="text-primary text-lg italic mb-2">Rules:</p>
+            <div>
+              <p className="text-primary text-lg italic mb-2">Rules:</p>
 
-  <ul className="list-disc list-inside text-gray-400 text-base">
-    {card.rules.map((rule, index) => (
-      <li key={index}>{rule}</li>
-    ))}
-  </ul>
-</div>
+              <ul className="list-disc list-inside text-gray-400 text-base">
+                {card.rules.map((rule, index) => (
+                  <li key={index}>{rule}</li>
+                ))}
+              </ul>
+            </div>
 
             {showArrow && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
