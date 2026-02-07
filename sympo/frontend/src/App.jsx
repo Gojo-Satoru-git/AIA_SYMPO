@@ -12,6 +12,7 @@ import Auth from './screens/Auth';
 import AppShell from './components/AppShell';
 import Eventprovider from './context/Eventprovider';
 import WorkshoProvider from './context/WorkshopProvider';
+import ResetPassword from './screens/ResetPassword';
 
 import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
@@ -71,6 +72,8 @@ const App = () => {
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
 
+          {/* Reset Password Route */}
+          <Route path="/reset-password" element={<ResetPassword />} />
           {/* QR Routes */}
           <Route
             path="/scan/:token"

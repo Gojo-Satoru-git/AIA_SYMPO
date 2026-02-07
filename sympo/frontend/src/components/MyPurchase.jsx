@@ -13,6 +13,10 @@ import QRCodeBox from "./QrCodeBox";
 const MyPurchaseDialog = ({ open, onClose }) => {
   const { purchases = [] } = usePurchases();
   const [activePurchase, setActivePurchase] = useState(null);
+  
+  const getQrUrl = (token) => {
+    return `${window.location.origin}/scan/${token}`;
+  };
 
   return (
     <>
@@ -52,6 +56,8 @@ const MyPurchaseDialog = ({ open, onClose }) => {
                 : [];
 
               const eventNames = events.map((e) => e.title).join(", ");
+              const fullQrUrl = getQrUrl(purchase.qrToken);
+
               return (
                 <Box
                   key={purchase.orderId}
@@ -77,7 +83,7 @@ const MyPurchaseDialog = ({ open, onClose }) => {
                   </Box>
 
                   <QRCodeBox
-                    value={purchase.qrToken}
+                    value={fullQrUrl}
                     size={40}
                     onClick={() => setActivePurchase(purchase)}
                   />
@@ -137,7 +143,7 @@ const MyPurchaseDialog = ({ open, onClose }) => {
                   borderRadius: "12px",
                   my: 2 
                 }}>
-              <QRCodeBox value={activePurchase.qrToken} size={220} />
+              <QRCodeBox value={getQrUrl(activePurchase.qrToken)} size={220} />
             </Box>
 
             <Typography variant="body1" fontWeight={600} mt={3} color="#fff">

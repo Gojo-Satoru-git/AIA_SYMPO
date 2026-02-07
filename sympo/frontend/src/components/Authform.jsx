@@ -5,6 +5,7 @@ import {
   updateProfile,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { registerUser } from '../services/auth.service';
@@ -103,6 +104,10 @@ const AuthForm = ({ mode }) => {
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
   const isOtpValid = true;
+
+  const [showReset, setShowReset] = useState(false); 
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
 
   const [passValid, setPassValid] = useState({
     upper: false,
@@ -209,9 +214,37 @@ const AuthForm = ({ mode }) => {
     }
   };
 
+  const handlePasswordReset = async () => {
+    if(!resetEmail) {
+      showToast('please enter your email address', 'error');
+      return;
+    }
+    setResetLoading(true);
+
+    const actionCodeSettings = {
+      url: `${window.location.origin}/reset-password`, 
+      handleCodeInApp: true,
+    };
+
+    try {
+      await sendPasswordResetEmail(auth, resetEmail, actionCodeSettings);
+      showToast('Password reset link sent to you email!', 'success');
+      setShowReset(false); 
+      setResetEmail('');
+    } catch (error) {
+      console.error(error);
+      const msg = error.code === 'auth/user-not-found' ? 'No account found with this email' : 'Failed to send reset link';
+      showToast(msg, 'error');
+    }finally {
+      setResetLoading(false);
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
+
+    if (showReset) return;
 
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
 
@@ -262,15 +295,6 @@ const AuthForm = ({ mode }) => {
         });
 
         const token = await cred.user.getIdToken();
-
-        console.log('REGISTER DATA:', {
-          uid: cred.user.uid,
-          email: data.email,
-          name: data.name,
-          phone: data.phone,
-          institute: finalInstitute,
-          year: year,
-        });
 
         await registerUser(
           {
@@ -334,6 +358,52 @@ const AuthForm = ({ mode }) => {
       </Typography>
     </Box>
   );
+
+  if (mode === 'signin' && showReset) {
+    return (
+      <div className='flex flex-col gap-6'>
+        <Typography variant="h6" sx={{ color: 'white', textAlign: 'cetner' }}>
+          Reset Password
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#aaa', textAlign: 'center', mb: 1 }}>
+          Enter your email to receive a password reset link.
+        </Typography>
+
+        <TextField 
+            label="Enter your email" 
+            type="email" 
+            fullWidth 
+            sx={inputStyle}
+            value={resetEmail}
+            onChange={(e) => setResetEmail(e.target.value)}
+         />
+
+         <Button
+          onClick={handlePasswordReset}
+          disabled={resetLoading || !resetEmail}
+          fullWidth
+          sx={{
+            py: 1.4,
+            backgroundColor: '#e50914',
+            color: 'white',
+            fontWeight: 700,
+            borderRadius: '999px',
+            '&:hover': { backgroundColor: '#ff1a1a' },
+            '&.Mui-disabled': { backgroundColor: '#555' },
+          }}
+         >
+          {resetLoading ? 'SENDING...' : 'SEND RESET LINK'}
+         </Button>
+
+         <Button
+            onClick={() => setShowReset(false)}
+            sx={{ color: '#bbb', textTransform: 'none', '&:hover': { color: 'white' } }}
+         >
+            Back to Sign In
+         </Button>
+      </div>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -576,6 +646,23 @@ const AuthForm = ({ mode }) => {
         onFocus={() => setPasswordFocused(true)}
         onBlur={() => setPasswordFocused(false)}
       />
+
+      {/* FORGOT PASSWORD LINK (NEW) */}
+      {mode === 'signin' && (
+        <div className="flex justify-end -mt-4">
+            <Button 
+                onClick={() => setShowReset(true)}
+                sx={{ 
+                    textTransform: 'none', 
+                    color: '#aaa', 
+                    fontSize: '0.85rem',
+                    '&:hover': { color: '#e50914', backgroundColor: 'transparent' }
+                }}
+            >
+                Forgot Password?
+            </Button>
+        </div>
+      )}
 
       {/* PASSWORD STRENGTH INDICATOR (Only on Signup) */}
       {mode === 'signup' && (passwordFocused || password.length > 0) && (
