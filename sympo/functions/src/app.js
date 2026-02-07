@@ -15,6 +15,8 @@ import eventRoutes from "./routes/event.routes.js";
 import collegeRoutes from './routes/college.routes.js';
 import otpRoutes from './routes/otp.routes.js';
 
+import promoRoutes from "./routes/promo.routes.js";
+
 import { FRONTEND_URL } from "./config/env1.js";
 
 const app = express();
@@ -40,6 +42,7 @@ app.use("/user", userRoutes);
 app.use("/events", eventRoutes);
 app.use("/colleges", collegeRoutes);
 app.use("/otp", otpRoutes);
+app.use("/promo", promoRoutes);
 
 // 404 Handler and Error Middleware
 

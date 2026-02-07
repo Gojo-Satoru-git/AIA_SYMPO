@@ -5,9 +5,9 @@ import crypto from "crypto";
 
 export const createOrder = async (req, res) => {
   try {
-    const { items , teams } = req.body;
+    const { items , promoCode } = req.body;
 
-    const { totalAmount, orderId } = await createOrderRecord(req.user.uid, items);
+    const { totalAmount, totalOldAmount ,  orderId } = await createOrderRecord(req.user.uid, items , promoCode );
     const razorpayOrder = await createRazorpayOrder(totalAmount);
 
     await db.collection("orders").doc(orderId).update({
@@ -19,6 +19,7 @@ export const createOrder = async (req, res) => {
       dbOrderId: orderId,
       amount: razorpayOrder.amount,
       keyId: process.env.RAZORPAY_KEY_ID,
+      totalOldAmount : totalOldAmount,
     });
   } catch (err) {
     res.status(400).json({ message: err.message, eventId: err.eventId });

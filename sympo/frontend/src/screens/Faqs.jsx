@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 const faqs = [
   {
-    q: 'What is the symposium?',
-    a: 'The symposium is a technical event organized by the department, featuring competitions, talks, and workshops designed to enhance technical and practical skills.',
+    q: 'How do I register?',
+    a: 'Choose any one event pass and click Register. After completing the payment, your pass will be available in your profile under “My Purchase.”',
   },
   {
-    q: 'Who can participate?',
-    a: 'Students from all colleges and departments are welcome to participate unless an event specifies eligibility criteria.',
+    q: 'Is on-spot registration available?',
+    a: 'Yes, on-spot registration is available for both technical and non-technical events.',
   },
   {
     q: 'Is there a registration fee?',
