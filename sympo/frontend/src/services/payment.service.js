@@ -32,7 +32,7 @@ export const verifyPaymentOrder = async (paymentData , cartItems) => {
     }
 
     const teamsPayload = cartItems
-      .filter(item => item.id === "12" || item.id === "13")
+      .filter(item => item.id === '16' || item.id === '17' || item.id === '18')
       .map(item => ({
         id: item.id,
         teamData: localStorage.getItem(`${item.title}-teamData`)

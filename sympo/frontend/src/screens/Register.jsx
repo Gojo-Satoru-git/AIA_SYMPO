@@ -28,15 +28,12 @@ const Registration = () => {
   const [showPassPopup, setShowPassPopup] = useState(false);
   const [passSuggestion, setPassSuggestion] = useState(null);
 
-<<<<<<< HEAD
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [totalOldAmount, setTotalOldAmount] = useState(null);
 
 
 
-=======
->>>>>>> 6ee5a02f09b428ee244e6d433d45f17c11094f94
   const selectedPass = cart.find((item) => item.type == 'pass');
 
   useEffect(() => {

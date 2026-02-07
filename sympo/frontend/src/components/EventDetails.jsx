@@ -7,7 +7,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   const { showToast } = useToast();
   const { checkCart } = useCart();
   const [showArrow, SetshowArrow] = useState(false);
-  const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17');
+  const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
   const { isEventCoveredByPass } = useCart();
 
   const [showForm, SetshowForm] = useState(false);
@@ -72,7 +72,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
   }, [card]);
   return (
     <>
-      {showForm && (card.id === '17' || card.id === '16') ? (
+      {showForm && (card.id === '17' || card.id === '16' || card.id === '18') ? (
         <TeamForm
           title={card.title}
           teamSize={card.teamSize}
@@ -99,7 +99,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
             >
               <img
                 src={card.image}
-                alt={card.title}
+                alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
                 className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
               />
               <div className="w-full max-w-2xl px-4">
@@ -153,7 +153,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                       showToast('Already included in the pass');
                       return;
                     } else if (
-                      (card.id === '12' || card.id === '13') &&
+                      (card.id === '16' || card.id === '17' || card.id === '18') &&
                       localStorage.getItem(`${card.title}-teamData`) === null
                     ) {
                       showToast('Please add team details first', 'info');
@@ -167,7 +167,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 >
                   {buttonText}
                 </button>
-                {card.id === '16' || card.id === '17' ? (
+                {card.id === '16' || card.id === '17' || card.id === '18' ? (
                   <button
                     className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
                     onClick={() => {

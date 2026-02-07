@@ -1,6 +1,7 @@
 import { db } from "../config/firebase.js";
 import admin from "firebase-admin";
 import offers from "../data/promoCode.js";
+import limitedSeatEavents  from "../data/limitedSeatEvents.js";
 
 export const createOrderRecord = async (userId, items , promoCode) => {
   let totalAmount = 0;
@@ -40,9 +41,8 @@ export const createOrderRecord = async (userId, items , promoCode) => {
         throw err;
       }
 
-      const ids = ["10", "11", "12", "13"];
 
-      if (ids.includes(item.eventId)) {
+      if (limitedSeatEavents.includes(item.eventId)) {
         const available = event.capacity - event.booked;
         if (available < item.quantity) {
           const err = new Error("Not enough seats");
@@ -59,8 +59,7 @@ export const createOrderRecord = async (userId, items , promoCode) => {
        ======================= */
     for (const e of eventCache) {
       const { eventRef, event, item } = e;
-      const ids = ["10", "11", "12", "13"];
-      if (ids.includes(item.eventId)) {
+      if (limitedSeatEavents.includes(item.eventId)) {
         tx.update(eventRef, {
           booked: event.booked + item.quantity, // ✅ WRITE AFTER ALL READS
         });
@@ -137,9 +136,8 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
     /* WRITE AFTER */
     for (const e of eventCache) {
       const { eventRef, event, item } = e;
-      const ids = ["10", "11", "12", "13"];
 
-      if (ids.includes(item.eventId)) {
+      if (limitedSeatEavents.includes(item.eventId)) {
         tx.update(eventRef, {
           booked: Math.max(0, event.booked - item.quantity),
         });
