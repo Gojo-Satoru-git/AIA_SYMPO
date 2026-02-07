@@ -1,4 +1,4 @@
-import { generateOtp, storeOtp, verifyStoredOtp, canResendOtp } from '../service/otp.service.js';
+import { generateOtp, storeOtp, verifyStoredOtp, canResendOtp, isEmailRegistered } from '../service/otp.service.js';
 import { sendOtpEmail } from '../utils/mailer.js';
 
 const sendOtp = async (req, res) => {
@@ -7,6 +7,16 @@ const sendOtp = async (req, res) => {
 
         if(!email) return res.status(400).json({message: "Email required"});
 
+        const registered = await isEmailRegistered(email);
+        if (registered) {
+            return res.status(400).json({ message: "Email is already registered. Please Sign In." });
+        }
+
+        const isVerified = await checkEmailVerified(email);
+        if (isVerified) {
+            return res.status(200).json({ message: "Email is already verified", isVerified: true });
+        }
+        
         const allowed = await canResendOtp(email);
 
         if(!allowed) return res.status(429).json({message: "Please wait before requesting another OTP"});

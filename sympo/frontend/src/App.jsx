@@ -73,7 +73,7 @@ const App = () => {
           <Route path="/signup" element={<Auth mode="signup" />} />
 
           {/* Reset Password Route */}
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth-action" element={<ResetPassword />} />
           {/* QR Routes */}
           <Route
             path="/scan/:token"

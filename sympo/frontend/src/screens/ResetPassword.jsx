@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
+import { 
+  confirmPasswordReset, 
+  verifyPasswordResetCode, 
+  applyActionCode
+} from 'firebase/auth';
 import { auth } from '../firebase';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import useToast from '../context/useToast';
@@ -26,40 +30,57 @@ const ResetPassword = () => {
   const { showToast } = useToast();
   
   const oobCode = searchParams.get('oobCode');
+  const mode = searchParams.get('mode'); 
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isCodeValid, setIsCodeValid] = useState(true);
-  const [checkingCode, setCheckingCode] = useState(true);
-
-  // Validation State
+  
+  const [status, setStatus] = useState('loading'); 
+  
   const [passValid, setPassValid] = useState({
     upper: false, lower: false, num: false, special: false, length: false,
   });
   const [match, setMatch] = useState(false);
 
-  // 1. Verify the link immediately on load
   useEffect(() => {
     if (!oobCode) {
-      setIsCodeValid(false);
-      setCheckingCode(false);
+      setStatus('invalid');
       return;
     }
-    verifyPasswordResetCode(auth, oobCode)
-      .then(() => {
-        setIsCodeValid(true);
-        setCheckingCode(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsCodeValid(false);
-        setCheckingCode(false);
-        showToast('Invalid or expired password reset link.', 'error');
-      });
-  }, [oobCode, showToast]);
 
-  // 2. Real-time validation
+    if (mode === 'verifyEmail') {
+      applyActionCode(auth, oobCode)
+        .then(() => {
+          setStatus('success');
+          showToast('Email verified successfully!', 'success');
+          setTimeout(() => navigate('/signin'), 3000);
+        })
+        .catch((error) => {
+          console.error("Verification Error:", error);
+          setStatus('invalid');
+          showToast('Invalid or expired verification link.', 'error');
+        });
+    }
+
+    else if (mode === 'resetPassword') {
+      verifyPasswordResetCode(auth, oobCode)
+        .then(() => {
+          setStatus('valid');
+        })
+        .catch((error) => {
+          console.error("Reset Code Error:", error);
+          setStatus('invalid');
+          showToast('Invalid or expired password reset link.', 'error');
+        });
+    }
+
+    else {
+        setStatus('invalid');
+    }
+
+  }, [oobCode, mode, navigate, showToast]);
+
   useEffect(() => {
     setPassValid({
       upper: /[A-Z]/.test(password),
@@ -102,18 +123,46 @@ const ResetPassword = () => {
     </Box>
   );
 
-  if (checkingCode) return <div className="text-white text-center mt-20">Verifying link...</div>;
+  if (status === 'loading') {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+            <CircularProgress sx={{ color: '#e50914' }} />
+            <Typography sx={{ color: '#aaa' }}>Processing request...</Typography>
+        </div>
+    );
+  }
 
-  if (!isCodeValid) {
+  if (status === 'invalid') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Typography variant="h5" sx={{ color: '#e50914' }}>Link Expired or Invalid</Typography>
+        <CancelIcon sx={{ color: '#e50914', fontSize: 60 }} />
+        <Typography variant="h5" sx={{ color: 'white', fontWeight: 700 }}>Invalid Link</Typography>
+        <Typography variant="body1" sx={{ color: '#aaa', textAlign: 'center' }}>
+            This link is expired, invalid, or has already been used.
+        </Typography>
         <Button 
           variant="outlined" 
           onClick={() => navigate('/signin')}
-          sx={{ color: 'white', borderColor: '#444', '&:hover': { borderColor: '#e50914' } }}
+          sx={{ mt: 2, color: 'white', borderColor: '#444', '&:hover': { borderColor: '#e50914' } }}
         >
           Return to Login
+        </Button>
+      </div>
+    );
+  }
+
+  if (mode === 'verifyEmail' && status === 'success') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <CheckCircleIcon sx={{ color: '#00e676', fontSize: 80 }} />
+        <Typography variant="h4" sx={{ color: 'white', fontWeight: 700 }}>Email Verified!</Typography>
+        <Typography variant="body1" sx={{ color: '#aaa' }}>Redirecting to login...</Typography>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate('/signin')} 
+          sx={{ mt: 2, bgcolor: '#e50914', '&:hover': { bgcolor: '#ff1a1a' } }}
+        >
+          Login Now
         </Button>
       </div>
     );
@@ -135,7 +184,6 @@ const ResetPassword = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {/* Validation Box */}
         {(password.length > 0) && (
           <Box sx={{ p: 2, bgcolor: 'rgba(229,9,20,0.05)', borderRadius: '12px', border: `1px solid rgba(229,9,20,0.4)` }}>
             <div className="grid grid-cols-2 gap-x-2">

@@ -6,6 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
+  signOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { registerUser } from '../services/auth.service';
@@ -109,6 +111,8 @@ const AuthForm = ({ mode }) => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
 
+  const [backupMode, setBackupMode] = useState(false);
+
   const [passValid, setPassValid] = useState({
     upper: false,
     lower: false,
@@ -181,36 +185,53 @@ const AuthForm = ({ mode }) => {
     setIsSendingOtp(true);
 
     try {
-      await sendOtpApi(emailValue);
+      const response = await sendOtpApi(emailValue);
+
+      if (response.isVerified) {
+          setIsEmailVerified(true);
+          setShowOtp(false);
+          showToast('Email verified (Found in records)', 'success');
+          setBackupMode(false);
+          setIsSendingOtp(false);
+          return;
+      }
 
       showToast(`OTP sent to your mail ${emailValue}`, 'success');
       setShowOtp(true);
       setCanResend(false);
       setResendTimer(60);
-    } catch (error) {
-      console.error(error);
-      const msg = error.response?.data?.message || 'Unable to send OTP';
-      showToast(msg, 'error');
-    } finally {
+      setBackupMode(false);
+    }catch (error) {
+      console.error("OTP Request Failed:", error);
+
+      const errorMessage = error.response?.data?.message || "";
+
+      if (errorMessage.toLowerCase().includes("already registered")) {
+        showToast(errorMessage, "error"); 
+      } else {
+        setBackupMode(true);
+        setShowOtp(false);
+        showToast('OTP Service busy. We will verify your email via link AFTER signup.', 'info');
+      }  
+    }finally {
       setIsSendingOtp(false);
     }
   };
 
-  const handleVerifyOtp = async () => {
+ const handleVerifyOtp = async () => {
     if (!otp) return;
     setVerifyingOtp(true);
-    try {
-      await verifyOtpApi(emailValue, otp);
-
-      setIsEmailVerified(true);
-      setShowOtp(false);
-      showToast('Email verified successfully!', 'success');
-    } catch (error) {
-      console.error(error);
-      const msg = error.response?.data?.message || 'Invalid OTP';
-      showToast(msg, 'error');
-    } finally {
-      setVerifyingOtp(false);
+    try { 
+      await verifyOtpApi(emailValue, otp); 
+      setIsEmailVerified(true); 
+      setShowOtp(false); 
+      showToast('Email verified!', 'success'); 
+    } 
+    catch (e) { 
+      showToast(e.response?.data?.message || 'Invalid OTP', 'error'); 
+    } 
+    finally { 
+      setVerifyingOtp(false); 
     }
   };
 
@@ -242,9 +263,7 @@ const AuthForm = ({ mode }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return;
-
-    if (showReset) return;
+    if (loading || showReset) return;
 
     const data = Object.fromEntries(new FormData(e.currentTarget).entries());
 
@@ -282,7 +301,7 @@ const AuthForm = ({ mode }) => {
           return;
         }
 
-        if (!isEmailVerified) {
+        if (!isEmailVerified && !backupMode) {
           showToast('Please verify your email first', 'error');
           setLoading(false);
           return;
@@ -294,34 +313,64 @@ const AuthForm = ({ mode }) => {
           displayName: data.name,
         });
 
-        const token = await cred.user.getIdToken();
+        if (backupMode) {
+            // 1. Send the Link
+            await sendEmailVerification(cred.user, {
+                url: `${window.location.origin}/auth-action?mode=verifyEmail`,
+                handleCodeInApp: true
+            });
+            const token = await cred.user.getIdToken();
 
-        await registerUser(
-          {
-            uid: cred.user.uid,
-            email: emailValue,
-            name: data.name,
-            phone: data.phone,
-            institute: finalInstitute,
-            year: year,
-          },
-          token
-        );
+            await registerUser(
+              {
+                uid: cred.user.uid,
+                email: emailValue,
+                name: data.name,
+                phone: data.phone,
+                institute: finalInstitute,
+                year: year,
+              },
+              token
+            );
+            
+            // 2. FORCE LOGOUT
+            await signOut(auth);
 
-        localStorage.setItem('authToken', token);
-
-        if (fetchProfile) {
-          await fetchProfile();
+            // 3. Show Message
+            showToast('Account Created! Check email to verify and login.', 'success');            
+            
+            // 4. Send them to Sign In page
+            navigate('/signin'); 
         } else {
-          console.error('fetchProfile function not found in context');
+            // Standard Flow
+            const token = await cred.user.getIdToken();
+            await registerUser({ uid: cred.user.uid, email: emailValue, name: data.name, phone: data.phone, institute: finalInstitute, year }, token);
+            localStorage.setItem('authToken', token);
+            if (fetchProfile) await fetchProfile();
+            showToast('Account created!', 'success');
+            navigate('/', { replace: true });
         }
-
-        showToast('Account created successfully', 'success');
-        navigate('/', { replace: true });
       }
 
       if (mode === 'signin') {
         const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
+        
+        if (!cred.user.emailVerified) {
+             // 1. Resend Link
+             await sendEmailVerification(cred.user, {
+                 url: `${window.location.origin}/reset-password?mode=verifyEmail`,
+                 handleCodeInApp: true
+             });
+
+             // 2. Kick them out
+             await signOut(auth);
+
+             // 3. Show Error
+             showToast('Email not verified. A new verification link has been sent.', 'error');
+             setLoading(false);
+             return;
+        }
+        
         const token = await cred.user.getIdToken();
         localStorage.setItem('authToken', token);
 
@@ -362,7 +411,7 @@ const AuthForm = ({ mode }) => {
   if (mode === 'signin' && showReset) {
     return (
       <div className='flex flex-col gap-6'>
-        <Typography variant="h6" sx={{ color: 'white', textAlign: 'cetner' }}>
+        <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>          
           Reset Password
         </Typography>
         <Typography variant="body2" sx={{ color: '#aaa', textAlign: 'center', mb: 1 }}>
@@ -540,6 +589,12 @@ const AuthForm = ({ mode }) => {
               >
                 <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
               </Button>
+            ) : backupMode ? (
+               // --- BACKUP UI ---
+               <Typography 
+                  sx={{ color: '#aaa', fontSize: '0.75rem', px: 1 }}>
+                    Link will be sent after Signup
+                </Typography>
             ) : (
               <Button
                 type="button"
@@ -580,7 +635,7 @@ const AuthForm = ({ mode }) => {
               </Button>
             )}
           </div>
-          {showOtp && !isEmailVerified && (
+          {showOtp && !isEmailVerified && !backupMode && (
             <div className="flex sm:col-span-2 gap-3 items-center">
               <TextField
                 name="otp"
@@ -725,7 +780,7 @@ const AuthForm = ({ mode }) => {
         disabled={
           loading ||
           (mode === 'signup' &&
-            (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified))
+            (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified && !backupMode))
         }
         sx={{
           mt: 2,
