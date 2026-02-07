@@ -1,10 +1,13 @@
 import { db } from "../config/firebase.js";
 import admin from "firebase-admin";
+import offers from "../data/promoCode.js";
 
-export const createOrderRecord = async (userId, items) => {
+export const createOrderRecord = async (userId, items , promoCode) => {
   let totalAmount = 0;
+  let totalOldAmount = 0;
   const validatedItems = [];
   const orderRef = db.collection("orders").doc();
+
 
   await db.runTransaction(async (tx) => {
 
@@ -57,15 +60,28 @@ export const createOrderRecord = async (userId, items) => {
     for (const e of eventCache) {
       const { eventRef, event, item } = e;
       const ids = ["10", "11", "12", "13"];
-
       if (ids.includes(item.eventId)) {
         tx.update(eventRef, {
           booked: event.booked + item.quantity, // ✅ WRITE AFTER ALL READS
         });
       }
 
-      const itemTotal = event.price * item.quantity;
+      let discount = 0;
+
+      if(promoCode) {
+        const promo = offers[promoCode.toUpperCase()];
+
+        if(promo && promo.validTill > new Date() && promo.applicableEvents.includes(item.eventId)) {
+            discount = promo.discountAmount;
+        }
+      }
+
+
+      const unitPriceAfterDiscount = Math.max(0, event.price - discount);
+      const itemTotal = unitPriceAfterDiscount * item.quantity;
+
       totalAmount += itemTotal;
+      totalOldAmount += event.price * item.quantity;
 
       validatedItems.push({
         eventId: String(item.eventId),
@@ -82,6 +98,7 @@ export const createOrderRecord = async (userId, items) => {
     tx.set(orderRef, {
       userId,
       amount: totalAmount,
+      promoCode: promoCode || null,
       currency: "INR",
       status: "RESERVED",
       items: validatedItems,
@@ -93,7 +110,7 @@ export const createOrderRecord = async (userId, items) => {
     });
   });
 
-  return { totalAmount, orderId: orderRef.id };
+  return { totalAmount , totalOldAmount, orderId: orderRef.id };
 };
 
 export const cancelOrderAndReleaseSeats = async (orderId) => {
