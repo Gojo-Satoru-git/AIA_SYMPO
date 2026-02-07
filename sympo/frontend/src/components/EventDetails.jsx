@@ -31,7 +31,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
 
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
-  const checkoverflow = useCallback(() => {
+  const checkoverflow = useCallback(()  => {
     const el = scrollRef.current;
     if (!el) return;
 
@@ -91,100 +91,104 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
           >
             ✕
           </button>
-
-          <div
-            ref={scrollRef}
-            className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] will-change-scroll transform-gpu isolation-auto"
-            style={{ backfaceVisibility: 'hidden' }}
-          >
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
-            />
-            <p className="text-gray-400 text-lg text-center ">{card.description}</p>
-            <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
-              {/* Team Size */}
-              <div className="text-center">
-                <span className="block font-bold uppercase text-sm opacity-70">Team Size</span>
-                <span className="text-xl">{card.teamSize}</span>
+          <div className="relative max-w-3xl mx-auto mt-10">
+            <div
+              ref={scrollRef}
+              className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] will-change-scroll transform-gpu isolation-auto"
+              style={{ backfaceVisibility: 'hidden' }}
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
+              />
+              <div className="w-full max-w-2xl px-4">
+                <p className="text-gray-300 text-lg text-center whitespace-pre-line leading-relaxed tracking-wide">
+                  {card.description}
+                </p>
               </div>
+              <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
+                {/* Team Size */}
+                <div className="text-center">
+                  <span className="block font-bold uppercase text-sm opacity-70">Team Size</span>
+                  <span className="text-xl">{card.teamSize}</span>
+                </div>
 
-              {/* Date & Time */}
-              <div className="text-center">
-                <span className="block font-bold uppercase text-sm opacity-70">Date & Time</span>
-                <span className="text-xl">
-                  {card.date} | {card.time}
-                </span>
-              </div>
+                {/* Date & Time */}
+                <div className="text-center">
+                  <span className="block font-bold uppercase text-sm opacity-70">Date & Time</span>
+                  <span className="text-xl">
+                    {card.date} | {card.time}
+                  </span>
+                </div>
 
-              {/* Contacts Group */}
-              <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
-                <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
+                {/* Contacts Group */}
+                <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
+                  <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
 
-                <div className="flex gap-6 text-center">
-                  {/* Contact 1 */}
-                  <div>
-                    <div className="font-bold text-white">{card.contact.name1}</div>
-                    <div className="text-sm">{card.contact.phone1}</div>
-                  </div>
-
-                  {/* Contact 2 */}
-                  {card.contact.name2 && (
+                  <div className="flex gap-6 text-center">
+                    {/* Contact 1 */}
                     <div>
-                      <div className="font-bold text-white">{card.contact.name2}</div>
-                      <div className="text-sm">{card.contact.phone2}</div>
+                      <div className="font-bold text-white">{card.contact.name1}</div>
+                      <div className="text-sm">{card.contact.phone1}</div>
                     </div>
-                  )}
+
+                    {/* Contact 2 */}
+                    {card.contact.name2 && (
+                      <div>
+                        <div className="font-bold text-white">{card.contact.name2}</div>
+                        <div className="text-sm">{card.contact.phone2}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-8">
-              <button
-                disabled={isDisabled}
-                className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
-                onClick={() => {
-                  console.log(isEventCoveredByPass(card.id));
-                  if (isEventCoveredByPass(card.id)) {
-                    showToast('Already included in the pass');
-                    return;
-                  } else if (
-                    (card.id === '12' || card.id === '13') &&
-                    localStorage.getItem(`${card.title}-teamData`) === null
-                  ) {
-                    showToast('Please add team details first', 'info');
-                  } else if (!checkCart(card)) {
-                    addToCart(card, card.category);
-                    showToast(`${card.title} added check the registration`, 'success');
-                  } else {
-                    showToast(`${card.title} is already in your cart`, 'info');
-                  }
-                }}
-              >
-                {buttonText}
-              </button>
-              {card.id === '16' || card.id === '17' ? (
+              <div className="flex items-center gap-8">
                 <button
-                  className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                  disabled={isDisabled}
+                  className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
                   onClick={() => {
-                    SetshowForm(true);
+                    console.log(isEventCoveredByPass(card.id));
+                    if (isEventCoveredByPass(card.id)) {
+                      showToast('Already included in the pass');
+                      return;
+                    } else if (
+                      (card.id === '12' || card.id === '13') &&
+                      localStorage.getItem(`${card.title}-teamData`) === null
+                    ) {
+                      showToast('Please add team details first', 'info');
+                    } else if (!checkCart(card)) {
+                      addToCart(card, card.category);
+                      showToast(`${card.title} added check the registration`, 'success');
+                    } else {
+                      showToast(`${card.title} is already in your cart`, 'info');
+                    }
                   }}
                 >
-                  {isPurchased ? 'View Team' : 'Add Team Details'}
+                  {buttonText}
                 </button>
-              ) : null}
-            </div>
-            <div>
-              <p className="text-primary text-lg italic mb-2">Rules:</p>
+                {card.id === '16' || card.id === '17' ? (
+                  <button
+                    className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                    onClick={() => {
+                      SetshowForm(true);
+                    }}
+                  >
+                    {isPurchased ? 'View Team' : 'Add Team Details'}
+                  </button>
+                ) : null}
+              </div>
+              <div>
+                <p className="text-primary text-lg italic mb-2">Rules:</p>
 
-              <ul className="list-disc list-inside text-gray-400 text-base">
-                {card.rules.map((rule, index) => (
-                  <li key={index}>{rule}</li>
-                ))}
-              </ul>
-              <div ref={bottomRef} className="h-1 w-full" />
+                <ul className="list-disc list-inside text-gray-400 text-base">
+                  {card.rules.map((rule, index) => (
+                    <li key={index}>{rule}</li>
+                  ))}
+                </ul>
+                <div ref={bottomRef} className="h-1 w-full" />
+              </div>
             </div>
-
             {showArrow && (
               <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
                 <span className="text-red-600 text-xl animate-bounce drop-shadow-md bg-black/50 rounded-full px-2">

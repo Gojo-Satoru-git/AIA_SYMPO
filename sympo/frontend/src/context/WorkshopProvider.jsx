@@ -13,7 +13,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Dipakumar',
@@ -33,7 +33,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Kamalnath',
@@ -53,7 +53,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Dipakumar',
@@ -73,7 +73,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Dipakumar',
@@ -93,7 +93,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Dipakumar',
@@ -113,7 +113,7 @@ function WorkshoProvider({ children }) {
       isSignature: true,
       date: '2026-02-21',
       time: '11:00 AM',
-      rules: 'Rules',
+      rules: ['Rules'],
       fees: 499,
       contact: {
         name1: 'Dipakumar',
