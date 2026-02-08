@@ -91,6 +91,7 @@ const CartProvider = ({ children }) => {
   const clearCart = () => setCart([]);
 
   const checkCart = (item) => {
+    if (!item) return false;
     return cart.some((p) => p.id === item.id);
   };
 

@@ -1,27 +1,42 @@
 /* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
+import useToast from '../context/useToast';
+import useCart from '../context/useCart';
 
 function Eventcard({
-  id,
-  title,
-  desc,
-  image,
-  date,
-  time,
+  card,
   index,
-  category,
-  backside,
   onClick,
   fallbackImage,
+  isInCart,
+  addToCart,
+  category,
+  isPurchased,
 }) {
   const [hasAppeared, setHasAppeared] = useState(false);
   const [Flipped, setFlipped] = useState(true);
   const cardRef = useRef(null);
+  const { showToast } = useToast();
 
+  const { isEventCoveredByPass } = useCart();
+  let buttonText = 'Add';
+  let buttonClass = 'bg-primary text-black';
+  let isDisabled = false;
+  const { checkCart } = useCart();
+
+  if (isPurchased) {
+    buttonText = 'Purchased';
+    buttonClass = 'bg-black-600 text-white cursor-not-allowed';
+    isDisabled = true;
+  } else if (isInCart) {
+    buttonText = 'In Cart';
+    buttonClass = 'bg-orange-500 text-black cursor-not-allowed';
+    isDisabled = true;
+  }
   useEffect(() => {
     setHasAppeared(false);
     setFlipped(true);
-  }, [category, title]);
+  }, [category, card.title]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -52,25 +67,24 @@ function Eventcard({
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses = 'w-[70vw] sm:w-72 h-96';
-
+  const sizeClasses = 'w-full max-w-[320px] h-fit mx-auto m-2';
   return (
-    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses}  m-2 sm:m-1`}>
+    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
       <div
-        className={`relative w-full h-full transition-transform duration-1000 preserve-3d ${
+        className={`preserve-3d relative h-full w-full transition-transform duration-1000 ${
           Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'
         }`}
       >
         {/* FRONT FACE (Needs backface-hidden to swap correctly) */}
         <div
           onClick={onClick}
-          className="absolute inset-0 w-full h-full backface-hidden rounded-md shadow-stGlow bg-black border-4 border-primary flex flex-col items-center cursor-pointer"
+          className="backface-hidden relative inset-0 flex h-full w-full cursor-pointer flex-col items-center rounded-md border-4 border-primary bg-black shadow-stGlow"
         >
-          <div className="flex-1 min-h-0 w-full">
+          <div className="relative h-[75%] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
             <img
-              src={image || fallbackImage}
-              alt={`AIA SYMPO TEKHORA26 ${title.toUpperCase()}`}
-              className="w-full h-full object-cover"
+              src={card.image || fallbackImage}
+              alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
+              className="h-full w-full object-cover"
               onError={(e) => {
                 if (!fallbackImage) return;
                 e.currentTarget.src = fallbackImage;
@@ -78,16 +92,52 @@ function Eventcard({
               }}
             />
           </div>
-          <div className="flex-shrink-0 w-full">
-            <p className="text-primary text-center p-2 mt-1 text-sm font-bold">
-              {(id < 10) ? "Rolling Event -" : ""} {date} · {time}
-            </p>
+          <div className="flex min-h-[80px] w-full flex-col justify-between bg-zinc-950 p-4">
+            <div className="text-center">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-red-500 opacity-80">
+                {card.id < 10 ? 'Rolling Event starts 9:30' : `${card.date} • ${card.time}`}
+              </p>
+            </div>
+
+            <div
+              className={`mt-auto flex items-center gap-3 ${card.id < 10 ? 'justify-center' : 'justify-between'}`}
+            >
+              <button
+                onClick={onClick}
+                className="text-[10px] font-black uppercase tracking-tighter text-zinc-500 transition-colors hover:text-white"
+              >
+                Learn More
+              </button>
+
+              {card.id >= 10 && (
+                <button
+                  disabled={isDisabled}
+                  className={`flex-1 rounded py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 ${buttonClass}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isEventCoveredByPass(card.id)) {
+                      showToast('Already included in the pass');
+                    } else if (
+                      ['16', '17', '18'].includes(card.id) &&
+                      localStorage.getItem(`${card.title}-teamData`) === null
+                    ) {
+                      showToast('Please add team details first', 'info');
+                    } else if (!checkCart(card)) {
+                      addToCart(card, category);
+                      showToast(`${card.title} added!`, 'success');
+                    }
+                  }}
+                >
+                  {buttonText}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
         {/* BACK FACE (Pre-rotated to face away) */}
-        <div className="absolute inset-0 w-full h-full backface-hidden bg-primary rounded-md flex items-center justify-center [transform:rotateY(180deg)]">
-          <img src={backside} className="w-full h-full overflow-hidden m-4"></img>
+        <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md bg-primary [transform:rotateY(180deg)]">
+          <img src={card.backside} className="m-4 h-full w-full overflow-hidden"></img>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ const Events = () => {
   const scrollRef4 = useRef(null);
 
   const [Selected, SetSelected] = useState('All');
-  const { addToCart } = useCart();
+  const { addToCart, checkCart } = useCart();
   const { checkPurchases } = usePurchases();
 
   const [clicked, setClicked] = useState(false);
@@ -99,7 +99,7 @@ const Events = () => {
     if (scrollRef4.current) {
       scrollRef4.current.scroll({ left: 0, behavior: 'smooth' });
       const timer = setTimeout(() => {
-        checkScroll(scrollRef2, setshowLeft, setshowRight);
+        checkScroll(scrollRef4, setshowLeft, setshowRight);
       }, 50);
 
       return () => clearTimeout(timer);
@@ -145,7 +145,8 @@ const Events = () => {
             itemCategory={cardclicked.category}
             onClose={() => setClicked(false)}
             checkPurchase={checkPurchases}
-            addToCart={handleCart}
+            isInCart={checkCart(detail)}
+            isPurchased={checkPurchases(detail)}
           />
         </div>
       )}
@@ -211,26 +212,28 @@ const Events = () => {
             onScroll={() => checkScroll(scrollRef2, setshowLeft, setshowRight)}
             className="no-scrollbar flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
           >
-            {display.map((events, index) => (
-              <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
-                <Eventcard
-                  title={events.title}
-                  desc={events.description}
-                  image={events.image}
-                  date={events.date}
-                  time={events.time}
-                  category={events.category}
-                  index={index}
-                  id={events.id}
-                  onClick={() => {
-                    setClicked(!clicked);
-                    setCardclicked({ id: events.id, category: events.category });
-                  }}
-                  backside={events.backside}
-                  fallbackImage={events.fallbackImage}
-                />
-              </div>
-            ))}
+            {display.map((events, index) => {
+              const itemInCart = checkCart(events);
+              const itemPurchased = checkPurchases(events);
+              return (
+                <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
+                  <Eventcard
+                    card={events}
+                    index={index}
+                    addToCart={handleCart}
+                    onClick={() => {
+                      setClicked(!clicked);
+                      setCardclicked({ id: events.id, category: events.category });
+                    }}
+                    category={events.category}
+                    backside={events.backside}
+                    fallbackImage={events.fallbackImage}
+                    isPurchased={itemPurchased}
+                    isInCart={itemInCart}
+                  />
+                </div>
+              );
+            })}
           </div>
           {showRight && (
             <IconButton
@@ -303,26 +306,28 @@ const Events = () => {
                 checkScroll(scrollRef3, setshowSELeft, setshowSERight);
               }}
             >
-              {SEvents.map((event, index) => (
-                <div key={`${Selected}-${event.id}`} className="flex-shrink-0 snap-center">
-                  <Eventcard
-                    title={event.title}
-                    desc={event.description}
-                    image={event.image}
-                    index={index}
-                    category="Signature Events"
-                    date={event.date}
-                    time={event.time}
-                    id={event.id}
-                    onClick={() => {
-                      setClicked(!clicked);
-                      setCardclicked({ id: event.id, category: 'Signature Events' });
-                    }}
-                    backside={event.backside}
-                    fallbackImage={event.fallbackImage}
-                  />
-                </div>
-              ))}
+              {SEvents.map((event, index) => {
+                const itemInCart = checkCart(event);
+                const itemPurchased = checkPurchases(event);
+                return (
+                  <div key={`${Selected}-${event.id}`} className="flex-shrink-0 snap-center">
+                    <Eventcard
+                      card={event}
+                      index={index}
+                      addToCart={handleCart}
+                      onClick={() => {
+                        setClicked(!clicked);
+                        setCardclicked({ id: event.id, category: 'Signature Events' });
+                      }}
+                      category="Signature Events"
+                      backside={event.backside}
+                      fallbackImage={event.fallbackImage}
+                      isPurchased={itemPurchased}
+                      isInCart={itemInCart}
+                    />
+                  </div>
+                );
+              })}
             </div>
             {showSERight && (
               <IconButton
@@ -395,26 +400,28 @@ const Events = () => {
                 checkScroll(scrollRef4, setshowWLeft, setshowWRight);
               }}
             >
-              {Workshops.map((workshop, index) => (
-                <div key={`${Selected}-${workshop.id}`} className="flex-shrink-0 snap-center">
-                  <Eventcard
-                    title={workshop.title}
-                    desc={workshop.description}
-                    image={workshop.image}
-                    index={index}
-                    category="workshop"
-                    date={workshop.date}
-                    time={workshop.time}
-                    id={workshop.id}
-                    onClick={() => {
-                      setClicked(!clicked);
-                      setCardclicked({ id: workshop.id, category: 'workshop' });
-                    }}
-                    backside={workshop.backside}
-                    fallbackImage={workshop.fallbackImage}
-                  />
-                </div>
-              ))}
+              {Workshops.map((workshop, index) => {
+                const itemInCart = checkCart(workshop);
+                const itemPurchased = checkPurchases(workshop);
+                return (
+                  <div key={`${Selected}-${workshop.id}`} className="flex-shrink-0 snap-center">
+                    <Eventcard
+                      card={workshop}
+                      index={index}
+                      addToCart={handleCart}
+                      onClick={() => {
+                        setClicked(!clicked);
+                        setCardclicked({ id: workshop.id, category: 'workshop' });
+                      }}
+                      category="workshop"
+                      backside={workshop.backside}
+                      fallbackImage={workshop.fallbackImage}
+                      isPurchased={itemInCart}
+                      isInCart={itemPurchased}
+                    />
+                  </div>
+                );
+              })}
             </div>
             {showWRight && (
               <IconButton

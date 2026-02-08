@@ -1,34 +1,14 @@
-import useToast from '../context/useToast';
 import TeamForm from './teamForm';
 import useCart from '../context/useCart';
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-function EventDetails({ card, onClose, checkPurchase, addToCart }) {
-  const { showToast } = useToast();
-  const { checkCart } = useCart();
+function EventDetails({ card, onClose, checkPurchase, isPurchased }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
-  const { isEventCoveredByPass } = useCart();
 
   const [showForm, SetshowForm] = useState(false);
 
-  const isPurchased = checkPurchase(card);
-  const isInCart = checkCart(card);
-
-  let buttonText = 'Add';
-  let buttonClass = 'bg-primary text-black';
-  let isDisabled = false;
-
-  if (isPurchased) {
-    buttonText = 'Purchased';
-    buttonClass = 'bg-black-600 text-white cursor-not-allowed';
-    isDisabled = true;
-  } else if (isInCart) {
-    buttonText = 'In Cart';
-    buttonClass = 'bg-orange-500 text-black cursor-not-allowed';
-    isDisabled = true;
-  }
-
+  const { checkCart } = useCart();
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
   const checkoverflow = useCallback(() => {
@@ -145,31 +125,6 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 </div>
               </div>
               <div className="flex items-center gap-8">
-                {card.id >= 10 && (
-                  <button
-                    disabled={isDisabled}
-                    className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow`}
-                    onClick={() => {
-                      console.log(isEventCoveredByPass(card.id));
-                      if (isEventCoveredByPass(card.id)) {
-                        showToast('Already included in the pass');
-                        return;
-                      } else if (
-                        (card.id === '16' || card.id === '17' || card.id == '18') &&
-                        localStorage.getItem(`${card.title}-teamData`) === null
-                      ) {
-                        showToast('Please add team details first', 'info');
-                      } else if (!checkCart(card)) {
-                        addToCart(card, card.category);
-                        showToast(`${card.title} added check the registration`, 'success');
-                      } else {
-                        showToast(`${card.title} is already in your cart`, 'info');
-                      }
-                    }}
-                  >
-                    {buttonText}
-                  </button>
-                )}
                 {card.id === '16' || card.id === '17' || card.id == '18' ? (
                   <button
                     className={`rounded-full bg-primary px-4 py-2 text-black shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
