@@ -29,7 +29,9 @@ export const PurchaseProvider = ({ children }) => {
       if (!order.events) return false;
       return order.events.some((event) => {
 
-        if (event.eventId == 'pass-global' || event.eventId == 'pass-tech' || event.eventId == 'pass-nontech') {
+        const isPass = ['pass-global' , 'pass-tech' , 'pass-nontech' , 'combo1' , 'combo2' , 'combo3'].includes(event.eventId);
+
+        if (isPass) {
           const pass = passes.find((p) => p.id === event.eventId);
 
           if (pass && pass.includes.includes(item.id)) {
