@@ -20,11 +20,11 @@ const Events = () => {
 
   const [clicked, setClicked] = useState(false);
   const [showLeft, setshowLeft] = useState(false);
-  const [showRight, setshowRight] = useState(false);
+  const [showRight, setshowRight] = useState(true);
   const [showWLeft, setshowWLeft] = useState(false);
-  const [showWRight, setshowWRight] = useState(false);
+  const [showWRight, setshowWRight] = useState(true);
   const [showSELeft, setshowSELeft] = useState(false);
-  const [showSERight, setshowSERight] = useState(false);
+  const [showSERight, setshowSERight] = useState(true);
   const [cardclicked, setCardclicked] = useState({
     id: null,
     category: null,
@@ -99,7 +99,7 @@ const Events = () => {
     if (scrollRef4.current) {
       scrollRef4.current.scroll({ left: 0, behavior: 'smooth' });
       const timer = setTimeout(() => {
-        checkScroll(scrollRef4, setshowLeft, setshowRight);
+        checkScroll(scrollRef4, setshowWLeft, setshowWRight);
       }, 50);
 
       return () => clearTimeout(timer);
@@ -416,8 +416,8 @@ const Events = () => {
                       category="workshop"
                       backside={workshop.backside}
                       fallbackImage={workshop.fallbackImage}
-                      isPurchased={itemInCart}
-                      isInCart={itemPurchased}
+                      isPurchased={itemPurchased}
+                      isInCart={itemInCart}
                     />
                   </div>
                 );
