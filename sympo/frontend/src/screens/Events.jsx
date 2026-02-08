@@ -5,6 +5,9 @@ import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { usePurchases } from '../context/PurchaseContext';
 import useCart from '../context/useCart';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { IconButton } from '@mui/material';
 import { Signeventscontext } from '../context/SEvents.context';
 const Events = () => {
   const scrollRef2 = useRef(null);
@@ -129,7 +132,7 @@ const Events = () => {
     <>
       {clicked && (
         <div
-          className="fixed top-0 left-0 z-50 w-full h-full  bg-black/60 backdrop-blur-sm"
+          className="fixed left-0 top-0 z-50 h-full w-full bg-black/60 backdrop-blur-sm"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setClicked(false);
@@ -146,25 +149,25 @@ const Events = () => {
           />
         </div>
       )}
-      <div className={`flex flex-col p-10 sm:justify-start  min-h-screen`}>
+      <div className={`flex min-h-screen flex-col p-10 sm:justify-start`}>
         <div
-          className={`flex  justify-center items-center py-10 text-primary mt-10 md:mt-10 sm:mt-10 `}
+          className={`mt-10 flex items-center justify-center py-10 text-primary sm:mt-10 md:mt-10`}
         >
-          <ul className="flex flex-shrink-0 lg:justify-center gap-5 md:gap-8 text-primary">
+          <ul className="flex flex-shrink-0 gap-5 text-primary md:gap-8 lg:justify-center">
             <li
-              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'All' ? 'bg-primary text-black scale-125' : ''}`}
+              className={`animated-border animate-fade-in-down cursor-pointer rounded-full border-solid p-2 shadow-stGlow ${Selected === 'All' ? 'scale-125 bg-primary text-black' : ''}`}
               onClick={() => SetSelected('All')}
             >
               All
             </li>
             <li
-              className={`p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Technical' ? 'bg-primary text-black scale-125' : ''}`}
+              className={`animated-border animate-fade-in-down cursor-pointer rounded-full border-solid p-2 shadow-stGlow ${Selected === 'Technical' ? 'scale-125 bg-primary text-black' : ''}`}
               onClick={() => SetSelected('Technical')}
             >
               Technical
             </li>
             <li
-              className={` p-2 rounded-full border-solid animated-border animate-fade-in-down shadow-stGlow cursor-pointer ${Selected === 'Non-Technical' ? 'bg-primary text-black scale-125' : ''}`}
+              className={`animated-border animate-fade-in-down cursor-pointer rounded-full border-solid p-2 shadow-stGlow ${Selected === 'Non-Technical' ? 'scale-125 bg-primary text-black' : ''}`}
               onClick={() => SetSelected('Non-Technical')}
             >
               Non-Technical
@@ -172,20 +175,41 @@ const Events = () => {
           </ul>
         </div>
 
-        <div className="relative w-full max-w-8xl flex items-center group">
+        <div className="max-w-8xl group relative flex w-full items-center">
           {showLeft && (
-            <button
+            <IconButton
               onClick={() => scroll('left', scrollRef2)}
-              className=" absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-110 transition-transform"
+              sx={{
+                m: 0.5,
+                display: 'flex',
+                position: 'absolute',
+                left: { xs: 0, md: -24 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'red',
+                backgroundColor: '#0b0b0b',
+                border: '1px solid red',
+                zIndex: 10,
+                '&:hover': {
+                  backgroundColor: '#0b0b0b',
+                  opacity: 0.9,
+                },
+                '&:active': {
+                  backgroundColor: '#0b0b0b',
+                },
+                '&.Mui-focusVisible': {
+                  backgroundColor: '#0b0b0b',
+                },
+              }}
             >
-              <span className="mb-auto">‹</span>
-            </button>
+              <ArrowBackIosNewIcon fontSize="small" />
+            </IconButton>
           )}
 
           <div
             ref={scrollRef2}
             onScroll={() => checkScroll(scrollRef2, setshowLeft, setshowRight)}
-            className="flex justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x  px-4"
+            className="no-scrollbar flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
           >
             {display.map((events, index) => (
               <div key={`${Selected}-${events.id}`} className="flex-shrink-0 snap-center">
@@ -209,30 +233,71 @@ const Events = () => {
             ))}
           </div>
           {showRight && (
-            <button
+            <IconButton
               onClick={() => scroll('right', scrollRef2)}
-              className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+              sx={{
+                display: 'flex',
+                position: 'absolute',
+                right: { xs: 0, md: -24 },
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'red',
+                backgroundColor: '#0b0b0b',
+                border: '1px solid red',
+                zIndex: 10,
+                '&:hover': {
+                  backgroundColor: '#0b0b0b',
+                  opacity: 0.9,
+                },
+                '&:active': {
+                  backgroundColor: '#0b0b0b',
+                },
+                '&.Mui-focusVisible': {
+                  backgroundColor: '#0b0b0b',
+                },
+              }}
             >
-              <span className="mb-auto">›</span>
-            </button>
+              <ArrowForwardIosIcon fontSize="small" />
+            </IconButton>
           )}
         </div>
 
-        <div className="relative text-primary mt-0">
-          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5 mb-4">
+        <div className="relative mt-0 text-primary">
+          <h2 className="animated-border mx-auto mb-4 mt-8 flex w-fit animate-fade-in-down justify-center rounded-full p-2 shadow-stGlow sm:mt-5">
             Signature Events
           </h2>
-          <div className="relative w-full max-w-8xl flex  items-center group">
+          <div className="max-w-8xl group relative flex w-full items-center">
             {showSELeft && (
-              <button
+              <IconButton
                 onClick={() => scroll('left', scrollRef3)}
-                className="absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform"
+                sx={{
+                  m: 0.5,
+                  display: 'flex',
+                  position: 'absolute',
+                  left: { xs: 0, md: -24 },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'red',
+                  backgroundColor: '#0b0b0b',
+                  border: '1px solid red',
+                  zIndex: 10,
+                  '&:hover': {
+                    backgroundColor: '#0b0b0b',
+                    opacity: 0.9,
+                  },
+                  '&:active': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                }}
               >
-                <span className="mb-auto">‹</span>
-              </button>
+                <ArrowBackIosNewIcon fontSize="small" />
+              </IconButton>
             )}
             <div
-              className="flex flex-nowrap md:justify-center items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x px-4 w-full"
+              className="no-scrollbar flex w-full snap-x flex-nowrap items-center gap-4 overflow-x-auto scroll-smooth px-4 md:justify-center"
               ref={scrollRef3}
               onScroll={() => {
                 checkScroll(scrollRef3, setshowSELeft, setshowSERight);
@@ -260,30 +325,71 @@ const Events = () => {
               ))}
             </div>
             {showSERight && (
-              <button
+              <IconButton
                 onClick={() => scroll('right', scrollRef3)}
-                className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+                sx={{
+                  display: 'flex',
+                  position: 'absolute',
+                  right: { xs: 0, md: -24 },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'red',
+                  backgroundColor: '#0b0b0b',
+                  border: '1px solid red',
+                  zIndex: 10,
+                  '&:hover': {
+                    backgroundColor: '#0b0b0b',
+                    opacity: 0.9,
+                  },
+                  '&:active': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                }}
               >
-                <span className="mb-auto">›</span>
-              </button>
+                <ArrowForwardIosIcon fontSize="small" />
+              </IconButton>
             )}
           </div>
         </div>
-        <div className="relative text-primary mt-0">
-          <h2 className="p-2 rounded-full w-fit mx-auto flex justify-center animated-border animate-fade-in-down shadow-stGlow mt-8 sm:mt-5  mb-4">
+        <div className="relative mt-0 text-primary">
+          <h2 className="animated-border mx-auto mb-4 mt-8 flex w-fit animate-fade-in-down justify-center rounded-full p-2 shadow-stGlow sm:mt-5">
             Workshops
           </h2>
-          <div className="relative w-full max-w-8xl flex  items-center group">
+          <div className="max-w-8xl group relative flex w-full items-center">
             {showWLeft && (
-              <button
+              <IconButton
                 onClick={() => scroll('left', scrollRef4)}
-                className="absolute mb-auto -left-2 lg:-left-8 z-20 p-2 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform"
+                sx={{
+                  m: 0.5,
+                  display: 'flex',
+                  position: 'absolute',
+                  left: { xs: 0, md: -24 },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'red',
+                  backgroundColor: '#0b0b0b',
+                  border: '1px solid red',
+                  zIndex: 10,
+                  '&:hover': {
+                    backgroundColor: '#0b0b0b',
+                    opacity: 0.9,
+                  },
+                  '&:active': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                }}
               >
-                <span className="mb-auto">‹</span>
-              </button>
+                <ArrowBackIosNewIcon fontSize="small" />
+              </IconButton>
             )}
             <div
-              className="flex flex-nowrap justify-start items-center gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x px-4"
+              className="no-scrollbar flex snap-x flex-nowrap items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
               ref={scrollRef4}
               onScroll={() => {
                 checkScroll(scrollRef4, setshowWLeft, setshowWRight);
@@ -311,12 +417,32 @@ const Events = () => {
               ))}
             </div>
             {showWRight && (
-              <button
+              <IconButton
                 onClick={() => scroll('right', scrollRef4)}
-                className="absolute mb-auto -right-4  lg:-right-10 z-10 p-4 text-primary text-3xl lg:text-5xl hover:scale-125 transition-transform items-center md:mt-42"
+                sx={{
+                  display: 'flex',
+                  position: 'absolute',
+                  right: { xs: 0, md: -24 },
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'red',
+                  backgroundColor: '#0b0b0b',
+                  border: '1px solid red',
+                  zIndex: 10,
+                  '&:hover': {
+                    backgroundColor: '#0b0b0b',
+                    opacity: 0.9,
+                  },
+                  '&:active': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: '#0b0b0b',
+                  },
+                }}
               >
-                <span className="mb-auto">›</span>
-              </button>
+                <ArrowForwardIosIcon fontSize="small" />
+              </IconButton>
             )}
           </div>
         </div>

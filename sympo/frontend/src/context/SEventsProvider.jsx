@@ -28,14 +28,14 @@ const SignEventProvider = ({ children }) => {
     {
       title: 'MUN Debate',
       id: '17',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sumpo-tekhora26-mun-debate.webp?alt=media&token=acba08d4-cbb9-4d2e-b03d-82c272bae5d1',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sumpo-tekhora26-mun-debate.webp?alt=media&token=acba08d4-cbb9-4d2e-b03d-82c272bae5d1',
       backside: './assets/Billy.webp',
       description:
         'We are proud to present a one-day, high-impact MUN organized with Youthalic, a leader in shaping confident communicators. More than a simulation, this immersive experience empowers young minds to step into the shoes of global leaders to debate real-world issues and craft meaningful solutions.\n\nWhat to Expect:\nSkill Development,Inclusivity,Atmosphere',
       category: 'Technical',
       isSignature: true,
-      miniTeamSize: '2',
-      teamSize: '4',
+      teamSize: '1',
       date: '2026-02-21',
       time: '11:00 AM',
       rules: [
@@ -91,7 +91,7 @@ const SignEventProvider = ({ children }) => {
       date: '2026-02-21',
       time: '11:00 AM',
       rules: ['Rules'],
-      miniTeamSize: '2',
+      miniTeamSize: '1',
       teamSize: '2',
       fees: 199,
       contact: {

@@ -87,44 +87,45 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
         <>
           <button
             onClick={onClose}
-            className="absolute top-2 right-4 text-primary text-xl font-bold"
+            className="absolute right-4 top-2 text-xl font-bold text-primary"
           >
             ✕
           </button>
-          <div className="relative max-w-3xl mx-auto mt-10">
+          <div className="relative mx-auto mt-10 max-w-3xl">
             <div
               ref={scrollRef}
-              className="flex items-center bg-black/70 flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] will-change-scroll transform-gpu isolation-auto"
+              className="isolation-auto mx-auto mt-10 flex max-h-[90vh] max-w-3xl transform-gpu flex-col items-center gap-4 overflow-auto rounded-md border-primary bg-black/70 p-8 will-change-scroll [-ms-overflow-style:none] [scrollbar-width:none] md:border md:shadow-stGlow [&::-webkit-scrollbar]:hidden"
               style={{ backfaceVisibility: 'hidden' }}
             >
               <img
                 src={card.image}
                 alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
-                className="w-72 aspect-[4/5] object-cover  rounded-md shadow-stGlow"
+                className="aspect-[4/5] w-72 rounded-md object-cover shadow-stGlow"
               />
               <div className="w-full max-w-2xl px-4">
-                <p className="text-gray-300 text-lg text-center whitespace-pre-line leading-relaxed tracking-wide">
+                <p className="whitespace-pre-line text-center text-lg leading-relaxed tracking-wide text-gray-300">
                   {card.description}
                 </p>
               </div>
-              <div className="w-full bg-black/40 border border-primary/30 rounded-lg p-2 flex flex-wrap justify-around items-center gap-6 text-primary text-lg">
+              <div className="flex w-full flex-wrap items-center justify-around gap-6 rounded-lg border border-primary/30 bg-black/40 p-2 text-lg text-primary">
                 {/* Team Size */}
                 <div className="text-center">
-                  <span className="block font-bold uppercase text-sm opacity-70">Team Size</span>
+                  <span className="block text-sm font-bold uppercase opacity-70">Team Size</span>
+                  {card.miniTeamSize && <span className="text-xl">{card.miniTeamSize}-</span>}
                   <span className="text-xl">{card.teamSize}</span>
                 </div>
 
                 {/* Date & Time */}
                 <div className="text-center">
-                  <span className="block font-bold uppercase text-sm opacity-70">Date & Time</span>
+                  <span className="block text-sm font-bold uppercase opacity-70">Date & Time</span>
                   <span className="text-xl">
                     {card.date} | {card.time}
                   </span>
                 </div>
 
                 {/* Contacts Group */}
-                <div className="flex flex-col items-center sm:border-l border-primary/30 sm:pl-6">
-                  <span className="font-bold uppercase text-sm opacity-70 mb-2">Contacts</span>
+                <div className="items-ctenter flex flex-col border-primary/30 sm:border-l sm:pl-6">
+                  <span className="mb-2 text-sm font-bold uppercase opacity-70">Contacts</span>
 
                   <div className="flex gap-6 text-center">
                     {/* Contact 1 */}
@@ -147,7 +148,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 {card.id >= 10 && (
                   <button
                     disabled={isDisabled}
-                    className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow `}
+                    className={`${isDisabled ? 'opacity-35' : ''} ${buttonClass} rounded-full px-4 py-2 shadow-stGlow`}
                     onClick={() => {
                       console.log(isEventCoveredByPass(card.id));
                       if (isEventCoveredByPass(card.id)) {
@@ -171,7 +172,7 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 )}
                 {card.id === '16' || card.id === '17' || card.id == '18' ? (
                   <button
-                    className={` bg-primary text-black rounded-full px-4 py-2 shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                    className={`rounded-full bg-primary px-4 py-2 text-black shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
                     onClick={() => {
                       SetshowForm(true);
                     }}
@@ -181,9 +182,9 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
                 ) : null}
               </div>
               <div>
-                <p className="text-primary text-lg italic mb-2">Rules:</p>
+                <p className="mb-2 text-lg italic text-primary">Rules:</p>
 
-                <ul className="list-disc list-inside text-gray-400 text-base">
+                <ul className="list-inside list-disc text-base text-gray-400">
                   {card.rules.map((rule, index) => (
                     <li key={index}>{rule}</li>
                   ))}
@@ -192,8 +193,8 @@ function EventDetails({ card, onClose, checkPurchase, addToCart }) {
               </div>
             </div>
             {showArrow && (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
-                <span className="text-red-600 text-xl animate-bounce drop-shadow-md bg-black/50 rounded-full px-2">
+              <div className="pointer-events-none absolute bottom-4 left-0 right-0 flex justify-center">
+                <span className="animate-bounce rounded-full bg-black/50 px-2 text-xl text-red-600 drop-shadow-md">
                   ↓
                 </span>
               </div>
