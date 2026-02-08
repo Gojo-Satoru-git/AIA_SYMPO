@@ -10,16 +10,16 @@ const faqs = [
     a: 'Yes, on-spot registration is available for both technical and non-technical events.',
   },
   {
+    q: 'Does every team member need to get a pass?',
+    a: 'Yes, for both technical and non-technical events, every team member must buy a pass',
+  },
+  {
     q: 'For the hackathon, does each individual need to register',
     a: 'No, for the hackathon, only one person from the team need to register',
   },
   {
     q: 'Will  I receive a certificate?',
     a: 'Yes!, certificates will be provided to all registered participants and winners where applicable.',
-  },
-  {
-    q: 'Does every team member need to get a pass?',
-    a: 'Yes, for both technical and non-technical events, every team member must buy a pass',
   },
   {
     q: 'Are arts students eligible to participate?',
