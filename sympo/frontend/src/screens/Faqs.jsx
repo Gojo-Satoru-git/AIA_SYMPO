@@ -3,7 +3,7 @@ import { useState } from 'react';
 const faqs = [
   {
     q: 'How do I register?',
-    a: 'Choose any one event pass and click Register. After completing the payment, your pass will be available in your profile under “My Purchase.”',
+    a: 'First, select an event pass that gives access to regular events. If you want to attend workshops or signature events, add them individually to your cart. After payment, all your registrations will appear in “My Purchases.”',
   },
   {
     q: 'Is on-spot registration available?',
