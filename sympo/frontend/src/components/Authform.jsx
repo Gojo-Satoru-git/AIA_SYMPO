@@ -22,6 +22,8 @@ import debounce from 'lodash/debounce';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
+import useCart from '../context/useCart';
+
 const menuItemStyle = {
   color: '#e5e5e5',
   fontSize: '0.95rem',
@@ -133,6 +135,8 @@ const AuthForm = ({ mode }) => {
   const [isSendingOtp, setIsSendingOtp] = useState(false);
 
   const collegeCache = useRef({});
+
+  const {clearCart} = useCart();
 
   useEffect(() => {
     let interval;
@@ -380,6 +384,7 @@ const AuthForm = ({ mode }) => {
         if (fetchProfile) await fetchProfile();
 
         showToast('Login successful', 'success');
+        clearCart();
         navigate('/', { replace: true });
       }
     } catch (err) {

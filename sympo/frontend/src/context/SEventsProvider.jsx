@@ -28,8 +28,7 @@ const SignEventProvider = ({ children }) => {
     {
       title: 'MUN Debate',
       id: '17',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4b4072c9-7ea6-439e-825b-19c86e85c3fb',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sumpo-tekhora26-mun-debate.webp?alt=media&token=acba08d4-cbb9-4d2e-b03d-82c272bae5d1',
       backside: './assets/Billy.webp',
       description:
         'We are proud to present a one-day, high-impact MUN organized with Youthalic, a leader in shaping confident communicators. More than a simulation, this immersive experience empowers young minds to step into the shoes of global leaders to debate real-world issues and craft meaningful solutions.\n\nWhat to Expect:\nSkill Development,Inclusivity,Atmosphere',
@@ -71,7 +70,7 @@ const SignEventProvider = ({ children }) => {
         'The POI Streak Award is given to the most active quality questioner.',
         'Suspension of rules requires a simple majority and EB approval.',
       ],
-      fees: 499,
+      fees: 299,
       contact: {
         name1: 'Sandheep',
         phone1: '9884793806',
