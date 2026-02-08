@@ -1,7 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 
 const Footer = () => {
   const [activePolicy, setActivePolicy] = useState(null); // "cancel" | "privacy" | null
+
+  useEffect(() => {
+  if (activePolicy) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  // Cleanup (important)
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [activePolicy]);
 
   return (
     <>
@@ -111,6 +124,9 @@ const Footer = () => {
                   <br />
                   If you have any concerns regarding your order, please contact
                   us at <strong>+91   91598 12736</strong>.
+                
+      <br />
+      Email: <strong>aia.mit.india@gmail.com</strong> 
                 </p>
               </>
             )}
@@ -173,7 +189,9 @@ const Footer = () => {
       <li>Opt out of non-essential data collection</li>
     </ul>
     <p className="mt-2">
-      Contact: <strong>+91  91598 12736</strong>
+      Contact: <strong>+91  91598 12736</strong> 
+      <br />
+      Email: <strong>aia.mit.india@gmail.com</strong> 
     </p>
   </div>
 
