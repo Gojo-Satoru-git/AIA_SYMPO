@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const dateText = "FEBRUARY   21 ,   2026   ·   MIT ,   CHENNAI";
+
 
 const Home = () => {
   const [showLine, setShowLine] = useState(false);
-  const [startTyping, setStartTyping] = useState(false);
-  const [typedText, setTypedText] = useState("");
-  const [charIndex, setCharIndex] = useState(0);
   const [showLogos, setShowLogos] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
@@ -22,41 +19,19 @@ const Home = () => {
  
 
 
-  useEffect(() => {
-    if (showLine) {
-      const timer = setTimeout(() => setStartTyping(true), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [showLine]);
+
 
  
-  useEffect(() => {
-    if (startTyping && charIndex < dateText.length) {
-      const timer = setTimeout(() => {
-        setTypedText(prev => prev + dateText[charIndex]);
-        setCharIndex(prev => prev + 1);
-      }, 20);
-      return () => clearTimeout(timer);
-    }
-  }, [startTyping, charIndex]);
 
- 
-  useEffect(() => {
-    if (charIndex === dateText.length) {
-      const timer = setTimeout(() => setShowLogos(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [charIndex]);
+ useEffect(() => {
+  const timer = setTimeout(() => {
+    setShowLogos(true);
+    setShowDescription(true);
+  }, 3000);
 
-  useEffect(() => {
-  if (charIndex === dateText.length) {
-    const timer = setTimeout(() => {
-      setShowLogos(true);
-      setShowDescription(true); // 👈 added
-    }, 500);
-    return () => clearTimeout(timer);
-  }
-}, [charIndex]);
+  return () => clearTimeout(timer);
+}, []);
+
 
 
   return (
@@ -127,17 +102,13 @@ const Home = () => {
       <div className="mt-[44px] md:mt-16 sm:mt-12  lg:mt-24 flex flex-col items-center justify-center text-center w-full max-w-5xl">
 
    
-        <p className="font-strange mb-2 sm:mt-24 md:mt-28 lg:mt-32 text-xs sm:text-lg md:text-xl tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.4em] text-white opacity-80 min-h-[1.5rem] sm:min-h-[2rem] break-words">
-          {typedText}
-          {startTyping && charIndex < dateText.length && (
-            <span className="animate-pulse">|</span>
-          )}
-        </p>
+        
+         
 
  
         <div className="inline-block">
           <h1
-            className="relative text-4xl sm:mt-5 lg:mt-0 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom "
+            className="relative text-4xl sm:mt-5 lg:mt-32 sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-[0.3em] sm:tracking-widest animate-zoom "
             style={{
               background: "linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)",
               WebkitBackgroundClip: "text",
@@ -249,3 +220,4 @@ const Home = () => {
 };
 
 export default Home;
+
