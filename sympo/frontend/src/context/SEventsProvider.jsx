@@ -5,8 +5,7 @@ const SignEventProvider = ({ children }) => {
     {
       title: 'Hackathon',
       id: '16',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4b4072c9-7ea6-439e-825b-19c86e85c3fb',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4040803f-61c6-4a45-b5e1-76779ffe3052',
       backside: './assets/Billy.webp',
       description: 'This is Hackathon',
       category: 'Technical',
@@ -28,8 +27,7 @@ const SignEventProvider = ({ children }) => {
     {
       title: 'MUN Debate',
       id: '17',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sumpo-tekhora26-mun-debate.webp?alt=media&token=acba08d4-cbb9-4d2e-b03d-82c272bae5d1',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/MUN.webp?alt=media&token=7dc12f48-9d39-45a3-9399-4265d884a87e',
       backside: './assets/Billy.webp',
       description:
         'We are proud to present a one-day, high-impact MUN organized with Youthalic, a leader in shaping confident communicators. More than a simulation, this immersive experience empowers young minds to step into the shoes of global leaders to debate real-world issues and craft meaningful solutions.\n\nWhat to Expect:\nSkill Development,Inclusivity,Atmosphere',
@@ -82,8 +80,7 @@ const SignEventProvider = ({ children }) => {
     {
       title: 'Paper Presentation',
       id: '18',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/paper_presentation.webp?alt=media&token=0cb3bc8a-db71-48c1-bf5b-81c95e6f2530',
+      image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Paper%20Presentation.webp?alt=media&token=c34772fa-11f2-4135-9677-be1888ad2d3d',
       backside: './assets/Robin.webp',
       description: 'This is Paper presentation',
       category: 'Technical',
