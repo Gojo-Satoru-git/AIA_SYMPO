@@ -217,9 +217,10 @@ const formattedEvents =[
 </Typography>
     <div className="relative scroll-hint scroll-hint-sm-md">
   <div className="flex gap-6 overflow-x-auto pb-6 hide-scrollbar px-4 py-2.5 md:justify-center">
-    <RegistrationCard position="Registration Lead" name="Karthik M" phone="9876543210" />
-    <RegistrationCard position="Registration Co-Lead" name="Anitha P" phone="9123456789" />
-    <RegistrationCard position="Help Desk" name="Rahul S" phone="9988776655" />
+    <RegistrationCard position="Registration Lead" name="Thirushika S" phone="9840650637" />
+    <RegistrationCard position="Registration Co-Lead" name="Jayashree M " phone="6380313115" />
+    <RegistrationCard position="Help Desk Lead " name="Samyuktha M" phone="6235983522" />
+    <RegistrationCard position="Help Desk Co-Lead" name="Sashetharai M" phone="6385572544" />
   </div>
 </div>
 

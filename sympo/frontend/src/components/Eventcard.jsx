@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 function Eventcard({
+  id,
   title,
   desc,
   image,
@@ -79,7 +80,7 @@ function Eventcard({
           </div>
           <div className="flex-shrink-0 w-full">
             <p className="text-primary text-center p-2 mt-1 text-sm font-bold">
-              {date} · {time}
+              {(id < 10) ? "Rolling Event -" : ""} {date} · {time}
             </p>
           </div>
         </div>
