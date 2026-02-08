@@ -576,7 +576,9 @@ const AuthForm = ({ mode }) => {
               onChange={(e) => setEmailValue(e.target.value)}
               required
               fullWidth
-              disabled={isEmailVerified}
+              InputProps={{
+                readOnly: isEmailVerified,
+              }}
               sx={inputStyle}
             />
 
