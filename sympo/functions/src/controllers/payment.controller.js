@@ -1,25 +1,32 @@
 import admin, { db } from "../config/firebase.js";
-import { createOrderRecord } from "../service/order.service.js";
-import { createRazorpayOrder, verifyRazorpayPayment } from "../service/razorpay.service.js";
 import crypto from "crypto";
+import { createOrderRecord } from "../service/order.service.js";
+import { createCashfreeOrder, fetchCashfreeOrder } from "../service/cashfree.service.js";
 
 export const createOrder = async (req, res) => {
   try {
     const { items , promoCode } = req.body;
 
     const { totalAmount, totalOldAmount ,  orderId } = await createOrderRecord(req.user.uid, items , promoCode );
-    const razorpayOrder = await createRazorpayOrder(totalAmount);
+
+    const cashfreeOrder = await createCashfreeOrder({
+      orderId,
+      amount: totalAmount,
+      customer: {
+        uid: req.user.uid,
+        email: req.user.email,
+        phone: req.user.phone,
+      },
+    });
 
     await db.collection("orders").doc(orderId).update({
-      razorpay_order_id: razorpayOrder.id,
+      cashfree_order_id: cashfreeOrder.order_id,
     });
 
     res.json({
-      orderId: razorpayOrder.id,
-      dbOrderId: orderId,
-      amount: razorpayOrder.amount,
-      keyId: process.env.RAZORPAY_KEY_ID,
-      totalOldAmount : totalOldAmount,
+      orderId: cashfreeOrder.order_id,
+      paymentSessionId: cashfreeOrder.payment_session_id,
+      totalOldAmount,
     });
   } catch (err) {
     res.status(400).json({ message: err.message, eventId: err.eventId });
@@ -29,78 +36,48 @@ export const createOrder = async (req, res) => {
 
 export const verifyOrder = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature , teams } = req.body;
+    const { orderId, teams } = req.body;
 
-    const valid = verifyRazorpayPayment(
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    );
+    const cashfreeOrder = await fetchCashfreeOrder(orderId);
 
-    if (!valid) return res.status(400).json({ message: "Invalid signature" });
+    if (cashfreeOrder.order_status !== "PAID") {
+      return res.status(400).json({ message: "Payment not completed" });
+    }
 
-    const snap = await db.collection("orders")
-      .where("razorpay_order_id", "==", razorpay_order_id)
-      .limit(1)
-      .get();
+    const orderRef = db.collection("orders").doc(orderId);
+    const orderSnap = await orderRef.get();
 
-    if (snap.empty) return res.status(404).json({ message: "Order not found" });
+    if (!orderSnap.exists) {
+      return res.status(404).json({ message: "Order not found" });
+    }
 
-    const orderDoc = snap.docs[0];
-    const order = orderDoc.data();
-
+    const order = orderSnap.data();
     if (order.status === "PAID") {
       return res.json({ success: true, qrToken: order.qrToken });
     }
 
-    if (order.status === "CANCELLED") {
-      return res.status(400).json({ message: "Order already cancelled" });
-    }
-
     const qrToken = crypto.randomBytes(32).toString("hex");
 
-    await orderDoc.ref.update({
+    await orderRef.update({
       status: "PAID",
-      razorpay_payment_id,
+      cashfree_payment_id: cashfreeOrder.cf_order_id,
       qrToken,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-
-    if (teams && teams.length > 0) {
+    if (teams?.length) {
       for (const team of teams) {
-        const teamDoc = await db.collection("teams").add({
+        await db.collection("teams").add({
           teamData: JSON.parse(team.teamData),
           eventId: team.id,
           uid: req.user.uid,
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
-
       }
     }
-
-
 
     res.json({ success: true, qrToken });
   } catch (err) {
     res.status(500).json({ message: "Verification failed" });
-  }
-};
-
-
-import { cancelOrderAndReleaseSeats } from "../service/order.service.js";
-
-export const cancelPayment = async (req, res) => {
-  const { orderId } = req.body;
-
-
-  if (!orderId) return res.status(400).json({ message: "Missing orderId" });
-
-  try {
-    await cancelOrderAndReleaseSeats(orderId);
-    return res.json({ success: true, message: "Order cancelled" });
-  } catch (err) {
-    console.error("Cancel failed:", err);
-    return res.status(500).json({ message: "Cancel failed" });
   }
 };

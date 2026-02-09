@@ -1,18 +1,39 @@
 import api from "./api";
 
-export const createPaymentOrder = async (cartItems , promoCode) => {
+/* ======================================================
+   CREATE CASHFREE PAYMENT ORDER
+====================================================== */
+
+/**
+ * Create Cashfree payment order
+ * @param {Array} cart - cart items
+ * @param {String|null} promoCode
+ */
+export const createPaymentOrder = async (cart, promoCode = null) => {
   try {
-    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    // 1️⃣ Validate cart
+    if (!Array.isArray(cart) || cart.length === 0) {
       throw new Error("Cart is empty");
     }
-    const itemsPayload = cartItems.map(item => ({
+
+    // 2️⃣ Build items payload
+    const items = cart.map((item) => ({
       eventId: item.id,
-      quantity: 1
+      quantity: 1,
     }));
 
-    const response = await api.post("/payment/order", { items: itemsPayload , promoCode });
-    
-    if (!response.data.orderId || !response.data.amount) {
+    // 3️⃣ Call backend
+    const response = await api.post("/payment/order", {
+      items,
+      promoCode,
+    });
+
+    // 4️⃣ Validate response
+    if (
+      !response?.data ||
+      !response.data.orderId ||
+      !response.data.amount
+    ) {
       throw new Error("Invalid order response from server");
     }
 
@@ -23,33 +44,75 @@ export const createPaymentOrder = async (cartItems , promoCode) => {
   }
 };
 
-export const verifyPaymentOrder = async (paymentData , cartItems) => {
-  try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = paymentData;
+/* ======================================================
+   VERIFY CASHFREE PAYMENT
+   (Webhook is PRIMARY, this is BACKUP)
+====================================================== */
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      throw new Error("Missing required payment verification data");
+/**
+ * Verify payment after Cashfree redirect
+ * @param {String} orderId - Cashfree order_id
+ * @param {Array} cart - cart items
+ */
+export const verifyPaymentOrder = async (orderId, cart) => {
+  try {
+    // 1️⃣ Validate input
+    if (!orderId) {
+      throw new Error("Missing Cashfree orderId");
     }
 
-    const teamsPayload = cartItems
-      .filter(item => item.id === '16' || item.id === '17' || item.id === '18')
-      .map(item => ({
+    if (!Array.isArray(cart) || cart.length === 0) {
+      throw new Error("Cart is empty");
+    }
+
+    // 2️⃣ Prepare team payload (same logic as old Razorpay flow)
+    const teams = cart
+      .filter((item) => item.type === "team")
+      .map((item) => ({
         id: item.id,
-        teamData: localStorage.getItem(`${item.title}-teamData`)
+        teamData:
+          item.teamData ||
+          localStorage.getItem(`${item.title}-teamData`) ||
+          null,
       }));
 
-    const response = await api.post("/payment/verify", { ...paymentData, teams: teamsPayload });
-    
-    if (!response.data.success) {
+    // 3️⃣ Call backend verify API
+    const response = await api.post("/payment/verify", {
+      orderId,
+      teams,
+    });
+
+    // 4️⃣ Validate backend response
+    if (!response?.data?.success) {
       throw new Error("Payment verification failed");
     }
-
-    
-
 
     return response;
   } catch (error) {
     console.error("Verification failed:", error);
+    throw error.response?.data || error;
+  }
+};
+
+/* ======================================================
+   OPTIONAL: CANCEL PAYMENT / RELEASE SEATS
+====================================================== */
+
+/**
+ * Cancel payment (manual user cancel)
+ * @param {String} orderId
+ */
+export const cancelPaymentOrder = async (orderId) => {
+  try {
+    if (!orderId) {
+      throw new Error("Missing orderId");
+    }
+
+    const response = await api.post("/payment/cancel", { orderId });
+
+    return response;
+  } catch (error) {
+    console.error("Payment cancellation failed:", error);
     throw error.response?.data || error;
   }
 };

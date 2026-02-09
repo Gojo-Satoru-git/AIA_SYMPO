@@ -11,6 +11,7 @@ import { usePurchases } from '../context/PurchaseContext';
 import api from '../services/api';
 import PassSuggestionModal from '../components/PassSuggestionModal';
 import TosButton from '../components/TosButton';
+import { load } from '@cashfreepayments/cashfree-js';
 
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
@@ -73,23 +74,37 @@ const Registration = () => {
     return true;
   };
 
-  // 1. Helper to load Razorpay Script
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      if (window.Razorpay) {
-        resolve(true);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      script.onload = () => resolve(true);
-      script.onerror = () => {
-        console.error('Failed to load Razorpay SDK');
-        resolve(false);
-      };
-      document.body.appendChild(script);
-    });
+  const proceedToPayment = async () => {
+    if (!user) return showToast('Please login first', 'error');
+    if (!validateCart()) return;
+
+    setPaymentLocked(true);
+    setPaymentLoading(true);
+
+    try {
+      // Create order from backend
+      const { data } = await createPaymentOrder(cart, promoCode);
+
+      setBackendAmount(data.amount);
+
+      // Load Cashfree (auto sandbox / prod)
+      const cashfree = await load({
+        mode: import.meta.env.PROD ? 'production' : 'sandbox',
+      });
+
+      // Open Cashfree checkout
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: '_self',
+      });
+
+      trackEvent('payment_initiated', { amount: data.amount });
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Payment initialization failed';
+      showToast(msg, 'error');
+      setPaymentLocked(false);
+      setPaymentLoading(false);
+    }
   };
 
   const analyzeCart = (cart) => {
@@ -122,10 +137,10 @@ const Registration = () => {
   const getRecommendation = (data) => {
     const { techCount, nonTechCount, techAmount, nonTechAmount, activePass } = data;
 
-    // 🔒 If user already purchased a pass → no recommendation
+    // If user already purchased a pass → no recommendation
     if (passes.some((p) => checkPassPurchases(p))) return null;
 
-    // 🆙 Upgrade case → Global Pass
+    // Upgrade case → Global Pass
     if (
       (activePass === passes[0].id && nonTechCount >= 2) ||
       (activePass === passes[2].id && techCount >= 2)
@@ -175,108 +190,6 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
     }
 
     return null;
-  };
-
-  const proceedToPayment = async () => {
-    if (!user) return showToast('Please login first', 'error');
-    if (!validateCart()) return;
-
-    setPaymentLocked(true);
-    setPaymentLoading(true);
-
-    try {
-      const isLoaded = await loadRazorpay();
-      if (!isLoaded) throw new Error('Razorpay SDK failed to load');
-
-      // Create order
-      const { data: order } = await createPaymentOrder(cart, promoCode);
-
-      setBackendAmount(order.amount);
-
-      const options = {
-        key: order.keyId,
-        amount: order.amount,
-        currency: order.currency,
-        name: "TEKHORA'26",
-        description: 'Event Registration',
-        order_id: order.orderId,
-
-        handler: async function (response) {
-          try {
-            const verifyRes = await verifyPaymentOrder(
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              },
-              cart
-            );
-
-            if (verifyRes.data.success) {
-              const qrToken = verifyRes.data.qrToken;
-
-              addPurchase({
-                orderId: response.razorpay_payment_id,
-                amount: order.amount / 100,
-                events: cart.map((item) => ({ eventId: item.id, title: item.title })),
-                qrToken: qrToken,
-              });
-
-              const token = verifyRes.data.qrToken;
-              const scanUrl = `${window.location.origin}/scan/${token}`;
-
-              setQrCode(scanUrl);
-              setQrVisible(true);
-
-              clearCart();
-              setBackendAmount(null);
-              showToast('Payment Successful!', 'success');
-              trackEvent('payment_success', { amount: order.amount });
-            }
-          } catch (err) {
-            showToast('Verification failed. Contact support.', 'error');
-          }
-        },
-
-        modal: {
-          ondismiss: async function () {
-            try {
-              await api.post('/payment/cancel', {
-                orderId: order.dbOrderId, // IMPORTANT: use DB order id
-              });
-              setBackendAmount(null);
-              showToast('Payment cancelled', 'error');
-            } catch (err) {
-              console.error('Cancel API failed', err);
-            }
-          },
-        },
-        prefill: {
-          name: user.displayName || 'Participant',
-          email: user.email,
-        },
-        theme: {
-          color: '#e50914',
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-
-      rzp.on('payment.failed', (res) => {
-        showToast('Payment Failed', 'error');
-        console.error(res.error);
-      });
-      rzp.open();
-    } catch (error) {
-      const errData = error?.response?.data || error;
-
-      const eventName = cart?.find((e) => e.id === errData.eventId)?.title || 'Unknown Event';
-
-      showToast(`${errData.message || 'Payment init failed'} for ${eventName}`, 'error');
-    } finally {
-      setPaymentLoading(false);
-      setPaymentLocked(false);
-    }
   };
 
   const handlePayment = async () => {
