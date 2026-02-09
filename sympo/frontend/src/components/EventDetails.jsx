@@ -20,7 +20,7 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
     window.requestAnimationFrame(() => {
       const { scrollTop, scrollHeight, clientHeight } = el;
       const isScrollable = scrollHeight > clientHeight;
-      const isBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 2;
+      const isBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 0;
 
       SetshowArrow((prev) => {
         const newValue = isScrollable && !isBottom;
@@ -107,11 +107,11 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                     <p className="border-b border-primary/30 pb-1 text-sm font-bold uppercase tracking-wider text-primary">
                       What you will learn:
                     </p>
-                    <ul className="grid grid-cols-1 gap-2">
+                    <ul className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-2">
                       {card.description.map((point, index) => (
                         <li
                           key={index}
-                          className="flex items-start gap-3 text-sm leading-relaxed text-gray-300 md:text-base"
+                          className="flex items-start gap-2 text-sm leading-tight text-gray-300"
                         >
                           <span className="mt-1 text-primary">▹</span>
                           {point}
@@ -214,9 +214,15 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
 
               {card.id === '17' && (
                 <>
-                  <h1 className="mx-auto mb-3 w-fit rounded-md border border-primary p-2 px-5 text-xl font-bold uppercase tracking-widest text-primary shadow-stGlow">
+                  <h1 className="mx-auto mb-3 mt-10 w-fit rounded-md border border-primary p-2 px-5 text-xl font-bold uppercase tracking-widest text-primary shadow-stGlow">
                     Country Matrix
                   </h1>
+                  <div className="mx-auto mb-6 max-w-md rounded-lg border border-primary/40 bg-primary/10 p-3 text-center">
+                    <p className="text-sm leading-relaxed text-gray-200">
+                      <span className="font-bold text-primary">Note:</span> The country will be
+                      assigned and informed via email 4 days prior to the event.
+                    </p>
+                  </div>
                   <div className="grid grid-cols-2 gap-4 rounded-lg border border-primary/30 bg-black/50 p-6 md:grid-cols-4">
                     {countries.sort().map((country) => (
                       <div
@@ -238,11 +244,11 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                       <li key={index}>{rule}</li>
                     ))}
                   </ul>
-                  <div ref={bottomRef} className="h-1 w-full" />
                 </div>
               )}
               {/* Ensure bottom sentinel exists for workshop category to trigger scroll arrow logic */}
               {itemCategory === 'workshop' && <div ref={bottomRef} className="h-1 w-full" />}
+              <div ref={bottomRef} className="h-1 w-full" />
             </div>
 
             {showArrow && (
