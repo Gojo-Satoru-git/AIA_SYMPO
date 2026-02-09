@@ -26,7 +26,7 @@ const About = () => {
       alt: 'edgematrix',
     },
     {
-      src: '/assets/slogos/youthalic.png',
+      src: '/assets/slogos/youthalic.webp',
       alt: 'youthalic',
     },
     {
@@ -50,7 +50,7 @@ const About = () => {
       alt: 'edgematrix',
     },
     {
-      src: '/assets/slogos/youthalic.png',
+      src: '/assets/slogos/youthalic.webp',
       alt: 'youthalic',
     },
     {
@@ -74,7 +74,7 @@ const About = () => {
       alt: 'edgematrix',
     },
     {
-      src: '/assets/slogos/youthalic.png',
+      src: '/assets/slogos/youthalic.webp',
       alt: 'youthalic',
     },
     {
@@ -124,7 +124,7 @@ const About = () => {
           logoHeight={100}
           pauseOnHover
           scaleOnHover
-          fadeOut
+
         />
       </section>
     </section>
