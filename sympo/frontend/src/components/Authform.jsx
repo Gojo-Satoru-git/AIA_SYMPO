@@ -361,8 +361,12 @@ const AuthForm = ({ mode }) => {
 
       if (mode === 'signin') {
         const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
+
+        const res = await api.post("/auth/verifyEmail" , {email : data.email});
+
+        const isVerified = res.data.data.isVerified;
         
-        if (!cred.user.emailVerified) {
+        if (!cred.user.emailVerified && !isVerified) {
              // 1. Resend Link
              await sendEmailVerification(cred.user, {
                  url: `${window.location.origin}/reset-password?mode=verifyEmail`,

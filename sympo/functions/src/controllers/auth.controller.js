@@ -85,3 +85,26 @@ export const logout = async (req, res) => {
     return success(res, null, "Logged out (with session cleanup)");
   }
 };
+
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const docSnap = await db.collection("verifiedEmails").doc(email).get();
+
+    if (!docSnap.exists) {
+      return error(res, "Email not Verified", 404);
+    }
+
+    const data = docSnap.data();
+
+    return success(res, {
+      msg: 'Email Verified',
+      isVerified: data.verified || null
+    });
+
+  } catch (e) {
+    return error(res, e.message, 500);
+  }
+};
