@@ -66,7 +66,7 @@ function Eventcard({
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses = 'w-[70vw] sm:w-72 h-112';
+  const sizeClasses = 'w-full max-w-[320px] aspect-[2/3]';
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
       <div
@@ -79,7 +79,7 @@ function Eventcard({
           onClick={onClick}
           className="backface-hidden relative inset-0 flex h-full w-full cursor-pointer flex-col items-center rounded-md border-4 border-primary bg-black shadow-stGlow"
         >
-          <div className="relative min-h-[350px] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
+          <div className="relative aspect-[4/5] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
             <img
               src={card.image || fallbackImage}
               alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
@@ -91,7 +91,7 @@ function Eventcard({
               }}
             />
           </div>
-          <div className="flex min-h-[80px] w-full flex-col justify-between bg-zinc-950 p-4">
+          <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
             <div className="text-center">
               <p className="text-[11px] font-bold uppercase tracking-widest text-red-500 opacity-80">
                 {card.id < 10 ? 'Rolling Event starts 9:30' : `${card.date} • ${card.time}`}
