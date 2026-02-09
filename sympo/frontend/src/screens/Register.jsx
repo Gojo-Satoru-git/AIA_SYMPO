@@ -56,6 +56,14 @@ const Registration = () => {
         verifyPaymentOrder(redirectedOrderId, cart)
           .then((res) => {
             if (res.qrToken) {
+              const purchase = {
+                orderId: firestoreOrderId,
+                amount: res.amount,
+                events: res.items,
+                qrToken: res.qrToken,
+              };
+
+              addPurchase(purchase);
               setQrCode(res.qrToken);
               setQrVisible(true);
               clearCart();
@@ -67,7 +75,7 @@ const Registration = () => {
             }
           })
           .catch((err) => {
-            const msg = err?.response?.data?.message || err.message || "Payment verification failed";
+            const msg = err?.response?.data?.message  || "Payment verification failed";
             showToast(msg, "error");
             console.error('Verification error:', err);
             setErrorMsg(msg);
@@ -92,6 +100,15 @@ const Registration = () => {
       verifyPaymentOrder(lastFS, [])
         .then((res) => {
           if (res.qrToken) {
+            const purchase = {
+                orderId: firestoreOrderId,
+                amount: res.amount,
+                events: res.items,
+                qrToken: res.qrToken,
+              };
+
+            addPurchase(purchase);
+
             setQrCode(res.qrToken);
             setQrVisible(true);
             clearCart();
@@ -145,50 +162,57 @@ const Registration = () => {
   };
 
   const proceedToPayment = async () => {
-    if (!user) return showToast('Please login first', 'error');
-    if (!validateCart()) return;
+  if (!user) return showToast('Please login first', 'error');
+  if (!validateCart()) return;
 
-    setPaymentLocked(true);
-    setPaymentLoading(true);
-    setErrorMsg("");
+  setPaymentLocked(true);
+  setPaymentLoading(true);
 
-    try {
-      // Create order from backend
-      const paymentData = await createPaymentOrder(cart, promoCode);
-      
-      const { 
-        firestoreOrderId, 
-        paymentSessionId, 
-        totalAmount,
-        totalOldAmount: oldAmount
-      } = paymentData;
+  try {
+    const paymentData = await createPaymentOrder(cart, promoCode);
+    const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
 
-      setFirestoreOrderId(firestoreOrderId);
-      // persist last firestore order id as a fallback across redirects
-      try { localStorage.setItem('lastFirestoreOrderId', firestoreOrderId); } catch(e){/* ignore */}
-      setTotalOldAmount(oldAmount);
-      setBackendAmount(totalAmount);
+    const cashfree = await load({
+      mode: import.meta.env.PROD ? 'production' : 'sandbox',
+    });
 
-      // Load Cashfree (auto sandbox / prod)
-      const cashfree = await load({
-        mode: import.meta.env.PROD ? 'production' : 'sandbox',
-      });
+    await cashfree.checkout({
+      paymentSessionId,
+      redirectTarget: '_modal', // 🔥 IMPORTANT
+    });
 
-      // Open Cashfree checkout
-      await cashfree.checkout({
-        paymentSessionId,
-        redirectTarget: '_self',
-      });
+    // ✅ verify AFTER modal payment
+    const res = await verifyPaymentOrder(firestoreOrderId, cart);
 
-      trackEvent('payment_initiated', { amount: totalAmount });
-    } catch (err) {
-      const msg = err?.response?.data?.message || err.message || 'Payment initialization failed';
-      showToast(msg, 'error');
-      console.error('Payment error:', err);
-      setPaymentLocked(false);
-      setPaymentLoading(false);
+    
+
+    if (res.qrToken) {
+      const purchase = {
+                orderId: firestoreOrderId,
+                amount: res.amount,
+                events: res.items,
+                qrToken: res.qrToken,
+              };
+
+      addPurchase(purchase);
+      setQrCode(res.qrToken);
+      setQrVisible(true);
+      clearCart();
+      showToast("Payment successful!", "success");
+    } else {
+      showToast("Payment completed but QR not generated", "warning");
     }
-  };
+
+  } catch (err) {
+    const msg = err?.response?.data?.message  || "Payment failed";
+    showToast(msg, "error");
+  } finally {
+    setPaymentLoading(false);
+    setPaymentLocked(false);
+  }
+};
+
+;
 
   const analyzeCart = (cart) => {
     let techCount = 0;

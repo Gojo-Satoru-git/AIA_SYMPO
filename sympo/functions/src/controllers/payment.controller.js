@@ -38,7 +38,6 @@ export const createOrder = async (req, res) => {
       });
     } catch (cashfreeErr) {
       // CRITICAL: If Cashfree fails, cancel the RESERVED order to release seats
-      console.error("Cashfree order creation failed:", cashfreeErr.message);
       await cancelOrderAndReleaseSeats(orderId);
       
       // Return detailed error message for debugging
@@ -67,7 +66,6 @@ export const createOrder = async (req, res) => {
       isPromoApplied: !!promoCode,
     });
   } catch (err) {
-    console.error("CreateOrder error:", err);
     res.status(400).json({ message: err.message, eventId: err.eventId });
   }
 };
@@ -108,9 +106,11 @@ export const verifyOrder = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
+    console.log('PAID' , JSON.stringify(order.items))
+
     // If already PAID, return existing QR token
     if (order.status === "PAID") {
-      return res.json({ success: true, qrToken: order.qrToken });
+      return res.json({ success: true, qrToken: order.qrToken , amount:order.amount ,  items:order.items });
     }
 
     // Check if order has expired
@@ -152,15 +152,15 @@ export const verifyOrder = async (req, res) => {
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
           });
         } catch (teamErr) {
-          console.error("Error adding team data:", teamErr);
           // Don't fail order if team data fails
         }
       }
     }
 
-    res.json({ success: true, qrToken });
+    console.log('After add team' , JSON.stringify(order.items))
+
+    res.json({ success: true, qrToken ,amount:order.amount , items:order.items });
   } catch (err) {
-    console.error("VerifyOrder error:", err);
     res.status(500).json({ message: "Verification failed" });
   }
 };
