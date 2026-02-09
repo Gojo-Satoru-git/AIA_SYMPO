@@ -23,6 +23,8 @@ const app = express();
 
 app.use(helmet());
 
+app.use("/payment/webhook", express.raw({ type: "application/json" }));
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(globalLimiter);
@@ -30,6 +32,7 @@ app.use(globalLimiter);
 app.use(cors({
   origin: FRONTEND_URL || "http://localhost:5173",
   methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
 

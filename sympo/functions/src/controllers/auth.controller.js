@@ -13,7 +13,7 @@ export const signup = async (req, res) => {
   try {
     const { uid, email } = req.user;
     console.log("Signup Request Body:", req.body);
-    const { name, phone, institute, year } = req.body;
+    let { name, phone, institute, year } = req.body;
 
     const verified = await db.collection("verifiedEmails").doc(email).get();
 
@@ -21,8 +21,15 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Email not verified" });
     }
 
+    // Sanitize inputs first
+    name = sanitizeInput(name);
+    phone = sanitizeInput(phone);
+    institute = sanitizeInput(institute);
+
+    // Validate after sanitization
     if (!name || !phone || !institute || !year) return error(res, "Missing fields", 400);
     if (!validatePhone(phone)) return error(res, "Invalid phone", 400);
+    if (isNaN(year) || year < 1 || year > 4) return error(res, "Invalid year", 400);
 
     const userRef = db.collection("users").doc(uid);
 
@@ -34,10 +41,10 @@ export const signup = async (req, res) => {
 
       t.set(userRef, {
         uid,
-        email:email ? email.toLowerCase() : "",
-        name: sanitizeInput(name).substring(0, 100),
-        phone: sanitizeInput(phone),
-        institute: sanitizeInput(institute).substring(0, 150),
+        email: email ? email.toLowerCase() : "",
+        name: name.substring(0, 100),
+        phone: phone,
+        institute: institute.substring(0, 150),
         year: parseInt(year),
         role: "PARTICIPANT",
         createdAt: admin.firestore.FieldValue.serverTimestamp(),

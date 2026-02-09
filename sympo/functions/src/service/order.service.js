@@ -1,7 +1,7 @@
 import { db } from "../config/firebase.js";
 import admin from "firebase-admin";
 import offers from "../data/promoCode.js";
-import limitedSeatEavents  from "../data/limitedSeatEvents.js";
+import limitedSeatEvents from "../data/limitedSeatEvents.js";
 
 export const createOrderRecord = async (userId, items , promoCode) => {
   let totalAmount = 0;
@@ -42,7 +42,7 @@ export const createOrderRecord = async (userId, items , promoCode) => {
       }
 
 
-      if (limitedSeatEavents.includes(item.eventId)) {
+      if (limitedSeatEvents.includes(String(item.eventId))) {
         const available = event.capacity - event.booked;
         if (available < item.quantity) {
           const err = new Error("Not enough seats");
@@ -59,7 +59,7 @@ export const createOrderRecord = async (userId, items , promoCode) => {
        ======================= */
     for (const e of eventCache) {
       const { eventRef, event, item } = e;
-      if (limitedSeatEavents.includes(item.eventId)) {
+      if (limitedSeatEvents.includes(String(item.eventId))) {
         tx.update(eventRef, {
           booked: event.booked + item.quantity, // ✅ WRITE AFTER ALL READS
         });
@@ -70,7 +70,7 @@ export const createOrderRecord = async (userId, items , promoCode) => {
       if(promoCode) {
         const promo = offers[promoCode.toUpperCase()];
 
-        if(promo && promo.validTill > new Date() && promo.applicableEvents.includes(item.eventId)) {
+        if(promo && new Date(promo.validTill) > new Date() && promo.applicableEvents.includes(String(item.eventId))) {
             discount = promo.discountAmount;
         }
       }
@@ -98,12 +98,9 @@ export const createOrderRecord = async (userId, items , promoCode) => {
       userId,
       amount: totalAmount,
       promoCode: promoCode || null,
-      currency: "INR",
       status: "RESERVED",
       items: validatedItems,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      razorpay_order_id: null,
-      razorpay_payment_id: null,
       qrToken: null,
       isUsed: false,
     });
@@ -137,7 +134,7 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
     for (const e of eventCache) {
       const { eventRef, event, item } = e;
 
-      if (limitedSeatEavents.includes(item.eventId)) {
+      if (limitedSeatEvents.includes(String(item.eventId))) {
         tx.update(eventRef, {
           booked: Math.max(0, event.booked - item.quantity),
         });

@@ -4,13 +4,13 @@ export const requireAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    if ( !authHeader?.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const token = authHeader.split(" ")[1];
 
-    const decodedToken = await admin.auth().verifyIdToken(token , true);
+    const decodedToken = await admin.auth().verifyIdToken(token);
 
     req.user = decodedToken
 

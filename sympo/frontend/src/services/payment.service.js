@@ -1,118 +1,99 @@
 import api from "./api";
 
-/* ======================================================
-   CREATE CASHFREE PAYMENT ORDER
-====================================================== */
-
-/**
- * Create Cashfree payment order
- * @param {Array} cart - cart items
- * @param {String|null} promoCode
- */
 export const createPaymentOrder = async (cart, promoCode = null) => {
-  try {
-    // 1️⃣ Validate cart
-    if (!Array.isArray(cart) || cart.length === 0) {
-      throw new Error("Cart is empty");
-    }
-
-    // 2️⃣ Build items payload
-    const items = cart.map((item) => ({
-      eventId: item.id,
-      quantity: 1,
-    }));
-
-    // 3️⃣ Call backend
-    const response = await api.post("/payment/order", {
-      items,
-      promoCode,
-    });
-
-    // 4️⃣ Validate response
-    if (
-      !response?.data ||
-      !response.data.orderId ||
-      !response.data.amount
-    ) {
-      throw new Error("Invalid order response from server");
-    }
-
-    return response;
-  } catch (error) {
-    console.error("Order creation failed:", error);
-    throw error.response?.data || error;
+  if (!Array.isArray(cart) || cart.length === 0) {
+    throw new Error("Cart is empty");
   }
+
+  const items = cart.map((item) => ({
+    eventId: String(item.id),
+    quantity: item.quantity && Number(item.quantity) > 0 ? Number(item.quantity) : 1,
+  }));
+
+  const res = await api.post("/payment/order", {
+    items,
+    promoCode: promoCode || null,
+  });
+
+  const {
+    firestoreOrderId,
+    cashfreeOrderId,
+    paymentSessionId,
+    totalOldAmount,
+    totalAmount,
+  } = res.data;
+
+  if (!firestoreOrderId || !cashfreeOrderId || !paymentSessionId) {
+    throw new Error("Invalid payment order response");
+  }
+
+  // Convert rupees to paise for Cashfree (multiply by 100)
+  const amountInPaise = Math.round(totalAmount * 100);
+
+  return {
+    firestoreOrderId,
+    cashfreeOrderId,
+    paymentSessionId,
+    totalOldAmount,
+    totalAmount,
+    amountInPaise,
+  };
 };
 
-/* ======================================================
-   VERIFY CASHFREE PAYMENT
-   (Webhook is PRIMARY, this is BACKUP)
-====================================================== */
+export const verifyPaymentOrder = async (firestoreOrderIdOrCashfreeId, cart) => {
+  if (!firestoreOrderIdOrCashfreeId) {
+    throw new Error("Missing order identifier");
+  }
 
-/**
- * Verify payment after Cashfree redirect
- * @param {String} orderId - Cashfree order_id
- * @param {Array} cart - cart items
- */
-export const verifyPaymentOrder = async (orderId, cart) => {
-  try {
-    // 1️⃣ Validate input
-    if (!orderId) {
-      throw new Error("Missing Cashfree orderId");
-    }
+  // Construct teams data for team events (workshops)
+  const teams = cart
+    .filter((item) => item.type === "team" || item.type === "workshop")
+    .map((item) => {
+      let teamData = item.teamData;
+      
+      // If teamData is stored in localStorage, retrieve it
+      if (!teamData) {
+        const stored = localStorage.getItem(`${item.title}-teamData`);
+        teamData = stored;
+      }
 
-    if (!Array.isArray(cart) || cart.length === 0) {
-      throw new Error("Cart is empty");
-    }
+      // If teamData exists, parse it if it's a string
+      if (teamData && typeof teamData === 'string') {
+        try {
+          teamData = JSON.parse(teamData);
+        } catch (e) {
+          console.warn(`Could not parse teamData for ${item.id}:`, e);
+          teamData = null;
+        }
+      }
 
-    // 2️⃣ Prepare team payload (same logic as old Razorpay flow)
-    const teams = cart
-      .filter((item) => item.type === "team")
-      .map((item) => ({
+      return {
         id: item.id,
-        teamData:
-          item.teamData ||
-          localStorage.getItem(`${item.title}-teamData`) ||
-          null,
-      }));
-
-    // 3️⃣ Call backend verify API
-    const response = await api.post("/payment/verify", {
-      orderId,
-      teams,
+        teamData: teamData ? JSON.stringify(teamData) : null,
+      };
     });
 
-    // 4️⃣ Validate backend response
-    if (!response?.data?.success) {
-      throw new Error("Payment verification failed");
+  // Support either firestoreOrderId or cashfreeOrderId
+  let payload = {};
+
+  if (typeof firestoreOrderIdOrCashfreeId === 'object') {
+    payload = { ...firestoreOrderIdOrCashfreeId };
+  } else if (typeof firestoreOrderIdOrCashfreeId === 'string') {
+    const id = firestoreOrderIdOrCashfreeId;
+    if (id.startsWith('order_') || id.includes('-')) {
+      payload.cashfreeOrderId = id;
+    } else {
+      payload.firestoreOrderId = id;
     }
-
-    return response;
-  } catch (error) {
-    console.error("Verification failed:", error);
-    throw error.response?.data || error;
   }
-};
 
-/* ======================================================
-   OPTIONAL: CANCEL PAYMENT / RELEASE SEATS
-====================================================== */
+  payload.teams = teams;
 
-/**
- * Cancel payment (manual user cancel)
- * @param {String} orderId
- */
-export const cancelPaymentOrder = async (orderId) => {
-  try {
-    if (!orderId) {
-      throw new Error("Missing orderId");
-    }
+  const res = await api.post("/payment/verify", payload);
 
-    const response = await api.post("/payment/cancel", { orderId });
-
-    return response;
-  } catch (error) {
-    console.error("Payment cancellation failed:", error);
-    throw error.response?.data || error;
+  if (!res.data?.success) {
+    throw new Error(res.data?.message || "Payment verification failed");
   }
+
+  return res.data;
 };

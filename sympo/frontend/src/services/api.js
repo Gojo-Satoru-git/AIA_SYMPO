@@ -18,13 +18,12 @@ api.interceptors.request.use(
     try {
       if (!config.headers) {
         config.headers = {};
-      }
+      }     
 
-      await auth.authStateReady();
-
+      // Get current user from Firebase Auth
       const user = auth.currentUser;
       if(user){
-        const token = await user.getIdToken(true);
+        const token = await user.getIdToken();
         config.headers.Authorization = `Bearer ${token}`;
       } 
       return config;
@@ -62,9 +61,11 @@ api.interceptors.response.use(
 
       console.error(`API Error ${status}:`, data?.message || "Unknown error");
       
-      // if (status === 401) {
-      //   window.location.href = "/login";
-      // }
+      if (status === 401) {
+        // Token invalid or expired - force signout/redirect to sign-in
+        console.warn('Unauthorized - redirecting to sign-in');
+        window.location.href = '/signin';
+      }
     } else {
       console.error("Network Error:", error.message);
     }

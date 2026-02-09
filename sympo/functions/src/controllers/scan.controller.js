@@ -1,4 +1,5 @@
 import { db } from '../config/firebase.js';
+import admin from 'firebase-admin';
 
 export const validateQR = async (req, res) => {
   try {
@@ -110,29 +111,37 @@ export const confirmEntry = async (req, res) => {
     const { qrToken, eventId } = req.body;
     if (!qrToken || !eventId) return res.status(400).json({ message: "Missing info" });
 
+    const snapshot = await db.collection("orders")
+      .where("qrToken", "==", qrToken)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: "Invalid QR Code" });
+    }
+
+    const doc = snapshot.docs[0];
+
     await db.runTransaction(async (t) => {
-      const snapshot = await t.get(
-        db.collection("orders").where("qrToken", "==", qrToken).limit(1)
-      );
+      const data = await t.get(doc.ref);
 
-      if (snapshot.empty) throw new Error("INVALID_QR");
+      if (!data.exists) throw new Error("ORDER_DISAPPEARED");
 
-      const doc = snapshot.docs[0];
-      const data = doc.data();
+      const orderData = data.data();
 
       // Ensure items exist
-      if (!data.items || !Array.isArray(data.items)) {
+      if (!orderData.items || !Array.isArray(orderData.items)) {
         throw new Error("NO_ITEMS_FOUND");
       }
 
       let itemFound = false;
 
-      const updatedItems = data.items.map(item => {
+      const updatedItems = orderData.items.map(item => {
         // Compare as strings to be safe
         if (String(item.eventId) === String(eventId)) {
           if (item.used) throw new Error("ALREADY_USED");
           itemFound = true;
-          return { ...item, used: true, usedAt: new Date() };
+          return { ...item, used: true, usedAt: admin.firestore.FieldValue.serverTimestamp() };
         }
         return item;
       });

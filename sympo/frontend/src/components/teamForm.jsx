@@ -2,7 +2,8 @@ import { TextField, Button, MenuItem } from '@mui/material';
 import useToast from '../context/useToast';
 import { useEffect, useState } from 'react';
 
-function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, onSuccess }) {
+function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, onSuccess,
+  countries = [], }) {
   const { showToast } = useToast();
 
   const [savedData, setSavedData] = useState({});
@@ -36,38 +37,6 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
       fontWeight: 600,
     },
   };
-  const countries = [
-    'United States of America',
-    'China',
-    'India',
-    'France',
-    'United Kingdom',
-    'Saudi Arabia',
-    'Iran',
-    'Turkey',
-    'Germany',
-    'Russia',
-    'Brazil',
-    'Pakistan',
-    'Afghanistan',
-    'Sweden',
-    'Nigeria',
-    'Israel',
-    'Qatar',
-    'United Arab Emirates',
-    'Japan',
-    'South Korea',
-    'Indonesia',
-    'Malaysia',
-    'Hungary',
-    'Poland',
-    'Canada',
-    'Australia',
-    'Bangladesh',
-    'Mexico',
-    'South Africa',
-  ];
-
   const getOptions = (currentField) => {
     const otherSelected = Object.keys(prefs)
       .filter((key) => key !== currentField)
@@ -116,6 +85,8 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
 
     return null;
   };
+
+  
 
   const inputStyle = {
     label: {

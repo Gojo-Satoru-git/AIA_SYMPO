@@ -3,12 +3,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+const envPath = path.resolve(__dirname, '../../.env');
+console.log("[Config] Loading from:", envPath);
+
+dotenv.config({ path: envPath });
+
+// Log what was loaded
+console.log("[Config] Environment variables loaded:");
 
 const requiredEnvVars = {
   PORT: "Application port",
-  CASHFREE_APP_ID: "Razorpay API key ID",
-  CASHFREE_SECRET_KEY: "Razorpay API key secret",
+  CASHFREE_APP_ID: "Cashfree App ID",
+  CASHFREE_SECRET_KEY: "Cashfree Secret Key",
+  CASHFREE_WEBHOOK_SECRET: "Cashfree Webhook Secret",
   FRONTEND_URL: "Frontend application URL",
 };
 

@@ -17,6 +17,39 @@ const Events = () => {
   const scrollRef4 = useRef(null);
   const { showToast } = useToast();
 
+
+  const countries = [
+  "United States of America",
+  "China",
+  "India",
+  "France",
+  "United Kingdom",
+  "Saudi Arabia",
+  "Iran",
+  "Turkey",
+  "Germany",
+  "Russia",
+  "Brazil",
+  "Pakistan",
+  "Afghanistan",
+  "Sweden",
+  "Nigeria",
+  "Israel",
+  "Qatar",
+  "United Arab Emirates",
+  "Japan",
+  "South Korea",
+  "Indonesia",
+  "Malaysia",
+  "Hungary",
+  "Poland",
+  "Canada",
+  "Australia",
+  "Bangladesh",
+  "Mexico",
+  "South Africa"
+];
+
   const [showForm, setShowForm] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
 
@@ -151,6 +184,7 @@ const Events = () => {
             teamSize={pendingItem?.item.teamSize || 3} // Fallback if not in data
             mini={pendingItem?.item.minTeamSize || 1}
             onclose={() => setShowForm(false)}
+            countries={countries}
             onSuccess={() => {
               processAddToCart(pendingItem.item, pendingItem.type);
               setShowForm(false);
@@ -176,6 +210,7 @@ const Events = () => {
             checkPurchase={checkPurchases}
             isInCart={checkCart(detail)}
             isPurchased={checkPurchases(detail)}
+            countries={countries}
           />
         </div>
       )}

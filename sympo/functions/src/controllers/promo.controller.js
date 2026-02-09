@@ -55,7 +55,8 @@ export const getPromoPreview = async (req, res) => {
       return error(res, "Invalid promo code", 400);
     }
 
-    if (new Date(promo.validTill) <= new Date()) {
+    const promoExpiry = new Date(promo.validTill);
+    if (promoExpiry <= new Date()) {
       return error(res, "Promo code expired", 400);
     }
 
@@ -70,6 +71,13 @@ export const getPromoPreview = async (req, res) => {
       if (promo.applicableEvents.includes(String(item.eventId))) {
         discount = promo.discountAmount;
         appliedToAny = true;
+      } else {
+        // Check if it's a combo/pass (if it has a dedicated promo)
+        const itemIdStr = String(item.eventId);
+        if (promo.applicableEvents.includes(itemIdStr)) {
+          discount = promo.discountAmount;
+          appliedToAny = true;
+        }
       }
 
       const oldPrice = event.price * item.quantity;

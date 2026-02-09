@@ -4,39 +4,12 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { IconButton } from '@mui/material';
 
-function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory }) {
+function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,countries }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
 
   const [showForm, SetshowForm] = useState(false);
-  const countries = [
-    'Afghanistan',
-    'Sweden',
-    'Nigeria',
-    'Israel',
-    'Australia',
-    'Bangladesh',
-    'Mexico',
-    'Russia',
-    'Brazil',
-    'Pakistan',
-    'Malaysia',
-    'Hungary',
-    'Poland',
-    'Qatar',
-    'United Arab Emirates',
-    'Japan',
-    'South Korea',
-    'South Africa',
-    'United Kingdom',
-    'Saudi Arabia',
-    'Iran',
-    'Turkey',
-    'United States of America',
-    'China',
-    'India',
-    'France',
-  ];
+  
   const { checkCart } = useCart();
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
@@ -87,6 +60,7 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
           teamSize={card.teamSize}
           mini={card.miniTeamSize}
           setShowAdd={setShowAdd}
+          countries={countries}
           onclose={() => {
             SetshowForm(false);
           }}

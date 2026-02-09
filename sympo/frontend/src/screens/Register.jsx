@@ -24,6 +24,7 @@ const Registration = () => {
   const [paymentLocked, setPaymentLocked] = useState(false);
   const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const { addPurchase, checkPassPurchases } = usePurchases();
 
@@ -33,6 +34,7 @@ const Registration = () => {
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [totalOldAmount, setTotalOldAmount] = useState(null);
+  const [firestoreOrderId, setFirestoreOrderId] = useState(null);
 
   const selectedPass = cart.find((item) => item.type == 'pass');
 
@@ -41,6 +43,74 @@ const Registration = () => {
     setTotalOldAmount(null);
     setPromoApplied(false);
   }, [cart]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirectedOrderId = params.get("order_id");
+
+    if (redirectedOrderId) {
+      // Short delay to ensure webhook processed the payment
+      setPaymentLoading(true);
+      setPaymentLocked(true);
+      const timeout = setTimeout(() => {
+        verifyPaymentOrder(redirectedOrderId, cart)
+          .then((res) => {
+            if (res.qrToken) {
+              setQrCode(res.qrToken);
+              setQrVisible(true);
+              clearCart();
+              showToast("Payment successful!", "success");
+              setErrorMsg("");
+            } else {
+              showToast("Payment completed but QR not generated", "warning");
+              setErrorMsg("Payment completed but QR not generated. Please contact support.");
+            }
+          })
+          .catch((err) => {
+            const msg = err?.response?.data?.message || err.message || "Payment verification failed";
+            showToast(msg, "error");
+            console.error('Verification error:', err);
+            setErrorMsg(msg);
+          })
+          .finally(() => {
+            setPaymentLoading(false);
+            setPaymentLocked(false);
+            try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+            window.history.replaceState({}, document.title, window.location.pathname);
+          });
+      }, 1000); // Give webhook 1 second to process
+
+      return () => clearTimeout(timeout);
+    }
+
+    // Fallback: No redirect param, but we may have a persisted last firestore id
+    const lastFS = localStorage.getItem('lastFirestoreOrderId');
+    if (lastFS) {
+      setPaymentLoading(true);
+      setPaymentLocked(true);
+      // Try to verify using firestore id (useful when redirect did not provide order_id)
+      verifyPaymentOrder(lastFS, [])
+        .then((res) => {
+          if (res.qrToken) {
+            setQrCode(res.qrToken);
+            setQrVisible(true);
+            clearCart();
+            showToast("Payment successful!", "success");
+            setErrorMsg("");
+            try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+          }
+        })
+        .catch((err) => {
+          // Ignore fallback errors - might not be processed yet
+          console.warn('Fallback verification failed', err);
+        })
+        .finally(() => {
+          setPaymentLoading(false);
+          setPaymentLocked(false);
+        });
+    }
+  }, []);
+
 
   if (authLoading) {
     return (
@@ -80,12 +150,24 @@ const Registration = () => {
 
     setPaymentLocked(true);
     setPaymentLoading(true);
+    setErrorMsg("");
 
     try {
       // Create order from backend
-      const { data } = await createPaymentOrder(cart, promoCode);
+      const paymentData = await createPaymentOrder(cart, promoCode);
+      
+      const { 
+        firestoreOrderId, 
+        paymentSessionId, 
+        totalAmount,
+        totalOldAmount: oldAmount
+      } = paymentData;
 
-      setBackendAmount(data.amount);
+      setFirestoreOrderId(firestoreOrderId);
+      // persist last firestore order id as a fallback across redirects
+      try { localStorage.setItem('lastFirestoreOrderId', firestoreOrderId); } catch(e){/* ignore */}
+      setTotalOldAmount(oldAmount);
+      setBackendAmount(totalAmount);
 
       // Load Cashfree (auto sandbox / prod)
       const cashfree = await load({
@@ -94,14 +176,15 @@ const Registration = () => {
 
       // Open Cashfree checkout
       await cashfree.checkout({
-        paymentSessionId: data.paymentSessionId,
+        paymentSessionId,
         redirectTarget: '_self',
       });
 
-      trackEvent('payment_initiated', { amount: data.amount });
+      trackEvent('payment_initiated', { amount: totalAmount });
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Payment initialization failed';
+      const msg = err?.response?.data?.message || err.message || 'Payment initialization failed';
       showToast(msg, 'error');
+      console.error('Payment error:', err);
       setPaymentLocked(false);
       setPaymentLoading(false);
     }
@@ -338,7 +421,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                     <span className="text-sm text-white/50 line-through">₹{totalOldAmount}</span>
                   )}
                   <span className="text-2xl tracking-widest text-primary">
-                    ₹{backendAmount ? backendAmount / 100 : totalPrice}
+                    ₹{backendAmount ?? totalPrice}
                   </span>
                 </div>
               </div>
@@ -357,31 +440,29 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                   <button
                     disabled={promoApplied}
                     onClick={async () => {
-                      if (!promoCode) return showToast('Enter promo code', 'error');
+                    if (!promoCode) return showToast('Enter promo code', 'error');
 
-                      const cartItems = cart.map((item) => ({ eventId: item.id, quantity: 1 }));
+                    const cartItems = cart.map((item) => ({ eventId: String(item.id), quantity: 1 }));
 
-                      console.log(
-                        'Applying promo code',
-                        JSON.stringify({ code: promoCode.toUpperCase(), items: cartItems })
-                      );
-                      try {
-                        const res = await api.post('/promo/preview', {
-                          code: promoCode.toUpperCase(),
-                          items: cartItems,
-                        });
+                    try {
+                      const res = await api.post('/promo/preview', {
+                        code: promoCode.toUpperCase(),
+                        items: cartItems,
+                      });
 
-                        console.log('Promo preview response', res.data);
-
-                        setBackendAmount(res.data.data.totalAmount * 100);
-                        setTotalOldAmount(res.data.data.totalOldAmount);
-                        setPromoApplied(res.data.data.isPromoApplied);
-                        showToast('Promo applied!', 'success');
-                      } catch (err) {
-                        const msg = err.response?.data?.message || 'Something went wrong';
-                        showToast(msg, 'error');
-                      }
-                    }}
+                      const { totalAmount, totalOldAmount, isPromoApplied } = res.data.data;
+                      
+                      // Store the actual amount from backend (already calculated with discount)
+                      setBackendAmount(totalAmount);
+                      setTotalOldAmount(totalOldAmount);
+                      setPromoApplied(isPromoApplied);
+                      showToast('Promo applied!', 'success');
+                    } catch (err) {
+                      const msg = err.response?.data?.message || 'Invalid promo code';
+                      showToast(msg, 'error');
+                      console.error('Promo error:', err);
+                    }
+                  }}
                     className="bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-widest text-black"
                   >
                     {promoApplied ? 'Applied' : 'Apply'}
@@ -389,6 +470,11 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                 </div>
 
                 {/* Pay Button */}
+                {errorMsg && (
+                  <div className="mb-3 rounded-md bg-red-900/40 px-4 py-2 text-sm font-medium text-red-200">
+                    {errorMsg}
+                  </div>
+                )}
                 <button
                   onClick={handlePayment}
                   disabled={paymentLoading || paymentLocked}
