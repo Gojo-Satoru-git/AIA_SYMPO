@@ -2,13 +2,41 @@ import TeamForm from './teamForm';
 import useCart from '../context/useCart';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import { IconButton } from '@mui/material';
 
 function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
 
   const [showForm, SetshowForm] = useState(false);
-
+  const countries = [
+    'Afghanistan',
+    'Sweden',
+    'Nigeria',
+    'Israel',
+    'Australia',
+    'Bangladesh',
+    'Mexico',
+    'Russia',
+    'Brazil',
+    'Pakistan',
+    'Malaysia',
+    'Hungary',
+    'Poland',
+    'Qatar',
+    'United Arab Emirates',
+    'Japan',
+    'South Korea',
+    'South Africa',
+    'United Kingdom',
+    'Saudi Arabia',
+    'Iran',
+    'Turkey',
+    'United States of America',
+    'China',
+    'India',
+    'France',
+  ];
   const { checkCart } = useCart();
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
@@ -90,11 +118,13 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
               </div>
               <div className="flex w-full flex-wrap items-center justify-around gap-6 rounded-lg border border-primary/30 bg-black/40 p-2 text-lg text-primary">
                 {/* Team Size */}
-                <div className="text-center">
-                  <span className="block text-sm font-bold uppercase opacity-70">Team Size</span>
-                  {card.miniTeamSize && <span className="text-xl">{card.miniTeamSize}-</span>}
-                  <span className="text-xl">{card.teamSize}</span>
-                </div>
+                {itemCategory != 'workshop' && (
+                  <div className="text-center">
+                    <span className="block text-sm font-bold uppercase opacity-70">Team Size</span>
+                    {card.miniTeamSize && <span className="text-xl">{card.miniTeamSize}-</span>}
+                    <span className="text-xl">{card.teamSize}</span>
+                  </div>
+                )}
 
                 {/* Date & Time */}
                 <div className="text-center">
@@ -145,16 +175,51 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
                   </button>
                 ) : null}
               </div>
-              <div>
-                <p className="mb-2 text-lg italic text-primary">Rules:</p>
+              <a
+                href={card.wplink}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 rounded-full border border-primary bg-primary/5 px-6 py-2 shadow-stGlowStrong transition-all duration-300"
+              >
+                <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
+                  <WhatsAppIcon className="h-6 w-6 text-primary" sx={{ fontSize: 28 }} />
+                </div>
 
-                <ul className="list-inside list-disc text-base text-gray-400">
-                  {card.rules.map((rule, index) => (
-                    <li key={index}>{rule}</li>
-                  ))}
-                </ul>
-                <div ref={bottomRef} className="h-1 w-full" />
-              </div>
+                <span className="text-sm uppercase tracking-widest text-white">Join the group</span>
+              </a>
+              <br />
+              <br />
+              {card.id === '17' && (
+                <>
+                  <h1 className="mx-auto mb-3 w-fit rounded-md border border-primary p-2 px-5 text-xl font-bold uppercase tracking-widest text-primary shadow-stGlow">
+                    Country Matrix
+                  </h1>
+
+                  {/* Optimized Grid */}
+                  <div className="grid grid-cols-2 gap-4 rounded-lg border border-primary/30 bg-black/50 p-6 md:grid-cols-4">
+                    {countries.sort().map((country) => (
+                      <div
+                        key={country}
+                        className="flex min-h-[60px] items-center justify-center rounded-sm border border-primary/20 bg-black/40 p-3 text-center text-xs font-medium uppercase tracking-widest text-white/90 transition-all duration-300 hover:scale-105 hover:border-primary hover:text-primary hover:shadow-stGlow"
+                      >
+                        {country}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {itemCategory != 'workshop' && (
+                <div>
+                  <p className="mb-2 text-lg italic text-primary">Rules:</p>
+
+                  <ul className="list-inside list-disc text-base text-gray-400">
+                    {card.rules.map((rule, index) => (
+                      <li key={index}>{rule}</li>
+                    ))}
+                  </ul>
+                  <div ref={bottomRef} className="h-1 w-full" />
+                </div>
+              )}
             </div>
             {showArrow && (
               <div className="pointer-events-none absolute bottom-4 left-0 right-0 flex justify-center">

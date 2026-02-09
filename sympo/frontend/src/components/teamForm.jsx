@@ -8,6 +8,12 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
   const [savedData, setSavedData] = useState({});
   const [domain, setDomain] = useState('');
 
+  const [prefs, setPrefs] = useState({
+    country_pref_1: savedData.country_pref_1 || '',
+    country_pref_2: savedData.country_pref_2 || '',
+    country_pref_3: savedData.country_pref_3 || '',
+  });
+
   const menuPaperStyle = {
     backgroundColor: '#0b0b0b',
     borderRadius: '14px',
@@ -30,13 +36,54 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
       fontWeight: 600,
     },
   };
+  const countries = [
+    'United States of America',
+    'China',
+    'India',
+    'France',
+    'United Kingdom',
+    'Saudi Arabia',
+    'Iran',
+    'Turkey',
+    'Germany',
+    'Russia',
+    'Brazil',
+    'Pakistan',
+    'Afghanistan',
+    'Sweden',
+    'Nigeria',
+    'Israel',
+    'Qatar',
+    'United Arab Emirates',
+    'Japan',
+    'South Korea',
+    'Indonesia',
+    'Malaysia',
+    'Hungary',
+    'Poland',
+    'Canada',
+    'Australia',
+    'Bangladesh',
+    'Mexico',
+    'South Africa',
+  ];
 
+  const getOptions = (currentField) => {
+    const otherSelected = Object.keys(prefs)
+      .filter((key) => key !== currentField)
+      .map((key) => prefs[key]);
+
+    return countries.filter((country) => !otherSelected.includes(country));
+  };
   useEffect(() => {
     const data = localStorage.getItem(`${title}-teamData`);
     if (data) {
       setSavedData(JSON.parse(data));
     }
   }, [title]);
+  const handleChange = (e) => {
+    setPrefs({ ...prefs, [e.target.name]: e.target.value });
+  };
 
   const validateTeamForm = (formData, teamSize, mini) => {
     const emails = new Set();
@@ -247,6 +294,57 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
               </div>
             </div>
           ))}
+
+          {title === 'MUN Debate' && (
+            <div className="flex w-full flex-col items-center gap-4">
+              {' '}
+              <h1 className="w-fit rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
+                MUN Experience
+              </h1>
+              <TextField
+                name="MUN_experience"
+                label="Enter your previous experience"
+                fullWidth
+                multiline
+                rows={2}
+                required
+                sx={inputStyle}
+                defaultValue={savedData.MUN_experience || ''}
+                InputProps={{
+                  readOnly: isDisabledAll,
+                }}
+              />
+              <h1 className="w-fit rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
+                Country preference
+              </h1>
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+                {['country_pref_1', 'country_pref_2', 'country_pref_3'].map((prefKey, index) => (
+                  <TextField
+                    key={prefKey}
+                    select
+                    name={prefKey}
+                    label={`Preference ${index + 1}`}
+                    value={prefs[prefKey]}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                    sx={inputStyle}
+                    SelectProps={{
+                      MenuProps: { PaperProps: { sx: menuPaperStyle } },
+                    }}
+                    InputProps={{ readOnly: isDisabledAll }}
+                  >
+                    {/* Show currently selected country + available ones */}
+                    {[prefs[prefKey], ...getOptions(prefKey)].filter(Boolean).map((country) => (
+                      <MenuItem key={country} value={country} sx={menuItemStyle}>
+                        {country}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ))}
+              </div>
+            </div>
+          )}
           {isDisabledAll ? null : (
             <Button
               type="submit"
