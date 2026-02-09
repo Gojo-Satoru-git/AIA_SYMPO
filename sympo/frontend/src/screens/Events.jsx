@@ -9,7 +9,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
 import useToast from '../context/useToast';
-import TeamForm from '../components/TeamForm';
+import TeamForm from '../components/teamForm';
 import { Signeventscontext } from '../context/SEvents.context';
 const Events = () => {
   const scrollRef2 = useRef(null);
