@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import Home from './screens/Home';
 import About from './screens/About';
 import Events from './screens/Events';
@@ -16,6 +16,14 @@ import AdminRoute from './components/AdminRoute';
 import ScanPage from './screens/ScanPage';
 import Scanner from './screens/Scanner';
 import MaintenancePage from './screens/Maintenance';
+// import TOSHome from './TOS/Home';
+
+const RedirectToTOS = () => {
+  useEffect(() => {
+    window.location.href = 'https://tos2026.web.app';
+  }, []);
+  return null;
+};
 
 const MainPage = () => {
   const HomeRef = useRef(null);
@@ -71,6 +79,8 @@ const App = () => {
           {/* Auth pages */}
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
+
+          <Route path="/tos" element={<RedirectToTOS />} />
 
           {/* Reset Password Route */}
           <Route path="/auth-action" element={<ResetPassword />} />
