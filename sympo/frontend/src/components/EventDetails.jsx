@@ -2,6 +2,7 @@ import TeamForm from './teamForm';
 import useCart from '../context/useCart';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import { IconButton } from '@mui/material';
 
 function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory }) {
   const [showArrow, SetshowArrow] = useState(false);
@@ -145,6 +146,18 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
                   </button>
                 ) : null}
               </div>
+              <a
+                href={card.wplink}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 rounded-full border border-primary bg-primary/5 px-6 py-2 shadow-stGlowStrong transition-all duration-300"
+              >
+                <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
+                  <WhatsAppIcon className="h-6 w-6 text-primary" sx={{ fontSize: 28 }} />
+                </div>
+
+                <span className="text-sm uppercase tracking-widest text-white">Join the group</span>
+              </a>
               <div>
                 <p className="mb-2 text-lg italic text-primary">Rules:</p>
 

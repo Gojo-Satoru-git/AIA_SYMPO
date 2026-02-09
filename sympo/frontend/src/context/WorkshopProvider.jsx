@@ -61,6 +61,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
+      wplink: 'https://wa.me/1234567890',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -83,6 +84,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
+      wplink: 'https://wa.me/1234567890',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -127,6 +129,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 350,
+      wplink: 'https://wa.me/1234567890',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',

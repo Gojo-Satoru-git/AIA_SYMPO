@@ -25,6 +25,7 @@ Success depends on cricket knowledge, smart bidding, team balance, and strategy 
         'Rules may be modified by organizers if required',
       ],
       fees: 50,
+      wplink: 'https://chat.whatsapp.com/Bgu30rlpEWN3QKdRYLbfkS',
       contact: {
         name1: 'Abinash',
         phone1: '6383467363',
@@ -36,7 +37,8 @@ Success depends on cricket knowledge, smart bidding, team balance, and strategy 
     {
       title: 'Call Of Query',
       id: '3',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Call%20of%20Query.webp?alt=media&token=ac11a7fd-7fa9-4baf-8a35-50cc75ef90dc',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Call%20of%20Query.webp?alt=media&token=ac11a7fd-7fa9-4baf-8a35-50cc75ef90dc',
       backside: './assets/Eleven.webp',
       description: `Think fast, query smart! This event tests your proficiency in DBMS concepts including SQL, transaction management,
 and relational logic through multiple challenging rounds.`,
@@ -52,6 +54,7 @@ and relational logic through multiple challenging rounds.`,
         'Finals include advanced and descriptive questions',
       ],
       fees: 60,
+      wplink: 'https://chat.whatsapp.com/LUTLQOXFkms1dkmOXNrfVA',
       contact: {
         name1: 'Surya',
         phone1: '8148124727',
@@ -80,6 +83,7 @@ and relational logic through multiple challenging rounds.`,
         'Host decision is final',
       ],
       fees: 50,
+      wplink: 'https://chat.whatsapp.com/KW7meAXZd0lFkk28eMumZq',
       contact: {
         name1: 'Itikash',
         phone1: '9786398639',
@@ -91,7 +95,8 @@ and relational logic through multiple challenging rounds.`,
     {
       title: 'Tournament of strategies',
       id: '1',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/TOS%20(1).webp?alt=media&token=db6719c5-0e5f-40fa-96f2-829aa2754938',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/TOS%20(1).webp?alt=media&token=db6719c5-0e5f-40fa-96f2-829aa2754938',
       backside: './assets/Mike.webp',
       description: `A mind sport where strategy matters more than coding. Participants submit a game plan which competes in an
 organizer-designed game testing logic, creativity, and adaptability.`,
@@ -108,6 +113,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
         'Outcome depends entirely on strategic thinking',
       ],
       fees: 60,
+      wplink: 'https://chat.whatsapp.com/HjNWy91PROw7FLJKsL3zWT',
       contact: {
         name1: 'Chandru',
         phone1: '7667634519',
@@ -135,6 +141,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
         'Fastest team to finish wins',
       ],
       fees: 50,
+      wplink: 'https://chat.whatsapp.com/KF72JiRa80cLoul2V1LoUv',
       contact: {
         name1: 'Jhanavi',
         phone1: '9384654366',
@@ -146,7 +153,8 @@ organizer-designed game testing logic, creativity, and adaptability.`,
     {
       title: 'Ninja Coding',
       id: '4',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Ninja%20Coding.webp?alt=media&token=0190689a-283e-4b59-91e9-02756bea1a14',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Ninja%20Coding.webp?alt=media&token=0190689a-283e-4b59-91e9-02756bea1a14',
       backside: './assets/Dustin.webp',
       description: `A competitive coding event testing aptitude, problem-solving skills, and programming ability.`,
       teamSize: '2-3',
@@ -161,6 +169,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
       ],
 
       fees: 60,
+      wplink: 'https://chat.whatsapp.com/K4iN3HWHWmn9kEoTmfBH9U',
       contact: {
         name1: 'Mekesh',
         phone1: '9952598472',
@@ -189,6 +198,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
         'Judges’ decisions are final',
       ],
       fees: 50,
+      wplink: 'https://chat.whatsapp.com/KNHsMcfMAkG7bgSy8trA4W',
       contact: {
         name1: 'Sudhahar',
         phone1: '9363595133',
@@ -200,7 +210,8 @@ organizer-designed game testing logic, creativity, and adaptability.`,
     {
       title: 'coding with AI',
       id: '2',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Coding%20with%20AI.webp?alt=media&token=41ec379d-9d3f-4c1f-9824-7a689ff8423f',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Coding%20with%20AI.webp?alt=media&token=41ec379d-9d3f-4c1f-9824-7a689ff8423f',
       backside: './assets/vecna.webp',
       description: `Coding with AI is a two-round competition that tests AI knowledge, coding skills, and machine learning abilities. Participants solve logic questions and build ML models using datasets. Winners are decided based on ML performance.`,
       category: 'Technical',
@@ -214,6 +225,8 @@ organizer-designed game testing logic, creativity, and adaptability.`,
         'Final winners decided purely on Round 2 performance',
       ],
       fees: 60,
+      wplink:
+        'https://chat.whatsapp.com/GLmmzP7Vz8nKgTtq55QBS0https://chat.whatsapp.com/GLmmzP7Vz8nKgTtq55QBS0',
       contact: {
         name1: 'SriLakshmi',
         phone1: '9566208249',
@@ -241,6 +254,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
         'Quizmaster’s decision is final',
       ],
       fees: 50,
+      wplink: 'https://chat.whatsapp.com/IP1xXPn9cPZAG4VvxzzVpi',
       contact: {
         name1: 'Pragadheeshwaran',
         phone1: '8903098801',

@@ -16,6 +16,7 @@ const SignEventProvider = ({ children }) => {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 499,
+      wplink:'https://chat.whatsapp.com/DIz6Lqd00DIE75JTfN5EKq',
       contact: {
         name1: 'Sandheep',
         phone1: '9884793806',
@@ -69,6 +70,7 @@ const SignEventProvider = ({ children }) => {
         'Suspension of rules requires a simple majority and EB approval.',
       ],
       fees: 299,
+      wplink:'https://chat.whatsapp.com/BOMIVFVlFfmKXlf5SakQvk',
       contact: {
         name1: 'Sandheep',
         phone1: '9884793806',
@@ -91,6 +93,7 @@ const SignEventProvider = ({ children }) => {
       miniTeamSize: '1',
       teamSize: '2',
       fees: 199,
+      wplink:'https://chat.whatsapp.com/B5qGEmOOVF8JkBub5bvwg1',
       contact: {
         name1: 'Poorna Prakash',
         phone1: '8838730894',
