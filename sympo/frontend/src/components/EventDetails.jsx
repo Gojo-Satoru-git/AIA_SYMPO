@@ -239,7 +239,7 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
               {itemCategory !== 'workshop' && card.id === '17' && (
                 <div>
                   <p className="mb-2 text-lg italic text-primary">Rules:</p>
-                  <ul className="list-inside list-disc text-base text-gray-400">
+                  <ul className="list-inside list-disc text-justify text-gray-400">
                     {card.rules.map((rule, index) => (
                       <li key={index}>{rule}</li>
                     ))}
