@@ -16,6 +16,7 @@ function Eventcard({
   const [Flipped, setFlipped] = useState(true);
   const cardRef = useRef(null);
   const { showToast } = useToast();
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const { isEventCoveredByPass } = useCart();
   let buttonText = 'Add';
@@ -66,7 +67,7 @@ function Eventcard({
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses = 'w-full max-w-[320px] aspect-[2/3]';
+  const sizeClasses = 'w-full max-w-[280px] aspect-[2/3]';
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
       <div
@@ -83,15 +84,25 @@ function Eventcard({
             <img
               src={card.image || fallbackImage}
               alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
-              className="h-full w-full object-cover"
+              onLoad={() => setImgLoaded(true)}
+              className={`h-full w-full object-contain transition-opacity duration-500 ${
+                imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               onError={(e) => {
                 if (!fallbackImage) return;
                 e.currentTarget.src = fallbackImage;
                 e.currentTarget.onerror = null;
+                setImgLoaded(true);
               }}
             />
+            {/* Optional: Simple loader while image isn't ready */}
+            {!imgLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              </div>
+            )}
           </div>
-          <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
+          <div className="flex w-full flex-1 flex-col justify-between p-3 sm:p-4">
             <div className="text-center">
               <p className="text-[11px] font-bold uppercase tracking-widest text-red-500 opacity-80">
                 {card.id < 10 ? 'Rolling Event starts 9:30' : `${card.date} • ${card.time}`}

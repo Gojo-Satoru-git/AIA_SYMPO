@@ -9,7 +9,34 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
 
   const [showForm, SetshowForm] = useState(false);
-
+  const countries = [
+    'Afghanistan',
+    'Sweden',
+    'Nigeria',
+    'Israel',
+    'Australia',
+    'Bangladesh',
+    'Mexico',
+    'Russia',
+    'Brazil',
+    'Pakistan',
+    'Malaysia',
+    'Hungary',
+    'Poland',
+    'Qatar',
+    'United Arab Emirates',
+    'Japan',
+    'South Korea',
+    'South Africa',
+    'United Kingdom',
+    'Saudi Arabia',
+    'Iran',
+    'Turkey',
+    'United States of America',
+    'China',
+    'India',
+    'France',
+  ];
   const { checkCart } = useCart();
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
@@ -91,11 +118,13 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
               </div>
               <div className="flex w-full flex-wrap items-center justify-around gap-6 rounded-lg border border-primary/30 bg-black/40 p-2 text-lg text-primary">
                 {/* Team Size */}
-                <div className="text-center">
-                  <span className="block text-sm font-bold uppercase opacity-70">Team Size</span>
-                  {card.miniTeamSize && <span className="text-xl">{card.miniTeamSize}-</span>}
-                  <span className="text-xl">{card.teamSize}</span>
-                </div>
+                {itemCategory != 'workshop' && (
+                  <div className="text-center">
+                    <span className="block text-sm font-bold uppercase opacity-70">Team Size</span>
+                    {card.miniTeamSize && <span className="text-xl">{card.miniTeamSize}-</span>}
+                    <span className="text-xl">{card.teamSize}</span>
+                  </div>
+                )}
 
                 {/* Date & Time */}
                 <div className="text-center">
@@ -158,6 +187,23 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory 
 
                 <span className="text-sm uppercase tracking-widest text-white">Join the group</span>
               </a>
+              <br />
+              <br />
+              <h1 className="mx-auto mb-3 w-fit rounded-md border border-primary p-2 px-5 text-xl font-bold uppercase tracking-widest text-primary shadow-stGlow">
+                Country Matrix
+              </h1>
+
+              {/* Optimized Grid */}
+              <div className="grid grid-cols-2 gap-4 rounded-lg border border-primary/30 bg-black/50 p-6 md:grid-cols-4">
+                {countries.sort().map((country) => (
+                  <div
+                    key={country}
+                    className="flex min-h-[60px] items-center justify-center rounded-sm border border-primary/20 bg-black/40 p-3 text-center text-xs font-medium uppercase tracking-widest text-white/90 transition-all duration-300 hover:scale-105 hover:border-primary hover:text-primary hover:shadow-stGlow"
+                  >
+                    {country}
+                  </div>
+                ))}
+              </div>
               <div>
                 <p className="mb-2 text-lg italic text-primary">Rules:</p>
 

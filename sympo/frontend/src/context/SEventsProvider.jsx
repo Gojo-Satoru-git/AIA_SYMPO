@@ -72,10 +72,8 @@ const SignEventProvider = ({ children }) => {
       fees: 299,
       wplink:'https://chat.whatsapp.com/BOMIVFVlFfmKXlf5SakQvk',
       contact: {
-        name1: 'Sandheep',
-        phone1: '9884793806',
-        name2: 'Rahul',
-        phone2: '9159812736',
+        name1: 'Rithikesh J',
+        phone1: '8667688159',
       },
       //fallbackImage: './assets/fall_back/hackathon.webp',
     },

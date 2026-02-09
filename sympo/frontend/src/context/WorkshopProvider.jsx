@@ -17,6 +17,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
+      wplink: 'https://chat.whatsapp.com/Lm6YJ4VWSbWANQ2r7OYz4F ',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -39,6 +40,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 399,
+      wplink: 'https://chat.whatsapp.com/GroOu44XweE1UeClMHLR8v ',
       contact: {
         name1: 'Kamalnath',
         phone1: '9150580147',
@@ -61,7 +63,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
-      wplink: 'https://wa.me/1234567890',
+      wplink: 'https://chat.whatsapp.com/KYPB9QSyS6H9gw7Mk802Fo',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -84,7 +86,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
-      wplink: 'https://wa.me/1234567890',
+      wplink: 'https://chat.whatsapp.com/JrHZ94hO3EsIabJQg8CVGx ',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -107,6 +109,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 599,
+      wplink: 'https://chat.whatsapp.com/Hne1yl9WgCs3FY8XUddKHC',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
@@ -129,7 +132,7 @@ function WorkshoProvider({ children }) {
       time: '11:00 AM',
       rules: ['Rules'],
       fees: 350,
-      wplink: 'https://wa.me/1234567890',
+      wplink: 'https://chat.whatsapp.com/JxwEKj1dIL6LVzVi5UaZoI',
       contact: {
         name1: 'Dipakumar',
         phone1: '7639933600',
