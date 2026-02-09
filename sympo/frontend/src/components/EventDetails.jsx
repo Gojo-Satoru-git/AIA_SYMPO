@@ -4,12 +4,12 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { IconButton } from '@mui/material';
 
-function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,countries }) {
+function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory, countries }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
 
   const [showForm, SetshowForm] = useState(false);
-  
+
   const { checkCart } = useCart();
   const scrollRef = useRef(null);
   const bottomRef = useRef(null);
@@ -89,6 +89,29 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                 <p className="whitespace-pre-line text-center text-lg leading-relaxed tracking-wide text-gray-300">
                   {card.description}
                 </p>
+                {card.id === '17' && (
+                  <div className="space-y-4 text-center">
+                    {/* Highlight Section */}
+                    <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+                      Skill Development • Inclusivity • Atmosphere
+                    </p>
+
+                    {/* Committee Badge */}
+                    <div className="border-primary-700 inline-block rounded-full border bg-primary px-4 py-1">
+                      <span className="text-sm font-medium text-white">Committee: </span>
+                      <span className="text-white-300 text-sm font-bold">UNHRC</span>
+                    </div>
+
+                    {/* Agenda Section */}
+                    <div className="px-4">
+                      <p className="mb-1 text-xs uppercase tracking-tighter text-primary">Agenda</p>
+                      <p className="text-base italic leading-relaxed text-gray-300">
+                        "The evolving role of belief systems and digital technologies in education
+                        and their implications for freedom of thought and expression"
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex w-full flex-wrap items-center justify-around gap-6 rounded-lg border border-primary/30 bg-black/40 p-2 text-lg text-primary">
                 {/* Team Size */}
