@@ -1,4 +1,4 @@
-import { useState ,useEffect  } from 'react';
+import { useState, useEffect } from 'react';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ import { passes } from '../data/passess';
 import { usePurchases } from '../context/PurchaseContext';
 import api from '../services/api';
 import PassSuggestionModal from '../components/PassSuggestionModal';
+import TosButton from '../components/TosButton';
 
 const Registration = () => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
@@ -32,8 +33,6 @@ const Registration = () => {
   const [promoApplied, setPromoApplied] = useState(false);
   const [totalOldAmount, setTotalOldAmount] = useState(null);
 
-
-
   const selectedPass = cart.find((item) => item.type == 'pass');
 
   useEffect(() => {
@@ -44,9 +43,9 @@ const Registration = () => {
 
   if (authLoading) {
     return (
-      <section className="min-h-screen bg-transparent text-white px-6 py-24 flex items-center justify-center">
+      <section className="flex min-h-screen items-center justify-center bg-transparent px-6 py-24 text-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-primary"></div>
           <p className="text-white/60">Loading...</p>
         </div>
       </section>
@@ -190,7 +189,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
       if (!isLoaded) throw new Error('Razorpay SDK failed to load');
 
       // Create order
-      const { data: order } = await createPaymentOrder(cart , promoCode);
+      const { data: order } = await createPaymentOrder(cart, promoCode);
 
       setBackendAmount(order.amount);
 
@@ -306,18 +305,18 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
   };
 
   return (
-    <section className="min-h-screen bg-transparent text-white px-6 py-24">
-      <div className="max-w-4xl mx-auto flex flex-col gap-12">
+    <section className="min-h-screen bg-transparent px-6 py-24 text-white">
+      <div className="mx-auto flex max-w-4xl flex-col gap-12">
         <div className="text-center">
-          <h2 className="text-primary text-3xl md:text-4xl tracking-widest uppercase mb-2">
+          <h2 className="mb-2 text-3xl uppercase tracking-widest text-primary md:text-4xl">
             Registration
           </h2>
-          <p className="text-white/60 text-sm">Review your selected events and workshops</p>
+          <p className="text-sm text-white/60">Review your selected events and workshops</p>
         </div>
         {/* ================= PASSES ================= */}
         <div className="flex flex-col gap-6">
-          <p className="text-center text-white/60 text-sm">Choose a pass</p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <p className="text-center text-sm text-white/60">Choose a pass</p>
+          <div className="grid gap-6 md:grid-cols-3">
             {passes.map((pass) => {
               const isSelected = selectedPass?.id === pass.id;
               const alreadyPurchased = checkPassPurchases(pass);
@@ -384,8 +383,8 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
         </div>
 
         {cart.length === 0 ? (
-          <div className="text-center mt-20">
-            <p className="text-white/50 uppercase tracking-widest text-sm">
+          <div className="mt-20 text-center">
+            <p className="text-sm uppercase tracking-widest text-white/50">
               No Passes selected yet
             </p>
           </div>
@@ -396,19 +395,19 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                 return (
                   <div
                     key={item.id}
-                    className={`flex justify-between items-center bg-darkCard border border-primary/30 rounded-xl p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}
+                    className={`flex items-center justify-between rounded-xl border border-primary/30 bg-darkCard p-4 ${removingId === item.id ? 'opacity-0' : 'opacity-100'} transition-all duration-300`}
                   >
                     <div>
-                      <p className="uppercase tracking-widest text-sm font-semibold">
+                      <p className="text-sm font-semibold uppercase tracking-widest">
                         {item.title}
                       </p>
-                      <p className="text-white/60 text-xs uppercase">{item.type}</p>
+                      <p className="text-xs uppercase text-white/60">{item.type}</p>
                     </div>
                     <div className="flex items-center gap-6">
-                      <span className="text-primary font-bold">₹{item.price}</span>
+                      <span className="font-bold text-primary">₹{item.price}</span>
                       <button
                         onClick={() => handleRemoveItem(item.id, item.title)}
-                        className="text-white/50 hover:text-primary transition disabled:opacity-50"
+                        className="text-white/50 transition hover:text-primary disabled:opacity-50"
                       >
                         ✕
                       </button>
@@ -418,60 +417,59 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
               })}
             </div>
 
-            <div className="mt-10 bg-black/60 backdrop-blur-md border border-primary rounded-2xl p-6 shadow-stGlowStrong flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+            <div className="mt-10 flex flex-col gap-6 rounded-2xl border border-primary bg-black/60 p-6 shadow-stGlowStrong backdrop-blur-md md:flex-row md:items-center md:justify-between">
               <div className="text-center md:text-left">
-                <p className="text-white/60 text-xs uppercase tracking-widest">Total Amount</p>
+                <p className="text-xs uppercase tracking-widest text-white/60">Total Amount</p>
                 <div className="flex flex-col">
                   {totalOldAmount && (
-                    <span className="text-white/50 line-through text-sm">
-                      ₹{totalOldAmount}
-                    </span>
+                    <span className="text-sm text-white/50 line-through">₹{totalOldAmount}</span>
                   )}
-                  <span className="text-primary text-2xl tracking-widest">
+                  <span className="text-2xl tracking-widest text-primary">
                     ₹{backendAmount ? backendAmount / 100 : totalPrice}
                   </span>
                 </div>
-
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-center">
-  
+              <div className="flex flex-col items-center gap-4 sm:flex-row">
                 {/* Promo Code Box */}
-                <div className="flex bg-black/70 border border-primary rounded-full overflow-hidden">
+                <div className="flex overflow-hidden rounded-full border border-primary bg-black/70">
                   <input
                     type="text"
                     value={promoCode}
                     disabled={promoApplied}
                     onChange={(e) => setPromoCode(e.target.value)}
                     placeholder="PROMO CODE"
-                    className="bg-transparent px-4 py-2 text-white outline-none w-40 uppercase tracking-widest text-xs"
+                    className="w-40 bg-transparent px-4 py-2 text-xs uppercase tracking-widest text-white outline-none"
                   />
                   <button
                     disabled={promoApplied}
                     onClick={async () => {
                       if (!promoCode) return showToast('Enter promo code', 'error');
 
-                      const cartItems = cart.map(item => ({ eventId: item.id, quantity: 1 }));
+                      const cartItems = cart.map((item) => ({ eventId: item.id, quantity: 1 }));
 
-                      console.log('Applying promo code', JSON.stringify({ code: promoCode.toUpperCase(), items: cartItems }));
+                      console.log(
+                        'Applying promo code',
+                        JSON.stringify({ code: promoCode.toUpperCase(), items: cartItems })
+                      );
                       try {
                         const res = await api.post('/promo/preview', {
-                            code: promoCode.toUpperCase(),
-                            items: cartItems
-                          })
+                          code: promoCode.toUpperCase(),
+                          items: cartItems,
+                        });
 
                         console.log('Promo preview response', res.data);
 
-                        setBackendAmount(res.data.data.totalAmount*100);
+                        setBackendAmount(res.data.data.totalAmount * 100);
                         setTotalOldAmount(res.data.data.totalOldAmount);
                         setPromoApplied(res.data.data.isPromoApplied);
                         showToast('Promo applied!', 'success');
-                      } catch(err) {
-                        const msg = err.response?.data?.message || "Something went wrong";
+                      } catch (err) {
+                        const msg = err.response?.data?.message || 'Something went wrong';
                         showToast(msg, 'error');
                       }
                     }}
-                    className="bg-primary text-black px-4 py-2 text-xs uppercase tracking-widest font-semibold"
+                    className="bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-widest text-black"
                   >
                     {promoApplied ? 'Applied' : 'Apply'}
                   </button>
@@ -481,48 +479,38 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                 <button
                   onClick={handlePayment}
                   disabled={paymentLoading || paymentLocked}
-                  className="
-                    px-6 py-3
-                    rounded-full
-                    bg-primary text-black
-                    uppercase tracking-widest text-sm font-semibold
-                    shadow-stGlowStrong
-                    hover:scale-105
-                    transition
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                  "
+                  className="rounded-full bg-primary px-6 py-3 text-sm font-semibold uppercase tracking-widest text-black shadow-stGlowStrong transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {paymentLoading ? 'Processing...' : 'Pay Now'}
                 </button>
               </div>
-
             </div>
           </>
         )}
 
         {/* Current QR Code Modal */}
         {qrCode && qrVisible && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-            <div className="bg-black border-2 border-primary rounded-2xl p-8 max-w-sm w-full">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+            <div className="w-full max-w-sm rounded-2xl border-2 border-primary bg-black p-8">
               <button
                 onClick={() => setQrVisible(false)}
-                className="absolute top-4 right-4 text-primary text-2xl hover:text-red-500 transition"
+                className="absolute right-4 top-4 text-2xl text-primary transition hover:text-red-500"
               >
                 ✕
               </button>
 
               <div className="text-center">
-                <h3 className="text-primary text-xl font-bold mb-4 uppercase">Entry Ticket</h3>
+                <h3 className="mb-4 text-xl font-bold uppercase text-primary">Entry Ticket</h3>
                 <QRCodeCanvas
                   value={qrCode}
                   size={220}
                   bgColor="#ffffff"
                   fgColor="#000000"
                   level="H"
-                  className="mx-auto border-2 border-primary rounded-lg p-2 bg-white"
+                  className="mx-auto rounded-lg border-2 border-primary bg-white p-2"
                 />
-                <p className="text-white/60 mt-6 text-sm">Show this QR at event entry</p>
-                <p className="text-white/40 text-xs mt-2">
+                <p className="mt-6 text-sm text-white/60">Show this QR at event entry</p>
+                <p className="mt-2 text-xs text-white/40">
                   You Can also find this QR in your purchases section.
                 </p>
 
@@ -537,7 +525,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                     link.download = `symposium-ticket-${Date.now()}.png`;
                     link.click();
                   }}
-                  className="mt-6 px-4 py-2 bg-primary text-black rounded-lg font-semibold text-sm"
+                  className="mt-6 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-black"
                 >
                   Download Ticket
                 </button>
@@ -570,6 +558,9 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
             }}
           />
         )}
+      </div>
+      <div className="flex items-center justify-center">
+        <TosButton />
       </div>
     </section>
   );
