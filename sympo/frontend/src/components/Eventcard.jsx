@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 import useToast from '../context/useToast';
 import useCart from '../context/useCart';
@@ -67,7 +66,7 @@ function Eventcard({
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses = 'w-full max-w-[320px] h-fit mx-auto m-2';
+  const sizeClasses = 'w-[70vw] sm:w-72 h-112';
   return (
     <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
       <div
@@ -80,7 +79,7 @@ function Eventcard({
           onClick={onClick}
           className="backface-hidden relative inset-0 flex h-full w-full cursor-pointer flex-col items-center rounded-md border-4 border-primary bg-black shadow-stGlow"
         >
-          <div className="relative h-[75%] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
+          <div className="relative min-h-[350px] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
             <img
               src={card.image || fallbackImage}
               alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
