@@ -2,8 +2,16 @@ import { TextField, Button, MenuItem } from '@mui/material';
 import useToast from '../context/useToast';
 import { useEffect, useState } from 'react';
 
-function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, onSuccess,
-  countries = [], }) {
+function TeamForm({
+  title,
+  onclose,
+  teamSize,
+  mini,
+  setShowAdd,
+  isDisabledAll,
+  onSuccess,
+  countries = [],
+}) {
   const { showToast } = useToast();
 
   const [savedData, setSavedData] = useState({});
@@ -85,8 +93,6 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
 
     return null;
   };
-
-  
 
   const inputStyle = {
     label: {
@@ -194,26 +200,31 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, o
                 Logistics
               </MenuItem>
             </TextField>
-            <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
-              Problem statement
-            </h1>
-            <TextField
-              name="problem_statement"
-              label="Explain your problem"
-              multiline
-              type="text"
-              rows={4}
-              required
-              fullWidth
-              sx={inputStyle}
-              defaultValue={savedData.problem_statement || ''}
-              InputProps={{
-                readOnly: isDisabledAll,
-              }}
-            />
           </>
         )}
-
+        {title === 'Hackathon' ||
+          (title === 'Paper Presentation' && (
+            <>
+              {' '}
+              <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
+                Problem statement
+              </h1>
+              <TextField
+                name="problem_statement"
+                label="Explain your problem"
+                multiline
+                type="text"
+                rows={4}
+                required
+                fullWidth
+                sx={inputStyle}
+                defaultValue={savedData.problem_statement || ''}
+                InputProps={{
+                  readOnly: isDisabledAll,
+                }}
+              />
+            </>
+          ))}
         <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
           Team details
         </h1>

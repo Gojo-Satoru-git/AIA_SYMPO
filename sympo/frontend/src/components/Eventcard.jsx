@@ -104,8 +104,8 @@ function Eventcard({
           </div>
           <div className="flex w-full flex-1 flex-col justify-between p-3 sm:p-4">
             <div className="text-center">
-              <p className="text-[11px] font-bold mb-2 uppercase tracking-widest text-red-500 opacity-80 " >
-                {card.id < 10 ? 'Rolling Event starts 9:30' : `${card.date} • ${card.time}`}
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-red-500 opacity-80">
+                {card.id < 10 ? `Rolling Event starts ${card.time}` : `${card.date} • ${card.time}`}
               </p>
             </div>
 

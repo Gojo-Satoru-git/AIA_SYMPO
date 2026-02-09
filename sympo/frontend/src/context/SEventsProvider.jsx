@@ -8,13 +8,14 @@ const SignEventProvider = ({ children }) => {
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4040803f-61c6-4a45-b5e1-76779ffe3052',
       backside: './assets/Billy.webp',
-      description: 'This is Hackathon',
+      description:
+        ' Our Hackathon is an exciting innovation challenge that brings together creative minds to solve real-world problems using technology. Participants collaborate, build prototypes and present impactful solutions within a limited time\n\n🥇 Winner Team:\n₹5000 Cash Prize + ₹4000 worth 1-Month Internship Voucher\n🥈 Runner-Up Team:\n₹3000 Cash Prize + ₹2000 worth 2-Weeks Internship Voucher\n🎖️ Additional Benefits:\nParticipation Certificates Mentorship Opportunities Recognition',
       category: 'Technical',
       isSignature: true,
       miniTeamSize: '2',
       teamSize: '4',
-      date: '2026-02-21',
-      time: '11:00 AM',
+      date: '2026-02-22',
+      time: '9.30am to 5pm',
       rules: ['Rules'],
       fees: 499,
       wplink: 'https://chat.whatsapp.com/DIz6Lqd00DIE75JTfN5EKq',
@@ -37,8 +38,8 @@ const SignEventProvider = ({ children }) => {
       category: 'Technical',
       isSignature: true,
       teamSize: '1',
-      date: '2026-02-21',
-      time: '11:00 AM',
+      date: '2026-02-22',
+      time: '9.30am to 5pm',
       rules: [
         'English is the official and working language for all formal and informal debate.',
         'Delegates must maintain diplomacy, respect, and decorum at all times.',
@@ -85,11 +86,12 @@ const SignEventProvider = ({ children }) => {
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Paper%20Presentation.webp?alt=media&token=c34772fa-11f2-4135-9677-be1888ad2d3d',
       backside: './assets/Robin.webp',
-      description: 'This is Paper presentation',
+      description:
+        'The Paper Presentation is an academic event that provides a platform for participants to present their research ideas, innovations, and findings on emerging topics. It encourages knowledge sharing, critical thinking, and communication skills.',
       category: 'Technical',
       isSignature: true,
       date: '2026-02-21',
-      time: '11:00 AM',
+      time: '9.30am-5pm',
       rules: ['Rules'],
       miniTeamSize: '1',
       teamSize: '2',
