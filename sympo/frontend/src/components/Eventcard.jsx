@@ -117,14 +117,11 @@ function Eventcard({
                     e.stopPropagation();
                     if (isEventCoveredByPass(card.id)) {
                       showToast('Already included in the pass');
-                    } else if (
-                      ['16', '17', '18'].includes(card.id) &&
-                      localStorage.getItem(`${card.title}-teamData`) === null
-                    ) {
-                      showToast('Please add team details first', 'info');
-                    } else if (!checkCart(card)) {
+                      return;
+                    }
+
+                    if (!checkCart(card)) {
                       addToCart(card, category);
-                      showToast(`${card.title} added!`, 'success');
                     }
                   }}
                 >

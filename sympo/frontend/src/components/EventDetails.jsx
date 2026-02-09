@@ -1,8 +1,9 @@
 import TeamForm from './teamForm';
 import useCart from '../context/useCart';
 import { useEffect, useRef, useState, useCallback } from 'react';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
-function EventDetails({ card, onClose, checkPurchase, isPurchased }) {
+function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory }) {
   const [showArrow, SetshowArrow] = useState(false);
   const [showAdd, setShowAdd] = useState(card.id === '16' || card.id === '17' || card.id === '18');
 
@@ -125,11 +126,19 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased }) {
                 </div>
               </div>
               <div className="flex items-center gap-8">
-                {card.id === '16' || card.id === '17' || card.id == '18' ? (
+                {itemCategory === 'Signature Events' ? (
                   <button
-                    className={`rounded-full bg-primary px-4 py-2 text-black shadow-stGlow ${!showAdd || checkCart(card) || checkPurchase(card) ? 'opacity-35' : ''}`}
+                    className={`rounded-full px-4 py-2 font-bold shadow-stGlow transition-all ${
+                      isPurchased
+                        ? 'border border-primary bg-zinc-800 text-white hover:bg-zinc-700' // Distinct style for Viewing
+                        : !showAdd || checkCart(card)
+                          ? 'cursor-not-allowed bg-primary text-black opacity-35' // Style for Disabled
+                          : 'bg-primary text-black hover:scale-105' // Style for Active Add
+                    }`}
                     onClick={() => {
-                      SetshowForm(true);
+                      if (isPurchased || (showAdd && !checkCart(card))) {
+                        SetshowForm(true);
+                      }
                     }}
                   >
                     {isPurchased ? 'View Team' : 'Add Team Details'}

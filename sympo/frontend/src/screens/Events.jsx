@@ -8,11 +8,17 @@ import useCart from '../context/useCart';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { IconButton } from '@mui/material';
+import useToast from '../context/useToast';
+import TeamForm from '../components/TeamForm';
 import { Signeventscontext } from '../context/SEvents.context';
 const Events = () => {
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
   const scrollRef4 = useRef(null);
+  const { showToast } = useToast();
+
+  const [showForm, setShowForm] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
 
   const [Selected, SetSelected] = useState('All');
   const { addToCart, checkCart } = useCart();
@@ -72,15 +78,23 @@ const Events = () => {
     }
   };
   const handleCart = (item, type) => {
+    if (type === 'Signature Events' || item.category === 'Signature Events' || item.isSignature) {
+      setPendingItem({ item, type });
+      setShowForm(true);
+      return; // Stop here, wait for form submission
+    }
+    processAddToCart(item, type);
+    showToast(`${item.title} added to cart!`, 'success');
+  };
+  const processAddToCart = (item, type) => {
     const price = Number(item.fees);
     const cartItem = {
       id: item.id,
       title: item.title,
       price: Number.isFinite(price) ? price : 0,
       type,
-      isSignature: item.isSignature == true,
+      isSignature: item.isSignature === true || type === 'Signature Events',
     };
-    console.log(cartItem);
     addToCart(cartItem);
   };
 
@@ -130,6 +144,21 @@ const Events = () => {
     Selected === 'All' ? eventext : eventext.filter((event) => event.category === Selected);
   return (
     <>
+      {showForm && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/80 backdrop-blur-md">
+          <TeamForm
+            title={pendingItem?.item.title}
+            teamSize={pendingItem?.item.teamSize || 3} // Fallback if not in data
+            mini={pendingItem?.item.minTeamSize || 1}
+            onclose={() => setShowForm(false)}
+            onSuccess={() => {
+              processAddToCart(pendingItem.item, pendingItem.type);
+              setShowForm(false);
+              setPendingItem(null);
+            }}
+          />
+        </div>
+      )}
       {clicked && (
         <div
           className="fixed left-0 top-0 z-50 h-full w-full bg-black/60 backdrop-blur-sm"
@@ -210,7 +239,7 @@ const Events = () => {
           <div
             ref={scrollRef2}
             onScroll={() => checkScroll(scrollRef2, setshowLeft, setshowRight)}
-            className="no-scrollbar flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
+            className="no-scrollbar touch-action-pan-x flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
           >
             {display.map((events, index) => {
               const itemInCart = checkCart(events);
@@ -300,7 +329,7 @@ const Events = () => {
               </IconButton>
             )}
             <div
-              className="no-scrollbar flex w-full snap-x flex-nowrap items-center gap-4 overflow-x-auto scroll-smooth px-4 md:justify-center"
+              className="no-scrollbar touch-action-pan-x flex w-full snap-x flex-nowrap items-center gap-4 overflow-x-auto scroll-smooth px-4 md:justify-center"
               ref={scrollRef3}
               onScroll={() => {
                 checkScroll(scrollRef3, setshowSELeft, setshowSERight);
@@ -394,7 +423,7 @@ const Events = () => {
               </IconButton>
             )}
             <div
-              className="no-scrollbar flex snap-x flex-nowrap items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
+              className="no-scrollbar touch-action-pan-x flex snap-x flex-nowrap items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
               ref={scrollRef4}
               onScroll={() => {
                 checkScroll(scrollRef4, setshowWLeft, setshowWRight);

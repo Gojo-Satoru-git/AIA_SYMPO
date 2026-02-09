@@ -13,24 +13,27 @@
   font-weight: normal;
   font-style: normal;
 }
+.touch-action-pan-x {
+  touch-action: pan-x;
+}
 * {
   font-family: 'StrangerThings';
 }
 @layer base {
-  html, body {
+  html,
+  body {
     @apply bg-black text-white;
     margin: 0;
     padding: 0;
   }
 }
-html, body {
+html,
+body {
   overscroll-behavior: none;
 }
 
 .will-cursor {
-  cursor: url('/cursors/will.ani'), 
-          url('/cursors/will.cur'),
-          auto;
+  cursor: url('/cursors/will.ani'), url('/cursors/will.cur'), auto;
 }
 
 .perspective {
@@ -83,9 +86,9 @@ html, body {
   }
 }
 
-
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) translateX(0px);
     opacity: 0;
   }

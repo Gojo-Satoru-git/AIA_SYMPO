@@ -2,7 +2,7 @@ import { TextField, Button, MenuItem } from '@mui/material';
 import useToast from '../context/useToast';
 import { useEffect, useState } from 'react';
 
-function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll }) {
+function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll, onSuccess }) {
   const { showToast } = useToast();
 
   const [savedData, setSavedData] = useState({});
@@ -107,14 +107,13 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
   };
   return (
     <>
-      <button className="absolute top-2 right-4 text-primary text-xl font-bold" onClick={onclose}>
+      <button className="absolute right-4 top-2 text-xl font-bold text-primary" onClick={onclose}>
         ✕
       </button>
 
       <form
         onSubmit={(e) => {
           e.preventDefault();
-
           const formData = Object.fromEntries(new FormData(e.target));
 
           const validationError = validateTeamForm(formData, teamSize, mini);
@@ -124,15 +123,20 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
           }
 
           localStorage.setItem(`${title}-teamData`, JSON.stringify(formData));
+          showToast('Registration details saved!', 'success');
 
-          showToast('Team details submitted successfully!', 'success');
-          setShowAdd(false);
+          // CRITICAL: Call the success handler passed from Events.js
+          if (onSuccess) {
+            onSuccess();
+          } else if (setShowAdd) {
+            setShowAdd(false);
+          }
         }}
-        className="flex items-center flex-col gap-4 p-8 md:border border-primary md:shadow-stGlow rounded-md max-h-[90vh] max-w-3xl mx-auto mt-10 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="mx-auto mt-10 flex max-h-[90vh] max-w-3xl flex-col items-center gap-4 overflow-auto rounded-md border-primary p-8 [-ms-overflow-style:none] [scrollbar-width:none] md:border md:shadow-stGlow [&::-webkit-scrollbar]:hidden"
       >
         {title === 'Hackathon' && (
           <>
-            <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
+            <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
               Problem domain
             </h1>
             <TextField
@@ -172,7 +176,7 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
                 Logistics
               </MenuItem>
             </TextField>
-            <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
+            <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
               Problem statement
             </h1>
             <TextField
@@ -192,17 +196,17 @@ function TeamForm({ title, onclose, teamSize, mini, setShowAdd, isDisabledAll })
           </>
         )}
 
-        <h1 className="text-primary font-bold border border-primary shadow-stGlow rounded-md p-2">
+        <h1 className="rounded-md border border-primary p-2 font-bold text-primary shadow-stGlow">
           Team details
         </h1>
         <div className="flex flex-col gap-6">
           {Array.from({ length: teamSize }).map((_, index) => (
             <div
               key={index}
-              className="flex flex-col gap-3 pb-6 border-b border-gray-800 last:border-0 last:pb-0"
+              className="flex flex-col gap-3 border-b border-gray-800 pb-6 last:border-0 last:pb-0"
             >
               <h2 className="text-primary">Team member {index + 1}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <TextField
                   name={`member_${index}_name`}
                   label="Name"
