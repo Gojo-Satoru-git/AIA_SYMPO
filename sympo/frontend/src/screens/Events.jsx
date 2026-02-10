@@ -7,6 +7,7 @@ import { eventcontext } from '../context/event.context';
 import { workshopcontext } from '../context/workshop.context';
 import { Signeventscontext } from '../context/SEvents.context';
 import { usePurchases } from '../context/PurchaseContext';
+import { SeatAvalContext } from '@/context/SeatAvalProvider';
 import useCart from '../context/useCart';
 import useToast from '../context/useToast';
 import { IconButton } from '@mui/material';
@@ -18,6 +19,7 @@ const Events = () => {
   const scrollRef3 = useRef(null);
   const scrollRef4 = useRef(null);
   const { showToast } = useToast();
+  const { checkSeatAval } = useContext(SeatAvalContext);
 
   const countries = [
     'United States of America',
@@ -117,6 +119,7 @@ const Events = () => {
       setShowForm(true);
       return;
     }
+    if(!checkSeatAval(item)) {return showToast('Sorry, this event is fully booked!', 'error');}
     processAddToCart(item, type);
     showToast(`${item.title} added to cart!`, 'success');
   };
