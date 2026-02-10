@@ -3,110 +3,139 @@ import admin from "firebase-admin";
 import offers from "../data/promoCode.js";
 import limitedSeatEvents from "../data/limitedSeatEvents.js";
 
-export const createOrderRecord = async (userId, items , promoCode) => {
+// Linked combo → event mapping
+const linkedSeatsMap = {
+  combo1: "10",
+  combo2: "12",
+  combo3: "14"
+};
+
+// ====== CREATE ORDER ======
+export const createOrderRecord = async (userId, items, promoCode) => {
+  const orderRef = db.collection("orders").doc();
   let totalAmount = 0;
   let totalOldAmount = 0;
   const validatedItems = [];
-  const orderRef = db.collection("orders").doc();
-
 
   await db.runTransaction(async (tx) => {
+    const eventDataCache = {};
 
-    const eventCache = []; // 🔴 CHANGED: store reads first
-
-    /* =======================
-       🔹 STEP 1: READ ONLY
-       ======================= */
+    // STEP 1: Build seat-only list (combo → linked event)
+    const seatItems = [];
     for (const item of items) {
-      if (!item.eventId || item.quantity <= 0) {
-        const err = new Error("Invalid item");
-        err.eventId = item.eventId;
-        throw err;
-      }
+      const linkedEventId = linkedSeatsMap[item.eventId];
 
-      const eventRef = db.collection("events").doc(String(item.eventId));
-      const eventSnap = await tx.get(eventRef); // ✅ READ ONLY
-
-      if (!eventSnap.exists) {
-        const err = new Error("Event not found");
-        err.eventId = item.eventId;
-        throw err;
-      }
-
-      const event = eventSnap.data();
-
-      if (!event.isActive) {
-        const err = new Error("Event inactive");
-        err.eventId = item.eventId;
-        throw err;
-      }
-
-
-      if (limitedSeatEvents.includes(String(item.eventId))) {
-        const available = event.capacity - event.booked;
-        if (available < item.quantity) {
-          const err = new Error("Not enough seats");
-          err.eventId = item.eventId;
-          throw err;
-        }
-      }
-
-      eventCache.push({ eventRef, event, item }); // 🔴 CHANGED
-    }
-
-    /* =======================
-       🔹 STEP 2: WRITE ONLY
-       ======================= */
-    for (const e of eventCache) {
-      const { eventRef, event, item } = e;
-      if (limitedSeatEvents.includes(String(item.eventId))) {
-        tx.update(eventRef, {
-          booked: event.booked + item.quantity, // ✅ WRITE AFTER ALL READS
+      if (linkedEventId) {
+        seatItems.push({
+          eventId: linkedEventId,
+          quantity: item.quantity || 1
+        });
+      } else {
+        seatItems.push({
+          eventId: item.eventId,
+          quantity: item.quantity || 1
         });
       }
+    }
+
+    // STEP 2: Read BOTH seat events and price events
+    const uniqueEventIds = [
+      ...new Set([
+        ...seatItems.map(i => i.eventId),     // seat events
+        ...items.map(i => i.eventId)          // pricing events (combo)
+      ])
+    ];
+
+    for (const eventId of uniqueEventIds) {
+      const eventRef = db.collection("events").doc(eventId);
+      const eventSnap = await tx.get(eventRef);
+      if (!eventSnap.exists) throw new Error(`Event not found: ${eventId}`);
+
+      const event = eventSnap.data();
+      if (!event.isActive) throw new Error(`Event inactive: ${event.title}`);
+
+      eventDataCache[eventId] = { ...event, ref: eventRef };
+    }
+
+    // STEP 3: Aggregate seat quantities
+    const aggregatedSeats = {};
+    for (const item of seatItems) {
+      aggregatedSeats[item.eventId] =
+        (aggregatedSeats[item.eventId] || 0) + item.quantity;
+    }
+
+    // STEP 4: Validate seat availability
+    for (const [eventId, quantity] of Object.entries(aggregatedSeats)) {
+      if (limitedSeatEvents.includes(eventId)) {
+        const event = eventDataCache[eventId];
+        const available = event.capacity - event.booked;
+        if (available < quantity) {
+          throw new Error(
+            `Not enough seats for "${event.title}". Only ${available} left.`
+          );
+        }
+      }
+    }
+
+    // STEP 5: Calculate totals (price from original item)
+    for (const item of items) {
+      const event = eventDataCache[item.eventId]; // PRICE FROM combo or normal event
+      if (!event) continue;
 
       let discount = 0;
-
-      if(promoCode) {
+      if (promoCode) {
         const promo = offers[promoCode.toUpperCase()];
-
-        if(promo && new Date(promo.validTill) > new Date() && promo.applicableEvents.includes(String(item.eventId))) {
+        if (promo && new Date(promo.validTill) > new Date()) {
+          if (promo.applicableEvents.includes(item.eventId)) {
             discount = promo.discountAmount;
+          }
         }
       }
 
-
+      const qty = item.quantity || 1;
       const unitPriceAfterDiscount = Math.max(0, event.price - discount);
-      const itemTotal = unitPriceAfterDiscount * item.quantity;
 
-      totalAmount += itemTotal;
-      totalOldAmount += event.price * item.quantity;
+      totalAmount += unitPriceAfterDiscount * qty;
+      totalOldAmount += event.price * qty;
 
       validatedItems.push({
-        eventId: String(item.eventId),
+        eventId: String(item.eventId), // combo stays combo
         title: event.title,
-        quantity: item.quantity,
+        quantity: qty,
         price: event.price,
-        used: false,
+        used: false
       });
     }
 
-    /* =======================
-       🔹 STEP 3: CREATE ORDER
-       ======================= */
+    // STEP 6: Update ONLY real seat events
+    for (const [eventId, quantity] of Object.entries(aggregatedSeats)) {
+      if (limitedSeatEvents.includes(eventId)) {
+        const event = eventDataCache[eventId];
+        tx.update(event.ref, { booked: event.booked + quantity });
+      }
+    }
+
+    // STEP 7: Order status
+    const initialStatus = Object.keys(aggregatedSeats).some(eventId =>
+      limitedSeatEvents.includes(eventId)
+    )
+      ? "RESERVED"
+      : "PENDING";
+
+    // STEP 8: Create order
     tx.set(orderRef, {
       userId,
       amount: totalAmount,
       promoCode: promoCode || null,
-      status: "RESERVED",
+      status: initialStatus,
       items: validatedItems,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       qrToken: null,
-      isUsed: false,
+      isUsed: false
     });
   });
 
-  return { totalAmount , totalOldAmount, orderId: orderRef.id };
+  return { totalAmount, totalOldAmount, orderId: orderRef.id };
 };
 
 export const cancelOrderAndReleaseSeats = async (orderId) => {
@@ -117,30 +146,62 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
     if (!orderSnap.exists) return;
 
     const order = orderSnap.data();
-    if (order.status === "PAID") return;
+    if (!["RESERVED", "PENDING"].includes(order.status)) return;
 
-    const eventCache = []; // 🔴 CHANGED
+    // STEP 1: Build seat-only list (combo → linked event)
+    const seatItems = [];
+    for (const item of order.items || []) {
+      const linkedEventId = linkedSeatsMap[item.eventId];
 
-    /* READ FIRST */
-    for (const item of order.items) {
-      const eventRef = db.collection("events").doc(String(item.eventId));
-      const eventSnap = await tx.get(eventRef);
-      if (!eventSnap.exists) continue;
-
-      eventCache.push({ eventRef, event: eventSnap.data(), item }); // 🔴 CHANGED
-    }
-
-    /* WRITE AFTER */
-    for (const e of eventCache) {
-      const { eventRef, event, item } = e;
-
-      if (limitedSeatEvents.includes(String(item.eventId))) {
-        tx.update(eventRef, {
-          booked: Math.max(0, event.booked - item.quantity),
+      if (linkedEventId) {
+        seatItems.push({
+          eventId: linkedEventId,
+          quantity: item.quantity || 1
+        });
+      } else {
+        seatItems.push({
+          eventId: item.eventId,
+          quantity: item.quantity || 1
         });
       }
     }
 
-    tx.update(orderRef, { status: "CANCELLED" });
+    // STEP 2: Aggregate seat quantities
+    const aggregatedSeats = {};
+    for (const item of seatItems) {
+      aggregatedSeats[item.eventId] =
+        (aggregatedSeats[item.eventId] || 0) + item.quantity;
+    }
+
+    // STEP 3: Read only seat events
+    const uniqueEventIds = Object.keys(aggregatedSeats);
+    const eventDataCache = {};
+
+    for (const eventId of uniqueEventIds) {
+      const eventRef = db.collection("events").doc(eventId);
+      const eventSnap = await tx.get(eventRef);
+      if (eventSnap.exists) {
+        eventDataCache[eventId] = {
+          ref: eventRef,
+          booked: eventSnap.data().booked || 0
+        };
+      }
+    }
+
+    // STEP 4: Release booked seats (only real seat events)
+    for (const [eventId, quantity] of Object.entries(aggregatedSeats)) {
+      if (limitedSeatEvents.includes(eventId) && eventDataCache[eventId]) {
+        const event = eventDataCache[eventId];
+        tx.update(event.ref, {
+          booked: Math.max(0, event.booked - quantity)
+        });
+      }
+    }
+
+    // STEP 5: Mark order cancelled
+    tx.update(orderRef, {
+      status: "CANCELLED",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
   });
 };

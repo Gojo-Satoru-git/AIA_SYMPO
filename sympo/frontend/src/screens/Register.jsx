@@ -161,7 +161,7 @@ const Registration = () => {
     return true;
   };
 
-  const proceedToPayment = async () => {
+const proceedToPayment = async () => {
   if (!user) return showToast('Please login first', 'error');
   if (!validateCart()) return;
 
@@ -172,47 +172,77 @@ const Registration = () => {
     const paymentData = await createPaymentOrder(cart, promoCode);
     const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
 
+    setFirestoreOrderId(firestoreOrderId);
+    localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
+
     const cashfree = await load({
       mode: import.meta.env.PROD ? 'production' : 'sandbox',
     });
 
-    await cashfree.checkout({
+    const checkoutOptions = {
       paymentSessionId,
-      redirectTarget: '_modal', // 🔥 IMPORTANT
-    });
+      redirectTarget: '_modal',
 
-    // ✅ verify AFTER modal payment
-    const res = await verifyPaymentOrder(firestoreOrderId, cart);
+      onClose: async () => {
+        console.log("Payment popup closed");
+        setPaymentLocked(false);
+        setPaymentLoading(false);
+        
+        // Cancel the order and release seats
+        try {
+          await api.post("/payment/cancel-abandoned", { orderId: firestoreOrderId });
+          showToast("Payment cancelled. Seats released.", "info");
+        } catch (err) {
+          console.error("Failed to cancel order:", err);
+        }finally {
+          localStorage.removeItem('lastFirestoreOrderId');
+        }
+      }
+    };
 
-    
+    await cashfree.checkout(checkoutOptions);
 
-    if (res.qrToken) {
+    const verified = await verifyPaymentOrder(firestoreOrderId, cart);
+
+    if (verified.qrToken) {
       const purchase = {
-                orderId: firestoreOrderId,
-                amount: res.amount,
-                events: res.items,
-                qrToken: res.qrToken,
-              };
+          orderId: firestoreOrderId,
+          amount: verified.amount,
+          events: verified.items,
+          qrToken :verified.qrToken,
+        };
 
       addPurchase(purchase);
-      setQrCode(res.qrToken);
+
+      setQrCode(verified.qrToken);
       setQrVisible(true);
       clearCart();
       showToast("Payment successful!", "success");
-    } else {
-      showToast("Payment completed but QR not generated", "warning");
+      setErrorMsg("");
+      try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
     }
 
   } catch (err) {
+
+    if (firestoreOrderId) {
+      try {
+        await api.post("/payment/cancel-abandoned", { orderId : firestoreOrderId });
+      } catch (cancelErr) {
+        console.error("Failed to cancel order after error:", cancelErr);
+        
+      }finally{
+        try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+      }
+    }
+
     const msg = err?.response?.data?.message  || "Payment failed";
     showToast(msg, "error");
-  } finally {
-    setPaymentLoading(false);
+    console.error('Payment error:', err);
     setPaymentLocked(false);
+    setPaymentLoading(false);
   }
 };
 
-;
 
   const analyzeCart = (cart) => {
     let techCount = 0;

@@ -24,6 +24,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 
 import useCart from '../context/useCart';
 
+import api from '../services/api';
+
 const menuItemStyle = {
   color: '#e5e5e5',
   fontSize: '0.95rem',
