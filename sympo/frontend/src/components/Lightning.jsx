@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-const LightningStrike = ({ trigger, xOffset = 0, hue = 357, onComplete }) => {
+const LightningStrike = ({ trigger, xOffset = 0, onComplete }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -41,29 +41,18 @@ const LightningStrike = ({ trigger, xOffset = 0, hue = 357, onComplete }) => {
         uv = uv * 2.0 - 1.0;
         uv.x *= res.x / res.y;
         
-        // 1. DYNAMIC THICKNESS & CONSOLIDATION
-        // On mobile, we use a smaller thickness and a higher "contrast" 
-        // to merge branches into a single line.
         bool isMobile = res.x < 600.0;
-        float thickness = isMobile ? 0.005 : 0.015;
-        float noiseScale = isMobile ? 1.0 : 1.5; // Less chaos on mobile
+        float thickness = isMobile ? 0.005 : 0.012;
+        float noiseScale = isMobile ? 1.0 : 1.5;
         
         float n = fbm(uv * noiseScale + time * 25.0);
-        
-        // On mobile, we reduce the horizontal "wobble" range to 1.0 
-        // to prevent the bolt from splitting into multiple visible paths.
-        float spread = isMobile ? 1.0 : 1.2; 
+        float spread = isMobile ? 0.8 : 1.2; 
         float dist = abs(uv.x - (xOff * (res.x/res.y)) + (n - 0.5) * spread);
         
-        // 2. CONCENTRATION
-        // Raising the result to a power on mobile sharpens the core 
-        // and removes the faint outer branches.
         float finalBeam = thickness / dist;
-        if(isMobile) {
-            finalBeam = pow(finalBeam, 1.2); 
-        }
+        if(isMobile) { finalBeam = pow(finalBeam, 1.2); }
 
-        vec3 color = vec3(0.8, 0.05, 0.05); // Stranger Things Red
+        vec3 color = vec3(0.85, 0.02, 0.02); // Stranger Things Deep Red
         float beam = finalBeam * opacity;
         gl_FragColor = vec4(color * beam, beam * opacity);
       }
@@ -121,7 +110,7 @@ const LightningStrike = ({ trigger, xOffset = 0, hue = 357, onComplete }) => {
       requestAnimationFrame(render);
     };
     requestAnimationFrame(render);
-  }, [trigger, xOffset, onComplete]);
+  }, [trigger, xOffset]);
 
   return (
     <canvas
