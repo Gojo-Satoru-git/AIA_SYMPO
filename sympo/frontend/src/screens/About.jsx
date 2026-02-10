@@ -22,7 +22,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -46,7 +46,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -70,7 +70,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -94,7 +94,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
   ];
