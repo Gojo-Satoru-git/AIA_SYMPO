@@ -176,7 +176,7 @@ const proceedToPayment = async () => {
     localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
 
     const cashfree = await load({
-      mode: import.meta.env.VITE_CASHFREE_MODE || 'sandbox',
+      mode: 'production',
     });
 
 
