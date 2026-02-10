@@ -20,7 +20,7 @@ function Eventcard({
 
   const { isEventCoveredByPass, checkCart } = useCart();
 
-  // Button State Logic
+  // Button State Logic (Restored to original)
   let buttonText = 'Add';
   let buttonClass = 'bg-primary text-black hover:shadow-[0_0_10px_rgba(var(--primary-rgb),0.4)]';
   let isDisabled = false;
@@ -59,30 +59,31 @@ function Eventcard({
 
   useEffect(() => {
     if (hasAppeared) {
-      const delay = index * 200;
+      const delay = index * 150;
       const timer = setTimeout(() => setFlipped(false), delay);
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
 
-  const sizeClasses = 'w-full max-w-[280px] aspect-[2/3]';
-
   return (
-    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
+    <div ref={cardRef} className="perspective m-2 h-[420px] w-[280px] flex-shrink-0 sm:m-1">
       <div
         className={`preserve-3d relative h-full w-full transition-transform duration-1000 ${Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'}`}
       >
         {/* FRONT FACE */}
         <div
           onClick={onClick}
-          className="backface-hidden relative inset-0 flex h-full w-full cursor-pointer flex-col items-center rounded-md border-4 border-primary bg-black shadow-stGlow"
+          className="backface-hidden relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border-2 border-primary bg-black shadow-stGlow"
         >
-          <div className="relative aspect-[4/5] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
+          {/* IMAGE SECTION: Seamless blending on 3 sides */}
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
             <img
               src={card.image || fallbackImage}
               alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
               onLoad={() => setImgLoaded(true)}
-              className={`h-full w-full object-contain transition-opacity duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              className={`h-full w-full object-contain transition-opacity duration-700 ${
+                imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               onError={(e) => {
                 if (!fallbackImage) return;
                 e.currentTarget.src = fallbackImage;
@@ -90,28 +91,44 @@ function Eventcard({
                 setImgLoaded(true);
               }}
             />
+
+            {/* SEAMLESS GRADIENT SYSTEM: Flows to Black on Left, Right, and Bottom */}
+            {imgLoaded && (
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `
+                    linear-gradient(to right, black 0%, transparent 15%),
+                    linear-gradient(to left, black 0%, transparent 15%),
+                    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%)
+                  `,
+                }}
+              />
+            )}
+
             {!imgLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
+                <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
               </div>
             )}
           </div>
 
-          <div className="flex w-full flex-1 flex-col justify-between p-3">
+          {/* DATA SECTION: Flows directly from the image area */}
+          <div className="flex w-full flex-1 flex-col justify-between bg-black p-4">
             <div className="text-center">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-red-500 opacity-80">
+              {/* Restored Rolling Events Logic */}
+              <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500 opacity-80">
                 {card.id < 10 ? `Rolling Event starts ${card.time}` : `${card.date} • ${card.time}`}
               </p>
             </div>
 
-            {/* SHARED BUTTON SPACE */}
-            <div className="mt-auto flex w-full gap-2">
+            <div className="mt-4 flex w-full gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onClick();
                 }}
-                className="flex-1 rounded-sm border border-white/10 py-1.5 text-[9px] font-black uppercase tracking-wider text-white backdrop-blur-md transition-all hover:border-primary/50 hover:bg-primary/20"
+                className="flex-1 rounded-sm border border-white/20 py-2.5 text-[9px] font-black uppercase tracking-wider text-white backdrop-blur-md transition-all hover:border-primary/50 hover:bg-primary/20"
               >
                 Learn More
               </button>
@@ -119,7 +136,7 @@ function Eventcard({
               {card.id >= 10 && (
                 <button
                   disabled={isDisabled}
-                  className={`relative flex-1 overflow-hidden rounded-sm py-1.5 text-[9px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 ${buttonClass}`}
+                  className={`relative flex-1 overflow-hidden rounded-sm py-2.5 text-[9px] font-black uppercase tracking-wider transition-all duration-300 active:scale-95 ${buttonClass}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (isEventCoveredByPass(card.id)) {
@@ -140,8 +157,8 @@ function Eventcard({
         </div>
 
         {/* BACK FACE */}
-        <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md bg-primary [transform:rotateY(180deg)]">
-          <img src={card.backside} alt="Card Back" className="m-4 h-full w-full object-contain" />
+        <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md border-2 border-primary bg-black [transform:rotateY(180deg)]">
+          <img src={card.backside} alt="Card Back" className="h-full w-full object-contain" />
         </div>
       </div>
     </div>
