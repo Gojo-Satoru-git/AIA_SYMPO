@@ -12,6 +12,10 @@ export const requireAuth = async (req, res, next) => {
 
     const decodedToken = await admin.auth().verifyIdToken(token);
 
+    if (!decodedToken.uid) {
+      return res.status(401).json({ message: "Invalid token: missing uid" });
+    }
+
     req.user = decodedToken
 
     next();
