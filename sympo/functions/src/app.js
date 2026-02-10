@@ -13,7 +13,7 @@ import collegeRoutes from './routes/college.routes.js';
 import otpRoutes from './routes/otp.routes.js';
 import promoRoutes from "./routes/promo.routes.js";
 
-import { FRONTEND_URL } from "./config/env.js"; // change to env.js for Firebase
+import { FRONTEND_URL } from "./config/env1.js"; // change to env.js for Firebase
 
 const app = express();
 

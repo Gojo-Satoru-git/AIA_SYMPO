@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL, NODE_ENV } from "../config/env.js"; // Firebase: env.js, localhost: env1.js
+import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL, NODE_ENV } from "../config/env1.js"; // Firebase: env.js, localhost: env1.js
 
 const NODE_ENV_VALUE = NODE_ENV.value ? NODE_ENV.value() : NODE_ENV || "development";
 const CASHFREE_BASE_URL =
