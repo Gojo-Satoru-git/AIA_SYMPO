@@ -47,7 +47,7 @@ export const verifyPaymentOrder = async (firestoreOrderIdOrCashfreeId, cart) => 
 
   // Construct teams data for team events (workshops)
   const teams = cart
-    .filter((item) => item.type === "team" || item.type === "workshop")
+    .filter((item) => item.id === '16'|| item.id === '17' || item.id === '18' )
     .map((item) => {
       let teamData = item.teamData;
       
