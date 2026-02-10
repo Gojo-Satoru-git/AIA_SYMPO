@@ -74,8 +74,8 @@ const App = () => {
       <>
         <Routes>
           {/* Scroll-based landing page */}
-          <Route path="/" element={<MainPage />} />
-          <Route path="/maintenance" element={<MaintenancePage />} />
+          <Route path="/maintenance" element={<MainPage />} />
+          <Route path="/" element={<MaintenancePage />} />
           {/* Auth pages */}
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
