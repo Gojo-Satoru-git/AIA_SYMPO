@@ -141,7 +141,7 @@ export const confirmEntry = async (req, res) => {
         if (String(item.eventId) === String(eventId)) {
           if (item.used) throw new Error("ALREADY_USED");
           itemFound = true;
-          return { ...item, used: true, usedAt: admin.firestore.FieldValue.serverTimestamp() };
+          return { ...item, used: true, usedAt: admin.firestore.Timestamp.now() };
         }
         return item;
       });
