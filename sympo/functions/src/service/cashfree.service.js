@@ -1,11 +1,8 @@
 import axios from "axios";
-import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL, NODE_ENV } from "../config/env1.js"; // Firebase: env.js, localhost: env1.js
+import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL, NODE_ENV } from "../config/env.js"; // Firebase: env.js, localhost: env1.js
 
 const NODE_ENV_VALUE = NODE_ENV.value ? NODE_ENV.value() : NODE_ENV || "development";
-const CASHFREE_BASE_URL =
-  NODE_ENV_VALUE === "production"
-    ? "https://api.cashfree.com/pg"
-    : "https://sandbox.cashfree.com/pg";
+const CASHFREE_BASE_URL = "https://api.cashfree.com/pg"
 
 const FRONTEND_URL_VALUE = FRONTEND_URL.value ? FRONTEND_URL.value() : FRONTEND_URL || "http://localhost:5173";
 

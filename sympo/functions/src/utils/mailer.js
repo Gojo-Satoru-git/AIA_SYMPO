@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { RESEND_API_KEY, OTP_EXPIRY_MINUTES } from "../config/env1.js"; // change to env.js for Firebase
+import { RESEND_API_KEY, OTP_EXPIRY_MINUTES } from "../config/env.js"; // change to env.js for Firebase
 
 const resend = new Resend(RESEND_API_KEY);
 
