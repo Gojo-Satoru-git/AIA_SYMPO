@@ -1,15 +1,16 @@
 import { Resend } from "resend";
+import { RESEND_API_KEY, OTP_EXPIRY_MINUTES } from "../config/env1.js"; // change to env.js for Firebase
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(RESEND_API_KEY);
 
 const sendOtpEmail = async (email, otp) => {
-  try {
-    const otpExpiry = process.env.OTP_EXPIRY_MINUTES || "5";
-    const { data, error } = await resend.emails.send({
-      from: "Tekhora <noreply@tekhora26.live>",
-      to: email,
-      subject: "⚡ TEKHORA'26 — Verify Your Identity",
-      html: `
+  const otpExpiry = OTP_EXPIRY_MINUTES || "5";
+
+  const { data, error } = await resend.emails.send({
+    from: "Tekhora <noreply@tekhora26.live>",
+    to: email,
+    subject: "⚡ TEKHORA'26 — Verify Your Identity",
+    html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -543,17 +544,10 @@ const sendOtpEmail = async (email, otp) => {
 </body>
 </html>
       `,
-    });
+  });
 
-    if (error) {
-      console.error("Resend API Error:", error);
-      throw new Error(error.message || "Failed to send email");
-    }
-    return data;
-  } catch (error) {
-    console.error("Error sending an OTP", error);
-    throw error;
-  }
+  if (error) throw new Error(error.message || "Failed to send email");
+  return data;
 };
 
 export { sendOtpEmail };

@@ -79,18 +79,25 @@ const Events = () => {
 
   // --- Lightning Interaction Handler ---
   const handleInteraction = (e, item, category) => {
-    // 1. Calculate screen-relative X position (-1.0 to 1.0)
+    const isMobile = window.innerWidth < 768;
+
+    // If it's mobile, skip the lightning and go straight to the details
+    if (isMobile) {
+      setCardclicked({ id: item.id, category: category });
+      setClicked(true);
+      return; // Exit early so setIsStriking(true) is never called
+    }
+
+    // Desktop logic remains the same
     const xPos = (e.clientX / window.innerWidth) * 2 - 1;
     setStrikeX(xPos);
     setIsStriking(true);
 
-    // 2. Open details after the bolt "impact"
     setTimeout(() => {
       setCardclicked({ id: item.id, category: category });
       setClicked(true);
     }, 400);
   };
-
   // --- Scroll Logic ---
   const scroll = (directions, scrollRef) => {
     const { current } = scrollRef;
