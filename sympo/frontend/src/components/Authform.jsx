@@ -394,8 +394,9 @@ const AuthForm = ({ mode }) => {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      console.error(err);
-      showToast(err?.response?.data?.message || err.message || 'Something went wrong', 'error');
+      const msg = err.code === "auth/invalid-credential" ? 'Invalid Credentials' : 
+        err.code === "auth/too-many-requests" ? "Too Many REquest Please Try Again !" : err.message;
+      showToast(msg || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
