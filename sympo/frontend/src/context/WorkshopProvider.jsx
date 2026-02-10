@@ -4,7 +4,7 @@ import { workshopcontext } from './workshop.context';
 function WorkshoProvider({ children }) {
   const OtherEvents = [
     {
-      title: 'Modern Big Data Engineering & Analytics: From Spark to AI Applications',
+      title: 'Modern Big Data Analytics',
       alt: 'AIA SYMPO TEKHORA26 BIG DATA AND ANALYTICS WORKSHOP',
       id: '10',
       image:
