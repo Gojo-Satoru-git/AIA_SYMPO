@@ -1,27 +1,22 @@
-import { defineString, defineInt, defineSecret } from "firebase-functions/params";
+// env.js - Firebase environment
+import { defineString, defineSecret } from "firebase-functions/params";
 
-/**
- * 1. DEFINE PARAMETERS
- * These replace the manual .env check. 
- * If these are missing during deploy, the Firebase CLI will prompt you for them.
- */
+// Server
+export const NODE_ENV = defineString("NODE_ENV", { default: "production" });
 
-// Basic Config
-export const FRONTEND_URL = defineString('FRONTEND_URL');
-export const NODE_ENV = defineString('NODE_ENV', { default: 'development' });
+// Razorpay
+export const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
+export const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
 
-// Secrets (Sensitive data should use defineSecret)
-// You will set these via: firebase functions:secrets:set RAZORPAY_KEY_SECRET
-export const RAZORPAY_KEY_ID = defineString('RAZORPAY_KEY_ID');
-export const RAZORPAY_KEY_SECRET = defineSecret('RAZORPAY_KEY_SECRET');
+// Cashfree
+export const CASHFREE_APP_ID = defineSecret("CASHFREE_APP_ID");
+export const CASHFREE_SECRET_KEY = defineSecret("CASHFREE_SECRET_KEY");
+export const CASHFREE_WEBHOOK_SECRET = defineSecret("CASHFREE_WEBHOOK_SECRET");
 
-/**
- * 2. EXPORT OBJECT
- * In Firebase, we use .value() to get the actual value at runtime.
- */
-export default {
-  get RAZORPAY_KEY_ID() { return RAZORPAY_KEY_ID.value(); },
-  get RAZORPAY_KEY_SECRET() { return RAZORPAY_KEY_SECRET.value(); },
-  get FRONTEND_URL() { return FRONTEND_URL.value(); },
-  get NODE_ENV() { return NODE_ENV.value(); },
-};
+// Resend & OTP
+export const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
+export const OTP_EXPIRY_MINUTES = defineString("OTP_EXPIRY_MINUTES", { default: "5" });
+export const OTP_RESEND_COOLDOWN_SECONDS = defineString("OTP_RESEND_COOLDOWN_SECONDS", { default: "60" });
+
+// Frontend
+export const FRONTEND_URL = defineString("FRONTEND_URL", { default: "https://yourfrontend.com" });
