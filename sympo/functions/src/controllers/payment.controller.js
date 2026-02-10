@@ -95,9 +95,15 @@ export const verifyOrder = async (req, res) => {
     if (order.userId !== req.user.uid)
       return res.status(403).json({ message: "Unauthorized" });
 
-    if (order.status === "PAID")
-      return res.json({ success: true, qrToken: order.qrToken, amount: order.amount, items: order.items });
-
+    if (order.status === "PAID"){
+      return res.json({ 
+        success: true, 
+        alreadyVerified: true,
+        qrToken: order.qrToken, 
+        amount: order.amount, 
+        items: order.items 
+      });
+    }
     if (order.expiresAt && admin.firestore.Timestamp.now() > order.expiresAt) {
       await cancelOrderAndReleaseSeats(firestoreOrderId);
       return res.status(400).json({ message: "Order expired" });

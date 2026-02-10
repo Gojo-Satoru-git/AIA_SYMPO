@@ -28,3 +28,13 @@ export const authLimiter = rateLimit({
   message: { message: "Too many auth attempts, please try again later." },
   skipSuccessfulRequests: true, // Only count failed attempts
 });
+
+export const orderLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+});
+
+export const verifyLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 3,
+});

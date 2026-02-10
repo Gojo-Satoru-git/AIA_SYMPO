@@ -2,17 +2,17 @@ import express from "express";
 import { requireAuth } from "../middlewares/auth.middleware.js";
 import { requireAdmin } from "../middlewares/admin.middleware.js";
 import { requireRegisteredUser } from "../middlewares/requireRegisteredUser.js";
-import { paymentLimiter } from "../middlewares/rateLimit.middleware.js";
+import { orderLimiter, verifyLimiter } from "../middlewares/rateLimit.middleware.js";
 
-import { createOrder, verifyOrder , cancelAbandonedPayment } from "../controllers/payment.controller.js";
+import { createOrder, verifyOrder, cancelAbandonedPayment } from "../controllers/payment.controller.js";
 import { validateQR, confirmEntry } from "../controllers/scan.controller.js";
 import { cashfreeWebhook } from "../controllers/webhook.controller.js";
 
 const router = express.Router();
 
 // User Routes
-router.post("/order", requireAuth, requireRegisteredUser, paymentLimiter, createOrder);
-router.post("/verify", requireAuth, paymentLimiter, verifyOrder);
+router.post("/order", requireAuth, requireRegisteredUser, orderLimiter, createOrder);
+router.post("/verify", requireAuth, verifyLimiter, verifyOrder);
 
 //Cancel Abandoned Orders
 router.post('/cancel-abandoned', cancelAbandonedPayment);
