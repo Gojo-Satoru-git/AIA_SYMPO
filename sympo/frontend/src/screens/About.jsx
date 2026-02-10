@@ -6,7 +6,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -14,7 +14,31 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.webp',
+      alt: 'toni&guy'
+    },
+    {
+      src: '/assets/slogos/uniq.jpg',
+      alt: 'uniq',
+    },
+    {
+      src: '/assets/slogos/edgematrix.webp',
+      alt: 'edgematrix',
+    },
+    {
+      src: '/assets/slogos/youthalic.webp',
+      alt: 'youthalic',
+    },
+    {
+      src: '/assets/slogos/bkt1.webp',
+      alt: 'bkt',
+    },
+    {
+      src: '/assets/slogos/thecreators.jpeg',
+      alt: 'Thecreators',
+    },
+    {
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
@@ -30,7 +54,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -38,7 +62,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
@@ -54,7 +78,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -62,31 +86,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
-      alt: 'toni&guy',
-    },
-    {
-      src: '/assets/slogos/uniq.jpg',
-      alt: 'uniq',
-    },
-    {
-      src: '/assets/slogos/edgematrix.webp',
-      alt: 'edgematrix',
-    },
-    {
-      src: '/assets/slogos/youthalic.webp',
-      alt: 'youthalic',
-    },
-    {
-      src: '/assets/slogos/bkt.webp',
-      alt: 'bkt',
-    },
-    {
-      src: '/assets/slogos/thecreators.jpeg',
-      alt: 'Thecreators',
-    },
-    {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
