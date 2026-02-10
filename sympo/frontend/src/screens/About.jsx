@@ -6,7 +6,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -14,15 +14,15 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
-      alt: 'toni&guy',
+      src: '/assets/slogos/t&g.png',
+      alt: 'toni&guy'
     },
     {
       src: '/assets/slogos/uniq.jpg',
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -30,7 +30,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -38,7 +38,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.png',
       alt: 'toni&guy',
     },
     {
@@ -46,7 +46,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -54,7 +54,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -62,7 +62,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.png',
       alt: 'toni&guy',
     },
     {
@@ -70,7 +70,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
     {
@@ -78,7 +78,7 @@ const About = () => {
       alt: 'youthalic',
     },
     {
-      src: '/assets/slogos/bkt.webp',
+      src: '/assets/slogos/bkt1.webp',
       alt: 'bkt',
     },
     {
@@ -86,7 +86,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/toni&guy.png',
+      src: '/assets/slogos/t&g.png',
       alt: 'toni&guy',
     },
     {
@@ -94,7 +94,7 @@ const About = () => {
       alt: 'uniq',
     },
     {
-      src: '/assets/slogos/edgematrix.webp',
+      src: '/assets/slogos/ed.webp',
       alt: 'edgematrix',
     },
   ];
