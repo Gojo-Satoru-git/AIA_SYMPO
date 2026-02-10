@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 import useToast from '../context/useToast';
 import useCart from '../context/useCart';
@@ -17,22 +16,25 @@ function Eventcard({
   const [Flipped, setFlipped] = useState(true);
   const cardRef = useRef(null);
   const { showToast } = useToast();
+  const [imgLoaded, setImgLoaded] = useState(false);
 
-  const { isEventCoveredByPass } = useCart();
+  const { isEventCoveredByPass, checkCart } = useCart();
+
   let buttonText = 'Add';
-  let buttonClass = 'bg-primary text-black';
+  let buttonClass = 'bg-primary text-black hover:shadow-[0_0_10px_rgba(var(--primary-rgb),0.4)]';
   let isDisabled = false;
-  const { checkCart } = useCart();
 
   if (isPurchased) {
-    buttonText = 'Purchased';
-    buttonClass = 'bg-black-600 text-white cursor-not-allowed';
+    buttonText = 'Sold';
+    buttonClass = 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700';
     isDisabled = true;
   } else if (isInCart) {
     buttonText = 'In Cart';
-    buttonClass = 'bg-orange-500 text-black cursor-not-allowed';
+    buttonClass =
+      'bg-orange-500/10 text-orange-500 border border-orange-500/50 animate-pulse cursor-not-allowed';
     isDisabled = true;
   }
+
   useEffect(() => {
     setHasAppeared(false);
     setFlipped(true);
@@ -41,103 +43,105 @@ function Eventcard({
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Use the first entry (index 0)
-        if (entries[0].isIntersecting) {
-          setHasAppeared(true);
-        } else {
+        if (entries[0].isIntersecting) setHasAppeared(true);
+        else {
           setHasAppeared(false);
           setFlipped(true);
         }
       },
       { threshold: 0.1 }
     );
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-
+    if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
     if (hasAppeared) {
-      const delay = index * 200;
-      const timer = setTimeout(() => {
-        setFlipped(false);
-      }, delay);
+      const delay = index * 150;
+      const timer = setTimeout(() => setFlipped(false), delay);
       return () => clearTimeout(timer);
     }
   }, [hasAppeared, index]);
-  const sizeClasses = 'w-full max-w-[320px] h-fit mx-auto m-2';
+
   return (
-    <div ref={cardRef} className={`perspective flex-shrink-0 ${sizeClasses} m-2 sm:m-1`}>
+    <div ref={cardRef} className="perspective m-2 h-[420px] w-[280px] flex-shrink-0 sm:m-1">
       <div
         className={`preserve-3d relative h-full w-full transition-transform duration-1000 ${
           Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'
         }`}
       >
-        {/* FRONT FACE (Needs backface-hidden to swap correctly) */}
+        {/* FRONT FACE */}
         <div
           onClick={onClick}
-          className="backface-hidden relative inset-0 flex h-full w-full cursor-pointer flex-col items-center rounded-md border-4 border-primary bg-black shadow-stGlow"
+          className="backface-hidden relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border-2 border-primary bg-black shadow-stGlow"
         >
-          <div className="relative h-[75%] w-full overflow-hidden border-b border-primary/30 bg-zinc-900">
+          {/* IMAGE SECTION - Removed all internal borders */}
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
             <img
               src={card.image || fallbackImage}
-              alt={`AIA SYMPO TEKHORA26 ${card.title.toUpperCase()}`}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                if (!fallbackImage) return;
-                e.currentTarget.src = fallbackImage;
-                e.currentTarget.onerror = null;
-              }}
+              alt={card.title}
+              onLoad={() => setImgLoaded(true)}
+              className={`h-full w-full object-contain transition-opacity duration-700 ${
+                imgLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
             />
+
+            {/* SEAMLESS 3-WAY BLEND OVERLAY */}
+            {imgLoaded && (
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `
+                    
+                    linear-gradient(to right, black 0%, transparent 15%),
+                    linear-gradient(to left, black 0%, transparent 15%),
+                    radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%)
+                  `,
+                }}
+              />
+            )}
+
+            {!imgLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
+                <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              </div>
+            )}
           </div>
-          <div className="flex min-h-[80px] w-full flex-col justify-between bg-zinc-950 p-4">
-            <div className="text-center">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-red-500 opacity-80">
-                {card.id < 10 ? 'Rolling Event starts 9:30' : `${card.date} • ${card.time}`}
+
+          {/* DATA SECTION - Seamless connection */}
+          <div className="flex flex-1 flex-col justify-between bg-black p-4">
+            <div className="text-left">
+              <h3 className="truncate text-[15px] font-black uppercase leading-none tracking-tight text-white">
+                {card.title}
+              </h3>
+              <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500">
+                {card.date || 'FEB 21'} • {card.time || '9:30 AM'}
               </p>
             </div>
 
-            <div
-              className={`mt-auto flex items-center gap-3 ${card.id < 10 ? 'justify-center' : 'justify-between'}`}
-            >
-              <button
-                onClick={onClick}
-                className="text-[10px] font-black uppercase tracking-tighter text-zinc-500 transition-colors hover:text-white"
-              >
-                Learn More
+            <div className="mt-4 flex w-full gap-2">
+              <button className="flex-1 rounded-sm border border-white/20 py-2.5 text-[10px] font-black uppercase text-white transition-colors hover:bg-white/5">
+                Info
               </button>
-
               {card.id >= 10 && (
                 <button
                   disabled={isDisabled}
-                  className={`flex-1 rounded py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 ${buttonClass}`}
+                  className={`relative flex-1 overflow-hidden rounded-sm py-2.5 text-[10px] font-black uppercase transition-all ${buttonClass}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (isEventCoveredByPass(card.id)) {
-                      showToast('Already included in the pass');
-                    } else if (
-                      ['16', '17', '18'].includes(card.id) &&
-                      localStorage.getItem(`${card.title}-teamData`) === null
-                    ) {
-                      showToast('Please add team details first', 'info');
-                    } else if (!checkCart(card)) {
-                      addToCart(card, category);
-                      showToast(`${card.title} added!`, 'success');
-                    }
+                    if (!checkCart(card)) addToCart(card, category);
                   }}
                 >
-                  {buttonText}
+                  <span className="relative z-10">{buttonText}</span>
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* BACK FACE (Pre-rotated to face away) */}
-        <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md bg-primary [transform:rotateY(180deg)]">
-          <img src={card.backside} className="m-4 h-full w-full overflow-hidden"></img>
+        {/* BACK FACE */}
+        <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md border-2 border-primary bg-black [transform:rotateY(180deg)]">
+          <img src={card.backside} alt="Back" className="h-full w-full object-contain" />
         </div>
       </div>
     </div>
