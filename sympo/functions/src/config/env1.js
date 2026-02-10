@@ -17,6 +17,7 @@ const requiredEnvVars = {
   CASHFREE_SECRET_KEY: "Cashfree Secret Key",
   CASHFREE_WEBHOOK_SECRET: "Cashfree Webhook Secret",
   FRONTEND_URL: "Frontend application URL",
+  FIREBASE_PROJECT_ID: "Firebase project ID",
 };
 
 const missingVars = [];
@@ -43,6 +44,7 @@ export const PORT = parseInt(process.env.PORT, 10) || 5000;
 export const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
 export const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
 export const FRONTEND_URL = process.env.FRONTEND_URL;
+export const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Optional: Keep the object export for files that use "import env from..."
@@ -51,6 +53,7 @@ export const env = {
   CASHFREE_APP_ID,
   CASHFREE_SECRET_KEY,
   FRONTEND_URL,
+  FIREBASE_PROJECT_ID,
   NODE_ENV
 };
 
