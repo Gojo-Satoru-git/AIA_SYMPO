@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 function Eventcard({
   card,
   index,
-  onClick,
+  onClick, // This is handleInteraction from Events.jsx
   fallbackImage,
   isInCart,
   addToCart,
@@ -15,6 +15,23 @@ function Eventcard({
   const cardRef = useRef(null);
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  // --- Original Button Logic ---
+  let buttonText = 'Add';
+  let buttonClass = 'bg-primary text-black hover:shadow-[0_0_10px_rgba(var(--primary-rgb),0.4)]';
+  let isDisabled = false;
+
+  if (isPurchased) {
+    buttonText = 'Sold';
+    buttonClass = 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700';
+    isDisabled = true;
+  } else if (isInCart) {
+    buttonText = 'In Cart';
+    buttonClass =
+      'bg-orange-500/10 text-orange-500 border border-orange-500/50 animate-pulse cursor-not-allowed';
+    isDisabled = true;
+  }
+
+  // --- Appearance & Flip Logic ---
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -40,60 +57,76 @@ function Eventcard({
   return (
     <div ref={cardRef} className="perspective m-2 h-[420px] w-[280px] flex-shrink-0 sm:m-1">
       <div
-        className={`preserve-3d relative h-full w-full transition-transform duration-1000 ${Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'}`}
+        className={`preserve-3d relative h-full w-full transition-transform duration-1000 ${
+          Flipped ? '[transform:rotateY(180deg)]' : '[transform:rotateY(0deg)]'
+        }`}
       >
         {/* FRONT FACE */}
         <div
-          onClick={(e) => onClick(e)} // Passes click event to calculate X
-          className="backface-hidden relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border-2 border-primary bg-black shadow-stGlow transition-all hover:brightness-125"
+          onClick={(e) => onClick(e)} // Triggers the Lightning Strike in Events.jsx
+          className="backface-hidden relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border-2 border-primary bg-black shadow-stGlow transition-all hover:border-red-500"
         >
+          {/* IMAGE SECTION */}
           <div className="relative aspect-[4/5] w-full overflow-hidden border-b border-primary/20 bg-black">
             <img
               src={card.image || fallbackImage}
-              className={`h-full w-full object-contain transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              alt={card.title}
               onLoad={() => setImgLoaded(true)}
-            />
               className={`h-full w-full object-contain transition-opacity duration-700 ${
                 imgLoaded ? 'opacity-100' : 'opacity-0'
               }`}
-              onError={(e) => {
-                if (!fallbackImage) return;
-                e.currentTarget.src = fallbackImage;
-                e.currentTarget.onerror = null;
-                setImgLoaded(true);
-              }}
             />
-
-            {/* SEAMLESS GRADIENT SYSTEM: Flows to Black on Left, Right, and Bottom */}
             {imgLoaded && (
               <div
                 className="pointer-events-none absolute inset-0"
                 style={{
-                  background: `
-                    linear-gradient(to right, black 0%, transparent 15%),
-                    linear-gradient(to left, black 0%, transparent 15%),
-                    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%)
-                  `,
+                  background: 'radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.85) 100%)',
                 }}
               />
             )}
-
-            {!imgLoaded && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
-                <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-              </div>
-            )}
           </div>
-          <div className="flex flex-1 flex-col justify-between p-4">
-            <h3 className="truncate text-[14px] font-black uppercase text-white">{card.title}</h3>
-            <p className="text-[10px] font-bold uppercase text-red-500">
-              {card.date || 'Rolling Event'}
-            </p>
+
+          {/* DATA SECTION */}
+          <div className="flex flex-1 flex-col justify-between bg-black p-4">
+            <div className="text-center">
+              {/* Restored Rolling Events Logic */}
+              <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-red-500 opacity-80">
+                {card.id < 10 ? `Rolling Event starts ${card.time}` : `${card.date} • ${card.time}`}
+              </p>
+            </div>
+
+            <div className="mt-4 flex w-full gap-2">
+              {/* INFO BUTTON: Does not trigger lightning, just opens details */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick(e);
+                }}
+                className="flex-1 rounded-sm border border-white/20 py-2.5 text-[10px] font-black uppercase text-white transition-colors hover:bg-white/5"
+              >
+                Info
+              </button>
+
+              {/* ADD BUTTON: Does not trigger lightning, handles cart logic */}
+              {card.id >= 10 && (
+                <button
+                  disabled={isDisabled}
+                  className={`relative flex-1 overflow-hidden rounded-sm py-2.5 text-[10px] font-black uppercase transition-all ${buttonClass}`}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents lightning strike on button click
+                    addToCart(card, category);
+                  }}
+                >
+                  <span className="relative z-10">{buttonText}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
+
         {/* BACK FACE */}
         <div className="backface-hidden absolute inset-0 flex h-full w-full items-center justify-center rounded-md border-2 border-primary bg-black [transform:rotateY(180deg)]">
-          <img src={card.backside} className="h-full w-full object-contain" />
+          <img src={card.backside} alt="Back" className="h-full w-full object-contain" />
         </div>
       </div>
     </div>
