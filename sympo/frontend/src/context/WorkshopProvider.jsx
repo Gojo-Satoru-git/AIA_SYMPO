@@ -63,7 +63,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '1:00 PM - 5:00 PM',
       rules: ['Rules'],
-      fees: 499,
+      fees: 399,
       wplink: 'https://chat.whatsapp.com/GroOu44XweE1UeClMHLR8v ',
       contact: {
         name1: 'Kamalnath',

@@ -220,6 +220,8 @@ const proceedToPayment = async () => {
       clearCart();
       showToast("Payment successful!", "success");
       setErrorMsg("");
+      setPaymentLocked(false);
+      setPaymentLoading(false);
       try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
     }
 
@@ -232,6 +234,8 @@ const proceedToPayment = async () => {
         console.error("Failed to cancel order after error:", cancelErr);
         
       }finally{
+        setPaymentLocked(false);
+        setPaymentLoading(false);
         try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
       }
     }

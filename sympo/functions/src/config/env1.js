@@ -19,5 +19,7 @@ export const RESEND_API_KEY = process.env.RESEND_API_KEY;
 export const OTP_EXPIRY_MINUTES = process.env.OTP_EXPIRY_MINUTES || "5";
 export const OTP_RESEND_COOLDOWN_SECONDS = process.env.OTP_RESEND_COOLDOWN_SECONDS || "60";
 
+export const PORT = process.env.PORT;
+
 // Frontend
 export const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
