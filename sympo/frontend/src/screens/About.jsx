@@ -14,7 +14,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy'
     },
     {
@@ -38,7 +38,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
@@ -62,7 +62,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
@@ -86,7 +86,7 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.png',
+      src: '/assets/slogos/t&g.webp',
       alt: 'toni&guy',
     },
     {
