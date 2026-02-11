@@ -439,7 +439,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
 
         {cart.length === 0 ? (
           <div className="mt-20 text-center">
-            <p className="text-sm uppercase tracking-widest text-white/50">
+            <p className="text-sm uppercase tracking-widest text-white/50 mb-5">
               No Passes selected yet
             </p>
           </div>
@@ -617,7 +617,25 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           />
         )}
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-4">
+        <a
+          href="https://forms.gle/Tn1dEaLDios2iGaF6"
+          target="_blank"
+          rel="noreferrer"
+          className="group flex items-center gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
+        >
+          <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
+            <img
+                    src="./assets/form.png"
+                    alt="Instagram"
+                    className="h-6 w-6"
+                  />
+          </div>
+
+          <span className="text-sm uppercase tracking-widest">
+            Accommodation Form
+          </span>
+        </a>
         <TosButton />
       </div>
     </section>

@@ -18,8 +18,8 @@ const About = () => {
       alt: 'toni&guy'
     },
     {
-      src: '/assets/slogos/uniq.jpg',
-      alt: 'uniq',
+      src: '/assets/slogos/kripya.webp',
+      alt: 'kripya',
     },
     {
       src: '/assets/slogos/ed.webp',
@@ -42,8 +42,8 @@ const About = () => {
       alt: 'toni&guy',
     },
     {
-      src: '/assets/slogos/uniq.jpg',
-      alt: 'uniq',
+      src: '/assets/slogos/kripya.webp',
+      alt: 'kripya',
     },
     {
       src: '/assets/slogos/ed.webp',
@@ -66,8 +66,8 @@ const About = () => {
       alt: 'toni&guy',
     },
     {
-      src: '/assets/slogos/uniq.jpg',
-      alt: 'uniq',
+      src: '/assets/slogos/kripya.webp',
+      alt: 'kripya',
     },
     {
       src: '/assets/slogos/ed.webp',
@@ -90,8 +90,8 @@ const About = () => {
       alt: 'toni&guy',
     },
     {
-      src: '/assets/slogos/uniq.jpg',
-      alt: 'uniq',
+      src: '/assets/slogos/kripya.webp',
+      alt: 'kripya',
     },
     {
       src: '/assets/slogos/ed.webp',
