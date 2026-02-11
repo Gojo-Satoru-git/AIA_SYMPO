@@ -139,7 +139,7 @@ const Home = () => {
           ${showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}
         `}
       >
-        Intercollegiate tech symposium, hosted by MIT's Department of Artificial Intelligence and Data Science.
+        Intercollegiate tech symposium, hosted by MIT's Artificial Intelligence Association.
       </p>
 
       

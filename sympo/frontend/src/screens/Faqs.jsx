@@ -14,6 +14,10 @@ const faqs = [
     a: 'Yes, for both technical and non-technical events, every team member must buy a pass',
   },
   {
+    q:'Do I get refreshments?',
+    a:`You’ll definitely be taken care of refreshments are provided during signature events and workshops, so you won’t have to worry about going hungry or thirsty while participating`
+  },
+  {
     q: 'For the hackathon, does each individual need to register',
     a: 'No, for the hackathon, only one person from the team need to register',
   },
