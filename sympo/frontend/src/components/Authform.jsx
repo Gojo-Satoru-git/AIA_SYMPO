@@ -17,6 +17,10 @@ import { searchColleges, sendOtpApi, verifyOtpApi } from '../services/api';
 import useToast from '../context/useToast';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import debounce from 'lodash/debounce';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -101,6 +105,7 @@ const AuthForm = ({ mode }) => {
   const [year, setYear] = useState('');
 
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
@@ -111,7 +116,7 @@ const AuthForm = ({ mode }) => {
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
   const isOtpValid = true;
 
-  const [showReset, setShowReset] = useState(false); 
+  const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
 
@@ -138,7 +143,13 @@ const AuthForm = ({ mode }) => {
 
   const collegeCache = useRef({});
 
-  const {clearCart} = useCart();
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    if (backupMode) {
+      showToast('Check the mail in the spam folder too', 'info');
+    }
+  }, [backupMode, showToast]);
 
   useEffect(() => {
     let interval;
@@ -206,69 +217,69 @@ const AuthForm = ({ mode }) => {
       setShowOtp(true);
       setResendTimer(60);
       setBackupMode(false);
-    }catch (error) {
-      console.error("OTP Request Failed:", error);
+    } catch (error) {
+      console.error('OTP Request Failed:', error);
 
       const status = error.response?.status;
-      const errorMessage = error.response?.data?.message || "";
+      const errorMessage = error.response?.data?.message || '';
 
-      if (errorMessage.toLowerCase().includes("already registered")) {
-        showToast(errorMessage, "error");
-      } 
-      else if (status === 424 || status === 503 || status === 429 || status >= 500) {
+      if (errorMessage.toLowerCase().includes('already registered')) {
+        showToast(errorMessage, 'error');
+      } else if (status === 424 || status === 503 || status === 429 || status >= 500) {
         setBackupMode(true);
         setShowOtp(false);
         showToast('Daily Email Limit Reached. Switched to Link Verification.', 'info');
       } else {
         showToast(errorMessage, 'error');
       }
-    }finally {
+    } finally {
       setIsSendingOtp(false);
     }
   };
 
- const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async () => {
     if (!otp) return;
     setVerifyingOtp(true);
-    try { 
-      await verifyOtpApi(emailValue, otp); 
-      setIsEmailVerified(true); 
-      setShowOtp(false); 
-      showToast('Email verified successfully!', 'success'); 
-    } 
-    catch (e) { 
-      showToast(e.response?.data?.message || 'Invalid OTP', 'error'); 
-    } 
-    finally { 
-      setVerifyingOtp(false); 
+    try {
+      await verifyOtpApi(emailValue, otp);
+      setIsEmailVerified(true);
+      setShowOtp(false);
+      showToast('Email verified successfully!', 'success');
+    } catch (e) {
+      showToast(e.response?.data?.message || 'Invalid OTP', 'error');
+    } finally {
+      setVerifyingOtp(false);
     }
   };
 
   const handlePasswordReset = async () => {
-    if(!resetEmail) {
+    if (!resetEmail) {
       showToast('please enter your email address', 'error');
       return;
     }
     setResetLoading(true);
 
     const actionCodeSettings = {
-      url: `${window.location.origin}/reset-password`, 
+      url: `${window.location.origin}/reset-password`,
       handleCodeInApp: true,
     };
 
     try {
       await sendPasswordResetEmail(auth, resetEmail, actionCodeSettings);
       showToast('Password reset link sent to you email!', 'success');
-      setShowReset(false); 
+      setShowReset(false);
       setResetEmail('');
     } catch (error) {
       console.error(error);
-      const msg = error.code === 'auth/user-not-found' ? 'No account found with this email' : 'Failed to send reset link';
+      const msg =
+        error.code === 'auth/user-not-found'
+          ? 'No account found with this email'
+          : 'Failed to send reset link';
       showToast(msg, 'error');
-    }finally {
+    } finally {
       setResetLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -323,67 +334,77 @@ const AuthForm = ({ mode }) => {
         });
 
         if (backupMode) {
-            // 1. Send the Link
-            await sendEmailVerification(cred.user, {
-                url: `${window.location.origin}/auth-action?mode=verifyEmail`,
-                handleCodeInApp: true
-            });
-            const token = await cred.user.getIdToken();
+          // 1. Send the Link
+          await sendEmailVerification(cred.user, {
+            url: `${window.location.origin}/auth-action?mode=verifyEmail`,
+            handleCodeInApp: true,
+          });
+          const token = await cred.user.getIdToken();
 
-            await registerUser(
-              {
-                uid: cred.user.uid,
-                email: emailValue,
-                name: data.name,
-                phone: data.phone,
-                institute: finalInstitute,
-                year: year,
-              },
-              token
-            );
-            
-            // 2. FORCE LOGOUT
-            await signOut(auth);
+          await registerUser(
+            {
+              uid: cred.user.uid,
+              email: emailValue,
+              name: data.name,
+              phone: data.phone,
+              institute: finalInstitute,
+              year: year,
+            },
+            token
+          );
 
-            // 3. Show Message
-            showToast('Account Created! Check email to verify and login.', 'success');            
-            
-            // 4. Send them to Sign In page
-            navigate('/signin'); 
+          // 2. FORCE LOGOUT
+          await signOut(auth);
+
+          // 3. Show Message
+          showToast('Account Created! Check email to verify and login.', 'success');
+
+          // 4. Send them to Sign In page
+          navigate('/signin');
         } else {
-            // Standard Flow
-            const token = await cred.user.getIdToken();
-            await registerUser({ uid: cred.user.uid, email: emailValue, name: data.name, phone: data.phone, institute: finalInstitute, year }, token);
-            localStorage.setItem('authToken', token);
-            if (fetchProfile) await fetchProfile();
-            showToast('Account created!', 'success');
-            navigate('/', { replace: true });
+          // Standard Flow
+          const token = await cred.user.getIdToken();
+          await registerUser(
+            {
+              uid: cred.user.uid,
+              email: emailValue,
+              name: data.name,
+              phone: data.phone,
+              institute: finalInstitute,
+              year,
+            },
+            token
+          );
+          localStorage.setItem('authToken', token);
+          if (fetchProfile) await fetchProfile();
+          showToast('Account created!', 'success');
+          navigate('/', { replace: true });
         }
       }
 
       if (mode === 'signin') {
         const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
 
-        const res = await api.post("/auth/verifyEmail" , {email : data.email});
+        const res = await api.post('/auth/verifyEmail', { email: data.email });
 
         const isVerified = res.data.data.isVerified;
-        
+
         if (!cred.user.emailVerified && !isVerified) {
-             // 1. Resend Link
-             await sendEmailVerification(cred.user, {
-                 url: `${window.location.origin}/reset-password?mode=verifyEmail`,
-                 handleCodeInApp: true
-             });
+          // 1. Resend Link
+          await sendEmailVerification(cred.user, {
+            url: `${window.location.origin}/reset-password?mode=verifyEmail`,
+            handleCodeInApp: true,
+          });
 
-             // 2. Kick them out
-             await signOut(auth);
+          // 2. Kick them out
+          await signOut(auth);
 
-             // 3. Show Error
-             showToast('Email not verified. A new verification link has been sent.', 'error');
-             setLoading(false);
-             return;
+          // 3. Show Error
+          showToast('Email not verified. A new verification link has been sent.', 'error');
+          setLoading(false);
+          return;
         }
-        
+
         const token = await cred.user.getIdToken();
         localStorage.setItem('authToken', token);
 
@@ -394,8 +415,12 @@ const AuthForm = ({ mode }) => {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      const msg = err.code === "auth/invalid-credential" ? 'Invalid Credentials' : 
-        err.code === "auth/too-many-requests" ? "Too Many REquest Please Try Again !" : err.message;
+      const msg =
+        err.code === 'auth/invalid-credential'
+          ? 'Invalid Credentials'
+          : err.code === 'auth/too-many-requests'
+            ? 'Too Many REquest Please Try Again !'
+            : err.message;
       showToast(msg || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
@@ -425,24 +450,24 @@ const AuthForm = ({ mode }) => {
 
   if (mode === 'signin' && showReset) {
     return (
-      <div className='flex flex-col gap-6'>
-        <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>          
+      <div className="flex flex-col gap-6">
+        <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>
           Reset Password
         </Typography>
         <Typography variant="body2" sx={{ color: '#aaa', textAlign: 'center', mb: 1 }}>
           Enter your email to receive a password reset link.
         </Typography>
 
-        <TextField 
-            label="Enter your email" 
-            type="email" 
-            fullWidth 
-            sx={inputStyle}
-            value={resetEmail}
-            onChange={(e) => setResetEmail(e.target.value)}
-         />
+        <TextField
+          label="Enter your email"
+          type="email"
+          fullWidth
+          sx={inputStyle}
+          value={resetEmail}
+          onChange={(e) => setResetEmail(e.target.value)}
+        />
 
-         <Button
+        <Button
           onClick={handlePasswordReset}
           disabled={resetLoading || !resetEmail}
           fullWidth
@@ -455,32 +480,32 @@ const AuthForm = ({ mode }) => {
             '&:hover': { backgroundColor: '#ff1a1a' },
             '&.Mui-disabled': { backgroundColor: '#555' },
           }}
-         >
+        >
           {resetLoading ? 'SENDING...' : 'SEND RESET LINK'}
-         </Button>
+        </Button>
 
-         <Button
-            onClick={() => setShowReset(false)}
-            sx={{ color: '#bbb', textTransform: 'none', '&:hover': { color: 'white' } }}
-         >
-            Back to Sign In
-         </Button>
+        <Button
+          onClick={() => setShowReset(false)}
+          sx={{ color: '#bbb', textTransform: 'none', '&:hover': { color: 'white' } }}
+        >
+          Back to Sign In
+        </Button>
       </div>
-    )
+    );
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {/* ================= SIGN UP ================= */}
       {mode === 'signup' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* FULL NAME */}
           <div className="grid grid-cols-1 sm:col-span-2">
             <TextField name="name" label="Full Name" required sx={inputStyle} />
           </div>
 
           {/* INSTITUTE */}
-          <div className="sm:col-span-2 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:col-span-2">
             <Autocomplete
               options={[
                 ...collegeOptions,
@@ -574,7 +599,7 @@ const AuthForm = ({ mode }) => {
           </TextField>
 
           {/* EMAIL */}
-          <div className="flex sm:col-span-2 gap-2 items-center">
+          <div className="flex items-center gap-2 sm:col-span-2">
             <TextField
               name="email"
               label="Email"
@@ -607,11 +632,12 @@ const AuthForm = ({ mode }) => {
                 <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
               </Button>
             ) : backupMode ? (
-               // --- BACKUP UI ---
-               <Typography 
-                  sx={{ color: '#aaa', fontSize: '0.75rem', px: 1 }}>
-                    Link will be sent after Signup
+              // --- BACKUP UI ---
+              <>
+                <Typography sx={{ color: '#aaa', fontSize: '0.75rem', px: 1 }}>
+                  Link will be sent after Signup
                 </Typography>
+              </>
             ) : (
               <Button
                 type="button"
@@ -653,7 +679,7 @@ const AuthForm = ({ mode }) => {
             )}
           </div>
           {showOtp && !isEmailVerified && !backupMode && (
-            <div className="flex sm:col-span-2 gap-3 items-center">
+            <div className="flex items-center gap-3 sm:col-span-2">
               <TextField
                 name="otp"
                 label="Enter OTP"
@@ -711,28 +737,46 @@ const AuthForm = ({ mode }) => {
       <TextField
         name="password"
         label="Password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         required
         sx={inputStyle}
         onChange={(e) => setPassword(e.target.value)}
         onFocus={() => setPasswordFocused(true)}
         onBlur={() => setPasswordFocused(false)}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+                onMouseDown={(e) => e.preventDefault()} // Keeps focus on the input
+                edge="end"
+                sx={{
+                  color: '#e50914', // Matches your "Stranger Things" red theme
+                  '&:hover': { color: '#ff1a1a' },
+                }}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
 
       {/* FORGOT PASSWORD LINK (NEW) */}
       {mode === 'signin' && (
-        <div className="flex justify-end -mt-4">
-            <Button 
-                onClick={() => setShowReset(true)}
-                sx={{ 
-                    textTransform: 'none', 
-                    color: '#aaa', 
-                    fontSize: '0.85rem',
-                    '&:hover': { color: '#e50914', backgroundColor: 'transparent' }
-                }}
-            >
-                Forgot Password?
-            </Button>
+        <div className="-mt-4 flex justify-end">
+          <Button
+            onClick={() => setShowReset(true)}
+            sx={{
+              textTransform: 'none',
+              color: '#aaa',
+              fontSize: '0.85rem',
+              '&:hover': { color: '#e50914', backgroundColor: 'transparent' },
+            }}
+          >
+            Forgot Password?
+          </Button>
         </div>
       )}
 
@@ -797,7 +841,9 @@ const AuthForm = ({ mode }) => {
         disabled={
           loading ||
           (mode === 'signup' &&
-            (!match || !Object.values(passValid).every(Boolean) || !isEmailVerified && !backupMode))
+            (!match ||
+              !Object.values(passValid).every(Boolean) ||
+              (!isEmailVerified && !backupMode)))
         }
         sx={{
           mt: 2,
@@ -822,7 +868,7 @@ const AuthForm = ({ mode }) => {
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             PROCESSING...
           </span>
         ) : mode === 'signin' ? (

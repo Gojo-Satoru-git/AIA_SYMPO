@@ -259,7 +259,7 @@ const Events = () => {
           <div
             ref={scrollRef2}
             onScroll={() => checkScroll(scrollRef2, setshowLeft, setshowRight)}
-            className="no-scrollbar touch-action-pan-x flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
+            className="no-scrollbar flex snap-x items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
           >
             {display.map((event, index) => (
               <div key={event.id} className="flex-shrink-0 snap-center">
@@ -300,7 +300,7 @@ const Events = () => {
               </IconButton>
             )}
             <div
-              className="no-scrollbar touch-action-pan-x flex w-full snap-x flex-nowrap items-center gap-4 overflow-x-auto scroll-smooth px-4 md:justify-center"
+              className="no-scrollbar  flex w-full snap-x flex-nowrap items-center gap-4 overflow-x-auto scroll-smooth px-4 md:justify-center"
               ref={scrollRef3}
               onScroll={() => checkScroll(scrollRef3, setshowSELeft, setshowSERight)}
             >
@@ -344,7 +344,7 @@ const Events = () => {
               </IconButton>
             )}
             <div
-              className="no-scrollbar touch-action-pan-x flex snap-x flex-nowrap items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
+              className="no-scrollbar  flex snap-x flex-nowrap items-center justify-start gap-4 overflow-x-auto scroll-smooth px-4"
               ref={scrollRef4}
               onScroll={() => checkScroll(scrollRef4, setshowWLeft, setshowWRight)}
             >
