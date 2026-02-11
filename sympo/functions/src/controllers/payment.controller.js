@@ -29,11 +29,21 @@ export const createOrder = async (req, res) => {
 
     const { totalAmount, totalOldAmount, orderId } = orderData;
 
+    const GATEWAY_PERCENT = 0.02; // 2%
+    const PLATFORM_FEE = 0.18;     // 18%
+
+    const gatewayFee = totalAmount * GATEWAY_PERCENT;
+    const gstOnGateway = gatewayFee * PLATFORM_FEE;
+
+    const convenienceFee = gatewayFee + gstOnGateway;
+
+    const finalAmount = Math.ceil(totalAmount + convenienceFee);
+
     let cashfreeOrder;
     try {
       cashfreeOrder = await createCashfreeOrder({
         orderId,
-        amount: totalAmount,
+        amount: finalAmount,
         customer: {
           uid: req.user.uid,
           email: userProfile.email,
@@ -61,7 +71,8 @@ export const createOrder = async (req, res) => {
       firestoreOrderId: orderId,
       cashfreeOrderId: cashfreeOrder.order_id,
       paymentSessionId: cashfreeOrder.payment_session_id,
-      totalAmount,
+      convenienceFee,
+      finalAmount,
       totalOldAmount,
       isPromoApplied: !!promoCode,
     });

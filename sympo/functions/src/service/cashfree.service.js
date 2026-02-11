@@ -12,6 +12,9 @@ export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
   const appId =  CASHFREE_APP_ID()
   const secretKey = CASHFREE_SECRET_KEY();
 
+  console.log("appId : ",appId);
+  console.log("secretKey : ",secretKey);
+
   console.log("[Cashfree] Creating order for:", { orderId, amount, email: customer.email });
 
   if (!appId || !secretKey) throw new Error("Payment gateway not configured.");
@@ -31,9 +34,7 @@ export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
       customer_email: customer.email,
       customer_phone: customer.phone,
     },
-    order_meta: {
-      return_url: `${FRONTEND_URL_VALUE}/payment-success?order_id={order_id}`,
-    },
+    order_meta: { },
   };
 
   try {
