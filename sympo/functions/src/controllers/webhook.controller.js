@@ -14,7 +14,7 @@ export const cashfreeWebhook = async (req, res) => {
 
     const signature = req.headers["x-webhook-signature"];
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.CASHFREE_WEBHOOK_SECRET)
+      .createHmac("sha256", process.env.CASHFREE_SECRET_KEY)
       .update(rawBody)
       .digest("base64");
 
