@@ -622,7 +622,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           href="https://forms.gle/Tn1dEaLDios2iGaF6"
           target="_blank"
           rel="noreferrer"
-          className="group flex items-center gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
+          className="group flex items-center mt-10 gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
         >
           <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
             <img
