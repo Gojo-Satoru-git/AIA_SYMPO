@@ -79,7 +79,7 @@ function WorkshoProvider({ children }) {
       id: '12',
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%203.webp?alt=media&token=8d2a9739-e7b9-479a-9199-ab9d4586082c',
-      backside: './assets/Henry.webp',
+      backside: './assets/branner.webp',
       company: 'Zenardy Technologies',
       trainer: 'Akash',
       description: [
@@ -112,7 +112,7 @@ function WorkshoProvider({ children }) {
       id: '13',
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%204.webp?alt=media&token=7ab40ab9-40ff-4e7d-9b16-884eab14fc78',
-      backside: './assets/Henry.webp',
+      backside: './assets/eddie.webp',
       company: 'Tekion',
       trainer: 'TBD',
       description: [
@@ -146,7 +146,7 @@ function WorkshoProvider({ children }) {
       id: '14',
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%205.webp?alt=media&token=c90589ef-9280-4dc3-974d-bc3fde8f1c4e',
-      backside: './assets/Henry.webp',
+      backside: './assets/wheelers.webp',
       company: 'Societe Generale',
       trainer: 'Bhuvaneshwari',
       description: [
@@ -179,7 +179,7 @@ function WorkshoProvider({ children }) {
       id: '15',
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%206.webp?alt=media&token=97f0bfd9-5568-4fc5-8e81-cd0e2261fc13',
-      backside: './assets/Henry.webp',
+      backside: './assets/erica.webp',
       company: 'CTS',
       trainer: 'Balachandar Ganesan',
       description: [
