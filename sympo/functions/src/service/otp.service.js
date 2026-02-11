@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import admin from "firebase-admin";
 
+import {OTP_EXPIRY_MINUTES , OTP_RESEND_COOLDOWN_SECONDS} from '../config/env1.js';
+
 const db = admin.firestore();
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -23,7 +25,7 @@ const checkEmailVerified = async (email) => {
 
 const storeOtp = async (email, otp) => {
   const otpHash = hashOtp(otp);
-  const expiryMinutes = parseInt(process.env.OTP_EXPIRY_MINUTES || "5");
+  const expiryMinutes = parseInt(OTP_EXPIRY_MINUTES() || "5");
 
   const expiresAt = admin.firestore.Timestamp.fromMillis(Date.now() + expiryMinutes * 60 * 1000);
   await db.collection("emailVerifications").doc(email).set({
@@ -60,7 +62,7 @@ const canResendOtp = async (email) => {
   const doc = await db.collection("emailVerifications").doc(email).get();
   if (!doc.exists) return true;
 
-  const cooldown = parseInt(process.env.OTP_RESEND_COOLDOWN_SECONDS || "60");
+  const cooldown = parseInt(OTP_RESEND_COOLDOWN_SECONDS() || "60");
   const data = doc.data();
   if (!data.createdAt) return false;
   return Date.now() - data.createdAt.toMillis() > cooldown * 1000;

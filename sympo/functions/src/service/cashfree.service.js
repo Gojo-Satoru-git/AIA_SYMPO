@@ -1,17 +1,16 @@
 import axios from "axios";
-import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL, NODE_ENV } from "../config/env.js"; // Firebase: env.js, localhost: env1.js
+import { CASHFREE_APP_ID, CASHFREE_SECRET_KEY, FRONTEND_URL } from "../config/env1.js"; // Firebase: env.js, localhost: env1.js
 
-const NODE_ENV_VALUE = NODE_ENV.value ? NODE_ENV.value() : NODE_ENV || "development";
-const CASHFREE_BASE_URL = "https://api.cashfree.com/pg"
+const CASHFREE_BASE_URL = "https://sandbox.cashfree.com/pg"
 
-const FRONTEND_URL_VALUE = FRONTEND_URL.value ? FRONTEND_URL.value() : FRONTEND_URL || "http://localhost:5173";
+const FRONTEND_URL_VALUE = FRONTEND_URL();
 
 console.log("[Cashfree] Initialized base URL:", CASHFREE_BASE_URL);
 
 export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
   // Access secrets at runtime
-  const appId = typeof CASHFREE_APP_ID.value === "function" ? await CASHFREE_APP_ID.value() : CASHFREE_APP_ID;
-  const secretKey = typeof CASHFREE_SECRET_KEY.value === "function" ? await CASHFREE_SECRET_KEY.value() : CASHFREE_SECRET_KEY;
+  const appId =  CASHFREE_APP_ID()
+  const secretKey = CASHFREE_SECRET_KEY();
 
   console.log("[Cashfree] Creating order for:", { orderId, amount, email: customer.email });
 
@@ -64,8 +63,8 @@ export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
 };
 
 export const fetchCashfreeOrder = async (orderId) => {
-  const appId = typeof CASHFREE_APP_ID.value === "function" ? await CASHFREE_APP_ID.value() : CASHFREE_APP_ID;
-  const secretKey = typeof CASHFREE_SECRET_KEY.value === "function" ? await CASHFREE_SECRET_KEY.value() : CASHFREE_SECRET_KEY;
+  const appId = CASHFREE_APP_ID();
+  const secretKey = CASHFREE_SECRET_KEY();
 
   if (!appId || !secretKey) throw new Error("Payment gateway not configured.");
 
