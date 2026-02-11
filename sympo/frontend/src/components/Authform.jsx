@@ -146,12 +146,6 @@ const AuthForm = ({ mode }) => {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    if (backupMode) {
-      showToast('Check the mail in the spam folder too', 'info');
-    }
-  }, [backupMode, showToast]);
-
-  useEffect(() => {
     let interval;
     if (resendTimer > 0) {
       setCanResend(false);
@@ -213,7 +207,6 @@ const AuthForm = ({ mode }) => {
         return;
       }
 
-      showToast(`OTP sent to your mail ${emailValue}`, 'success');
       setShowOtp(true);
       setResendTimer(60);
       setBackupMode(false);
@@ -692,6 +685,40 @@ const AuthForm = ({ mode }) => {
                   setOtp(e.target.value);
                 }}
               />
+              <Typography
+                sx={{
+                  color: backupMode ? '#ffc107' : '#aaa',
+                  fontSize: '0.72rem',
+                  px: 1,
+                  mt: 0.5,
+                  fontStyle: 'italic',
+                  animation: 'fadeIn 0.5s ease-in-out',
+                }}
+              >
+                {backupMode ? (
+                  <>
+                    Limit reached. Link will be sent (check{' '}
+                    <Box component="span" sx={{ color: '#e50914', fontWeight: 800 }}>
+                      spam
+                    </Box>
+                    ).
+                    <Box
+                      component="span"
+                      sx={{ color: 'white', display: 'block', fontWeight: 600 }}
+                    >
+                      ➔ Set your password below first.
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    📩 OTP sent! Check your inbox/{' '}
+                    <Box component="span" sx={{ color: '#e50914', fontWeight: 800 }}>
+                      spam
+                    </Box>
+                    .
+                  </>
+                )}
+              </Typography>
               <Button
                 type="button"
                 onClick={handleVerifyOtp}
