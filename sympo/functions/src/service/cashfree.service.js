@@ -5,17 +5,12 @@ const CASHFREE_BASE_URL = "https://sandbox.cashfree.com/pg"
 
 const FRONTEND_URL_VALUE = FRONTEND_URL();
 
-console.log("[Cashfree] Initialized base URL:", CASHFREE_BASE_URL);
 
 export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
   // Access secrets at runtime
   const appId =  CASHFREE_APP_ID()
   const secretKey = CASHFREE_SECRET_KEY();
 
-  console.log("appId : ",appId);
-  console.log("secretKey : ",secretKey);
-
-  console.log("[Cashfree] Creating order for:", { orderId, amount, email: customer.email });
 
   if (!appId || !secretKey) throw new Error("Payment gateway not configured.");
 
@@ -47,7 +42,6 @@ export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
       },
     });
 
-    console.log("[Cashfree] Order created:", response.data.order_id);
     return response.data;
   } catch (err) {
     console.error("[Cashfree] API error:", err.message);
@@ -77,7 +71,6 @@ export const fetchCashfreeOrder = async (orderId) => {
         "x-api-version": "2023-08-01",
       },
     });
-    console.log("[Cashfree] Order fetched:", res.data);
     return res.data;
   } catch (err) {
     console.error("[Cashfree] Fetch error:", err.message);

@@ -13,7 +13,7 @@ import collegeRoutes from './routes/college.routes.js';
 import otpRoutes from './routes/otp.routes.js';
 import promoRoutes from "./routes/promo.routes.js";
 
-import { FRONTEND_URL  } from "./config/env1.js"; // change to env.js for Firebase
+import { FRONTEND_URL  } from "./config/env1.js"; 
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(helmet());
 console.log(FRONTEND_URL());
 
 app.use(cors({
-  //origin: FRONTEND_URL() || "http://localhost:5173",
+  origin: FRONTEND_URL() || "http://localhost:5173",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

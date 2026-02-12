@@ -138,15 +138,39 @@ export const createOrderRecord = async (userId, items, promoCode) => {
   return { totalAmount, totalOldAmount, orderId: orderRef.id };
 };
 
-export const cancelOrderAndReleaseSeats = async (orderId) => {
+/**
+ * Cancel order and release seats
+ * 
+ * This function is called when:
+ * - Payment fails (status: FAILED)
+ * - User cancels payment (status: CANCELLED)
+ * - User drops payment (status: USER_DROPPED)
+ * - Payment expires (status: EXPIRED)
+ * - Payment times out (status: TIMEOUT)
+ * - User closes payment modal without paying (status: USER_DROPPED)
+ * 
+ * @param {string} orderId - The Firestore order ID
+ * @param {string} newStatus - The status to set (default: "CANCELLED")
+ */
+export const cancelOrderAndReleaseSeats = async (orderId, newStatus = "CANCELLED") => {
   const orderRef = db.collection("orders").doc(orderId);
 
   await db.runTransaction(async (tx) => {
     const orderSnap = await tx.get(orderRef);
-    if (!orderSnap.exists) return;
+    if (!orderSnap.exists) {
+      console.warn(`Order not found during cancellation: ${orderId}`);
+      return;
+    }
 
     const order = orderSnap.data();
-    if (!["RESERVED", "PENDING"].includes(order.status)) return;
+    
+    // Only release seats if order is in a reservable state
+    if (!["RESERVED", "PENDING", "ACTIVE"].includes(order.status)) {
+      console.log(`Order ${orderId} status is ${order.status}, no seat release needed`);
+      return;
+    }
+
+    console.log(`Releasing seats for order ${orderId} (current status: ${order.status})`);
 
     // STEP 1: Build seat-only list (combo → linked event)
     const seatItems = [];
@@ -189,19 +213,96 @@ export const cancelOrderAndReleaseSeats = async (orderId) => {
     }
 
     // STEP 4: Release booked seats (only real seat events)
+    let seatsReleased = 0;
     for (const [eventId, quantity] of Object.entries(aggregatedSeats)) {
       if (limitedSeatEvents.includes(eventId) && eventDataCache[eventId]) {
         const event = eventDataCache[eventId];
+        const newBooked = Math.max(0, event.booked - quantity);
+        
         tx.update(event.ref, {
-          booked: Math.max(0, event.booked - quantity)
+          booked: newBooked
         });
+        
+        seatsReleased += quantity;
+        console.log(`Released ${quantity} seats for event ${eventId} (${event.booked} → ${newBooked})`);
       }
     }
 
-    // STEP 5: Mark order cancelled
+    console.log(`✅ Total seats released: ${seatsReleased} for order ${orderId}`);
+    
+    // STEP 5: Update order status
     tx.update(orderRef, {
-      status: "CANCELLED",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      status: newStatus,
+      failure_reason: getFailureReason(newStatus),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+    
+    console.log(`✅ Order ${orderId} status updated to: ${newStatus}`);
   });
+};
+
+/**
+ * Helper function to get failure reason based on status
+ */
+const getFailureReason = (status) => {
+  const reasons = {
+    "USER_DROPPED": "Payment modal closed by user",
+    "CANCELLED": "Payment cancelled",
+    "FAILED": "Payment failed",
+    "EXPIRED": "Payment session expired",
+    "TIMEOUT": "Payment timed out",
+    "INACTIVE": "Order inactive"
+  };
+  
+  return reasons[status] || "Payment not completed";
+};
+
+/**
+ * Helper function to check if an order status represents a completed payment
+ */
+export const isPaymentSuccessful = (status) => {
+  return status === "PAID";
+};
+
+/**
+ * Helper function to check if an order status represents a failed/cancelled payment
+ */
+export const isPaymentFailed = (status) => {
+  const failureStatuses = [
+    "FAILED",
+    "CANCELLED", 
+    "EXPIRED",
+    "USER_DROPPED",
+    "TIMEOUT",
+    "INACTIVE"
+  ];
+  return failureStatuses.includes(status);
+};
+
+/**
+ * Helper function to check if an order is still in progress
+ */
+export const isPaymentPending = (status) => {
+  const pendingStatuses = ["RESERVED", "PENDING", "ACTIVE"];
+  return pendingStatuses.includes(status);
+};
+
+/**
+ * Get human-readable status message
+ */
+export const getStatusMessage = (status) => {
+  const statusMessages = {
+    PAID: "Payment successful",
+    FAILED: "Payment failed",
+    CANCELLED: "Payment cancelled by user",
+    USER_DROPPED: "User closed payment page",
+    EXPIRED: "Payment session expired",
+    TIMEOUT: "Payment timed out",
+    INACTIVE: "Order inactive",
+    ACTIVE: "Payment in progress",
+    RESERVED: "Seats reserved, awaiting payment",
+    PENDING: "Order pending"
+  };
+  
+  return statusMessages[status] || `Status: ${status}`;
 };

@@ -51,7 +51,7 @@ export const createOrder = async (req, res) => {
         },
       });
     } catch (cashfreeErr) {
-      await cancelOrderAndReleaseSeats(orderId);
+      await cancelOrderAndReleaseSeats(orderId, "FAILED");
       const errorMsg = cashfreeErr.message.includes("credentials")
         ? "Payment credentials not configured."
         : cashfreeErr.message.includes("unreachable")
@@ -115,8 +115,9 @@ export const verifyOrder = async (req, res) => {
         items: order.items 
       });
     }
+    
     if (order.expiresAt && admin.firestore.Timestamp.now() > order.expiresAt) {
-      await cancelOrderAndReleaseSeats(firestoreOrderId);
+      await cancelOrderAndReleaseSeats(firestoreOrderId, "EXPIRED");
       return res.status(400).json({ message: "Order expired" });
     }
 
@@ -124,7 +125,9 @@ export const verifyOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid order state" });
 
     const cashfreeOrder = await fetchCashfreeOrder(order.cashfree_order_id);
-    if (cashfreeOrder.order_status !== "PAID")
+    
+    // ✅ FIX: Cashfree returns "SUCCESS" for successful payments, not "PAID"
+    if (cashfreeOrder.order_status !== "SUCCESS")
       return res.status(400).json({ message: "Payment not completed" });
 
     const qrToken = crypto.randomBytes(32).toString("hex");
@@ -156,22 +159,42 @@ export const verifyOrder = async (req, res) => {
   }
 };
 
+/**
+ * Cancel abandoned payment (when user closes payment modal or payment fails)
+ * Accepts optional status parameter to set specific cancellation reason
+ */
 export const cancelAbandonedPayment = async (req, res) => {
-
   try {
-    const { orderId } = req.body;
-    if (!orderId) return res.status(400).json({ message: "Order ID required" });
+    const { orderId, status } = req.body;
+    
+    if (!orderId) {
+      return res.status(400).json({ message: "Order ID required" });
+    }
 
-    await cancelOrderAndReleaseSeats(orderId);
+    // Use provided status or default to USER_DROPPED
+    const cancelStatus = status || "USER_DROPPED";
+    
+    // Release seats and update status atomically
+    await cancelOrderAndReleaseSeats(orderId, cancelStatus);
 
-    res.json({ success: true, message: "Order cancelled and seats released" });
+    res.json({ 
+      success: true, 
+      message: "Order cancelled and seats released",
+      status: cancelStatus
+    });
   } catch (err) {
-    console.error("Failed to cancel abandoned order", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Failed to cancel abandoned order:", err);
+    res.status(500).json({ 
+      success: false, 
+      message: err.message || "Failed to cancel order"
+    });
   }
 };
 
-
+/**
+ * Cleanup expired orders (run via cron job)
+ * Automatically releases seats for orders that have exceeded their timeout
+ */
 export const cleanupExpiredOrders = async () => {
   const now = admin.firestore.Timestamp.now();
   
@@ -182,7 +205,9 @@ export const cleanupExpiredOrders = async () => {
     .get();
 
   for (const doc of expiredOrders.docs) {
-    await cancelOrderAndReleaseSeats(doc.id);
-    console.log("Cleaned up expired order:", doc.id);
+    await cancelOrderAndReleaseSeats(doc.id, "EXPIRED");
+    console.log("✅ Cleaned up expired order:", doc.id);
   }
+  
+  console.log(`🧹 Cleanup completed. Processed ${expiredOrders.size} expired orders.`);
 };

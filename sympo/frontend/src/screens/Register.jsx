@@ -42,6 +42,8 @@ const Registration = () => {
     setBackendAmount(null);
     setTotalOldAmount(null);
     setPromoApplied(false);
+
+    setPromoCode('');
   }, [cart]);
 
   useEffect(() => {
@@ -168,34 +170,39 @@ const proceedToPayment = async () => {
   setPaymentLocked(true);
   setPaymentLoading(true);
 
+  let currentFirestoreOrderId = null; 
+
   try {
     const paymentData = await createPaymentOrder(cart, promoCode);
     const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
 
+    currentFirestoreOrderId = firestoreOrderId; 
     setFirestoreOrderId(firestoreOrderId);
     localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
 
     const cashfree = await load({
-      mode: 'production',
+      mode: 'sandbox',
     });
-
 
     const checkoutOptions = {
       paymentSessionId,
       redirectTarget: '_modal',
 
       onClose: async () => {
-        console.log("Payment popup closed");
+        console.log("Payment popup closed by user");
         setPaymentLocked(false);
         setPaymentLoading(false);
         
-        // Cancel the order and release seats
+        // Cancel the order and release seats with USER_DROPPED status
         try {
-          await api.post("/payment/cancel-abandoned", { orderId: firestoreOrderId });
+          await api.post("/payment/cancel-abandoned", { 
+            orderId: firestoreOrderId,
+            status: "USER_DROPPED" // ✅ Specify status
+          });
           showToast("Payment cancelled. Seats released.", "info");
         } catch (err) {
           console.error("Failed to cancel order:", err);
-        }finally {
+        } finally {
           localStorage.removeItem('lastFirestoreOrderId');
         }
       }
@@ -207,11 +214,11 @@ const proceedToPayment = async () => {
 
     if (verified.qrToken) {
       const purchase = {
-          orderId: firestoreOrderId,
-          amount: verified.amount,
-          events: verified.items,
-          qrToken :verified.qrToken,
-        };
+        orderId: firestoreOrderId,
+        amount: verified.amount,
+        events: verified.items,
+        qrToken: verified.qrToken,
+      };
 
       addPurchase(purchase);
 
@@ -226,28 +233,32 @@ const proceedToPayment = async () => {
     }
 
   } catch (err) {
-
-    if (firestoreOrderId) {
+    // Handle payment error - cancel order if it was created
+    if (currentFirestoreOrderId) {
       try {
-        await api.post("/payment/cancel-abandoned", { orderId : firestoreOrderId });
+        await api.post("/payment/cancel-abandoned", { 
+          orderId: currentFirestoreOrderId,
+          status: "USER_QUIT" // ✅ Use FAILED status for errors
+        });
+        console.log("Order cancelled due to payment error");
       } catch (cancelErr) {
         console.error("Failed to cancel order after error:", cancelErr);
-        
-      }finally{
+      } finally {
         setPaymentLocked(false);
         setPaymentLoading(false);
         try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
       }
+    } else {
+      // No order was created, just unlock
+      setPaymentLocked(false);
+      setPaymentLoading(false);
     }
 
-    const msg = err?.response?.data?.message  || "Payment failed";
+    const msg = err?.response?.data?.message || "Payment failed";
     showToast(msg, "error");
     console.error('Payment error:', err);
-    setPaymentLocked(false);
-    setPaymentLoading(false);
   }
 };
-
 
   const analyzeCart = (cart) => {
     let techCount = 0;
