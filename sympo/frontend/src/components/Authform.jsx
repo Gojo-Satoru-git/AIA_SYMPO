@@ -22,7 +22,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import debounce from 'lodash/debounce';
-
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -103,9 +102,9 @@ const AuthForm = ({ mode }) => {
 
   const [loading, setLoading] = useState(false);
   const [year, setYear] = useState('');
-
+  const passwordInputRef = useRef(null);
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
@@ -157,7 +156,20 @@ const AuthForm = ({ mode }) => {
     }
     return () => clearInterval(interval);
   }, [resendTimer]);
+  useEffect(() => {
+    if (passwordInputRef.current) {
+      const input = passwordInputRef.current;
 
+      // This ensures the cursor move happens AFTER the type change is complete
+      const timer = setTimeout(() => {
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+        input.focus();
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPass]);
   useEffect(() => {
     setPassValid({
       upper: /[A-Z]/.test(password),
@@ -764,9 +776,11 @@ const AuthForm = ({ mode }) => {
       <TextField
         name="password"
         label="Password"
-        type={showPassword ? 'text' : 'password'}
+        type={showPass ? 'text' : 'password'}
         required
+        inputProps={{ ref: passwordInputRef }}
         sx={inputStyle}
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
         onFocus={() => setPasswordFocused(true)}
         onBlur={() => setPasswordFocused(false)}
@@ -775,7 +789,7 @@ const AuthForm = ({ mode }) => {
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPass(!showPass)}
                 onMouseDown={(e) => e.preventDefault()} // Keeps focus on the input
                 edge="end"
                 sx={{
@@ -783,7 +797,7 @@ const AuthForm = ({ mode }) => {
                   '&:hover': { color: '#ff1a1a' },
                 }}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPass ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ),
