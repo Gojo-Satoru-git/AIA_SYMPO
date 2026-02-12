@@ -335,7 +335,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
   };
 
   const handlePayment = async () => {
-    if (!user) return showToast('Please login first', 'error');
+    if (!user) return showToast('Please sign in first', 'error');
     if (!validateCart()) return;
 
     const analysis = analyzeCart(cart);
@@ -352,7 +352,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
 
   const handleRemoveItem = (itemId, itemTitle) => {
     setRemovingId(itemId);
-    showToast(`${itemTitle} removed from cart`, 'info');
+    showToast(`${itemTitle} removed from Registration`, 'info');
     setTimeout(() => {
       removeFromCart(itemId);
       setRemovingId(null);
@@ -366,11 +366,10 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           <h2 className="mb-2 text-3xl uppercase tracking-widest text-primary md:text-4xl">
             Registration
           </h2>
-          <p className="text-sm text-white/60">Review your selected events and workshops</p>
         </div>
         {/* ================= PASSES ================= */}
         <div className="flex flex-col gap-6">
-          <p className="text-center text-sm text-white/60">Choose a pass</p>
+          <p className="text-center uppercase text-xl text-primary">Passes</p>
           <div className="grid gap-6 md:grid-cols-3">
             {passes.map((pass) => {
               const isSelected = selectedPass?.id === pass.id;
@@ -429,14 +428,14 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                       includes: pass.includes,
                     });
 
-                    showToast(`${pass.title} applied`, 'success');
+                    showToast(`${pass.title} applied , Check the Registration`, 'success');
                   }}
                 />
               );
             })}
           </div>
         </div>
-
+        
         {cart.length === 0 ? (
           <div className="mt-20 text-center">
             <p className="text-sm uppercase tracking-widest text-white/50 mb-5">
@@ -445,6 +444,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           </div>
         ) : (
           <>
+            <p className="text-sm text-white/60 self-center">Review your selected events and workshops</p>
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
                 return (

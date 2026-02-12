@@ -125,7 +125,7 @@ const Events = () => {
       return;
     }
     processAddToCart(item, type);
-    showToast(`${item.title} added to cart!`, 'success');
+    showToast(`${item.title} added! check the Registration`, 'success');
   };
 
   const processAddToCart = (item, type) => {

@@ -115,7 +115,7 @@ const NavMenubar = ({ HomeRef, AboutRef, EventsRef, ContactRef, FAQsRef, Registe
     { id: 3, name: 'Events', ref: EventsRef },
     { id: 5, name: 'FAQs', ref: FAQsRef },
     { id: 4, name: 'Contact us', ref: ContactRef },
-    { id: 6, name: 'Register', ref: RegisterRef, cta: true },
+    { id: 6, name: 'Registration', ref: RegisterRef, cta: true },
   ];
 
   return (

@@ -25,7 +25,7 @@ function Eventcard({
     buttonClass = 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700';
     isDisabled = true;
   } else if (isInCart) {
-    buttonText = 'In Cart';
+    buttonText = 'Added';
     buttonClass =
       'bg-orange-500/10 text-orange-500 border border-orange-500/50 animate-pulse cursor-not-allowed';
     isDisabled = true;
