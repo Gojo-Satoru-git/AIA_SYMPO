@@ -7,7 +7,7 @@ const faqs = [
   },
   {
     q: 'Is on-spot registration available?',
-    a: 'Yes, on-spot registration is available for both technical and non-technical events.',
+    a: 'Yes, on-spot registration is Available',
   },
   {
     q: 'Does every team member need to get a pass?',
