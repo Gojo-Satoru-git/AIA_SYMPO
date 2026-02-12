@@ -147,7 +147,7 @@ function TeamForm({
           }
 
           localStorage.setItem(`${title}-teamData`, JSON.stringify(formData));
-          showToast('Registration details saved!', 'success');
+          showToast('Team details saved!,Check the registration ', 'success');
 
           // CRITICAL: Call the success handler passed from Events.js
           if (onSuccess) {
