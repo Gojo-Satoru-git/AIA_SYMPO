@@ -13,7 +13,7 @@ import PassSuggestionModal from '../components/PassSuggestionModal';
 import TosButton from '../components/TosButton';
 import { load } from '@cashfreepayments/cashfree-js';
 
-const Registration = () => {
+const Registration = ({ RegisterRef }) => {
   const { cart, removeFromCart, totalPrice, clearCart, addToCart } = useCart();
   const { showToast } = useToast();
   const { user, loading: authLoading } = useAuth();
@@ -24,7 +24,7 @@ const Registration = () => {
   const [paymentLocked, setPaymentLocked] = useState(false);
   const [qrCode, setQrCode] = useState('');
   const [qrVisible, setQrVisible] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState('');
 
   const { addPurchase, checkPassPurchases } = usePurchases();
 
@@ -42,13 +42,12 @@ const Registration = () => {
     setBackendAmount(null);
     setTotalOldAmount(null);
     setPromoApplied(false);
-
     setPromoCode('');
   }, [cart]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const redirectedOrderId = params.get("order_id");
+    const redirectedOrderId = params.get('order_id');
 
     if (redirectedOrderId) {
       // Short delay to ensure webhook processed the payment
@@ -68,24 +67,36 @@ const Registration = () => {
               addPurchase(purchase);
               setQrCode(res.qrToken);
               setQrVisible(true);
+              // ✅ Clear promo code after successful payment
+              setPromoCode('');
+              setPromoApplied(false);
+              setBackendAmount(null);
+              setTotalOldAmount(null);
               clearCart();
-              showToast("Payment successful!", "success");
-              setErrorMsg("");
+              showToast('Payment successful!', 'success');
+              setErrorMsg('');
             } else {
-              showToast("Payment completed but QR not generated", "warning");
-              setErrorMsg("Payment completed but QR not generated. Please contact support.");
+              showToast('Payment completed but QR not generated', 'warning');
+              setErrorMsg('Payment completed but QR not generated. Please contact support.');
             }
           })
           .catch((err) => {
-            const msg = err?.response?.data?.message  || "Payment verification failed";
-            showToast(msg, "error");
+            const msg = err?.response?.data?.message || 'Payment verification failed';
+            showToast(msg, 'error');
             console.error('Verification error:', err);
             setErrorMsg(msg);
+            // ✅ Clear promo code after failed payment
+            setPromoCode('');
+            setPromoApplied(false);
+            setBackendAmount(null);
+            setTotalOldAmount(null);
           })
           .finally(() => {
             setPaymentLoading(false);
             setPaymentLocked(false);
-            try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+            try {
+              localStorage.removeItem('lastFirestoreOrderId');
+            } catch (e) {}
             window.history.replaceState({}, document.title, window.location.pathname);
           });
       }, 1000); // Give webhook 1 second to process
@@ -103,20 +114,26 @@ const Registration = () => {
         .then((res) => {
           if (res.qrToken) {
             const purchase = {
-                orderId: firestoreOrderId,
-                amount: res.amount,
-                events: res.items,
-                qrToken: res.qrToken,
-              };
+              orderId: firestoreOrderId,
+              amount: res.amount,
+              events: res.items,
+              qrToken: res.qrToken,
+            };
 
             addPurchase(purchase);
-
             setQrCode(res.qrToken);
             setQrVisible(true);
+            // ✅ Clear promo code after successful payment
+            setPromoCode('');
+            setPromoApplied(false);
+            setBackendAmount(null);
+            setTotalOldAmount(null);
             clearCart();
-            showToast("Payment successful!", "success");
-            setErrorMsg("");
-            try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+            showToast('Payment successful!', 'success');
+            setErrorMsg('');
+            try {
+              localStorage.removeItem('lastFirestoreOrderId');
+            } catch (e) {}
           }
         })
         .catch((err) => {
@@ -129,7 +146,6 @@ const Registration = () => {
         });
     }
   }, []);
-
 
   if (authLoading) {
     return (
@@ -163,102 +179,125 @@ const Registration = () => {
     return true;
   };
 
-const proceedToPayment = async () => {
-  if (!user) return showToast('Please login first', 'error');
-  if (!validateCart()) return;
+  const proceedToPayment = async () => {
+    if (!user) return showToast('Please login first', 'error');
+    if (!validateCart()) return;
 
-  setPaymentLocked(true);
-  setPaymentLoading(true);
+    setPaymentLocked(true);
+    setPaymentLoading(true);
 
-  let currentFirestoreOrderId = null; 
+    let currentFirestoreOrderId = null;
 
-  try {
-    const paymentData = await createPaymentOrder(cart, promoCode);
-    const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
+    try {
+      const paymentData = await createPaymentOrder(cart, promoCode);
+      const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
 
-    currentFirestoreOrderId = firestoreOrderId; 
-    setFirestoreOrderId(firestoreOrderId);
-    localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
+      currentFirestoreOrderId = firestoreOrderId;
+      setFirestoreOrderId(firestoreOrderId);
+      localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
 
-    const cashfree = await load({
-      mode: 'sandbox',
-    });
+      const cashfree = await load({
+        mode: 'sandbox',
+      });
 
-    const checkoutOptions = {
-      paymentSessionId,
-      redirectTarget: '_modal',
+      const checkoutOptions = {
+        paymentSessionId,
+        redirectTarget: '_modal',
 
-      onClose: async () => {
-        console.log("Payment popup closed by user");
-        setPaymentLocked(false);
-        setPaymentLoading(false);
-        
-        // Cancel the order and release seats with USER_DROPPED status
-        try {
-          await api.post("/payment/cancel-abandoned", { 
-            orderId: firestoreOrderId,
-            status: "USER_DROPPED" // ✅ Specify status
-          });
-          showToast("Payment cancelled. Seats released.", "info");
-        } catch (err) {
-          console.error("Failed to cancel order:", err);
-        } finally {
-          localStorage.removeItem('lastFirestoreOrderId');
-        }
-      }
-    };
+        onClose: async () => {
+          console.log('Payment popup closed by user');
+          setPaymentLocked(false);
+          setPaymentLoading(false);
 
-    await cashfree.checkout(checkoutOptions);
-
-    const verified = await verifyPaymentOrder(firestoreOrderId, cart);
-
-    if (verified.qrToken) {
-      const purchase = {
-        orderId: firestoreOrderId,
-        amount: verified.amount,
-        events: verified.items,
-        qrToken: verified.qrToken,
+          // Cancel the order and release seats with USER_DROPPED status
+          try {
+            await api.post('/payment/cancel-abandoned', {
+              orderId: firestoreOrderId,
+              status: 'USER_DROPPED', // ✅ Specify status
+            });
+            showToast('Payment cancelled. Seats released.', 'info');
+            // ✅ Clear promo code when user closes payment modal
+            setPromoCode('');
+            setPromoApplied(false);
+            setBackendAmount(null);
+            setTotalOldAmount(null);
+          } catch (err) {
+            console.error('Failed to cancel order:', err);
+          } finally {
+            localStorage.removeItem('lastFirestoreOrderId');
+          }
+        },
       };
 
-      addPurchase(purchase);
+      await cashfree.checkout(checkoutOptions);
 
-      setQrCode(verified.qrToken);
-      setQrVisible(true);
-      clearCart();
-      showToast("Payment successful!", "success");
-      setErrorMsg("");
-      setPaymentLocked(false);
-      setPaymentLoading(false);
-      try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
-    }
+      const verified = await verifyPaymentOrder(firestoreOrderId, cart);
 
-  } catch (err) {
-    // Handle payment error - cancel order if it was created
-    if (currentFirestoreOrderId) {
-      try {
-        await api.post("/payment/cancel-abandoned", { 
-          orderId: currentFirestoreOrderId,
-          status: "USER_QUIT" // ✅ Use FAILED status for errors
-        });
-        console.log("Order cancelled due to payment error");
-      } catch (cancelErr) {
-        console.error("Failed to cancel order after error:", cancelErr);
-      } finally {
+      if (verified.qrToken) {
+        const purchase = {
+          orderId: firestoreOrderId,
+          amount: verified.amount,
+          events: verified.items,
+          qrToken: verified.qrToken,
+        };
+
+        addPurchase(purchase);
+
+        setQrCode(verified.qrToken);
+        setQrVisible(true);
+        clearCart();
+        // ✅ Clear promo code after successful payment
+        setPromoCode('');
+        setPromoApplied(false);
+        setBackendAmount(null);
+        setTotalOldAmount(null);
+        showToast('Payment successful!', 'success');
+        setErrorMsg('');
         setPaymentLocked(false);
         setPaymentLoading(false);
-        try { localStorage.removeItem('lastFirestoreOrderId'); } catch(e){}
+        try {
+          localStorage.removeItem('lastFirestoreOrderId');
+        } catch (e) {}
       }
-    } else {
-      // No order was created, just unlock
-      setPaymentLocked(false);
-      setPaymentLoading(false);
-    }
+    } catch (err) {
+      // Handle payment error - cancel order if it was created
+      if (currentFirestoreOrderId) {
+        try {
+          await api.post('/payment/cancel-abandoned', {
+            orderId: currentFirestoreOrderId,
+            status: 'USER_QUIT', // ✅ Use FAILED status for errors
+          });
+          console.log('Order cancelled due to payment error');
+        } catch (cancelErr) {
+          console.error('Failed to cancel order after error:', cancelErr);
+        } finally {
+          setPaymentLocked(false);
+          setPaymentLoading(false);
+          // ✅ Clear promo code after payment error
+          setPromoCode('');
+          setPromoApplied(false);
+          setBackendAmount(null);
+          setTotalOldAmount(null);
+          try {
+            localStorage.removeItem('lastFirestoreOrderId');
+          } catch (e) {}
+        }
+      } else {
+        // No order was created, just unlock
+        setPaymentLocked(false);
+        setPaymentLoading(false);
+        // ✅ Clear promo code
+        setPromoCode('');
+        setPromoApplied(false);
+        setBackendAmount(null);
+        setTotalOldAmount(null);
+      }
 
-    const msg = err?.response?.data?.message || "Payment failed";
-    showToast(msg, "error");
-    console.error('Payment error:', err);
-  }
-};
+      const msg = err?.response?.data?.message || 'Payment failed';
+      showToast(msg, 'error');
+      console.error('Payment error:', err);
+    }
+  };
 
   const analyzeCart = (cart) => {
     let techCount = 0;
@@ -380,7 +419,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
         </div>
         {/* ================= PASSES ================= */}
         <div className="flex flex-col gap-6">
-          <p className="text-center uppercase text-xl text-primary">Passes</p>
+          <p className="text-center text-xl uppercase text-primary">Passes</p>
           <div className="grid gap-6 md:grid-cols-3">
             {passes.map((pass) => {
               const isSelected = selectedPass?.id === pass.id;
@@ -446,16 +485,24 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
             })}
           </div>
         </div>
-        
+
+        {/* Anchor for navigating to the registration review (right below Passes) */}
+        <div ref={RegisterRef} />
+
         {cart.length === 0 ? (
           <div className="mt-20 text-center">
-            <p className="text-sm uppercase tracking-widest text-white/50 mb-5">
-              No Passes selected yet
+            <p className="mb-10 self-center text-center text-sm text-primary">
+              Review your selected events , workshops and passes
+            </p>
+            <p className="mb-5 text-sm uppercase tracking-widest text-white/50">
+              No item selected yet
             </p>
           </div>
         ) : (
-          <>
-            <p className="text-sm text-white/60 self-center">Review your selected events , workshops and passes</p>
+          <div>
+            <p className="mb-10 self-center text-center text-sm text-primary">
+              Review your selected events , workshops and passes
+            </p>
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
                 return (
@@ -510,29 +557,32 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                   <button
                     disabled={promoApplied}
                     onClick={async () => {
-                    if (!promoCode) return showToast('Enter promo code', 'error');
+                      if (!promoCode) return showToast('Enter promo code', 'error');
 
-                    const cartItems = cart.map((item) => ({ eventId: String(item.id), quantity: 1 }));
+                      const cartItems = cart.map((item) => ({
+                        eventId: String(item.id),
+                        quantity: 1,
+                      }));
 
-                    try {
-                      const res = await api.post('/promo/preview', {
-                        code: promoCode.toUpperCase(),
-                        items: cartItems,
-                      });
+                      try {
+                        const res = await api.post('/promo/preview', {
+                          code: promoCode.toUpperCase(),
+                          items: cartItems,
+                        });
 
-                      const { totalAmount, totalOldAmount, isPromoApplied } = res.data.data;
-                      
-                      // Store the actual amount from backend (already calculated with discount)
-                      setBackendAmount(totalAmount);
-                      setTotalOldAmount(totalOldAmount);
-                      setPromoApplied(isPromoApplied);
-                      showToast('Promo applied!', 'success');
-                    } catch (err) {
-                      const msg = err.response?.data?.message || 'Invalid promo code';
-                      showToast(msg, 'error');
-                      console.error('Promo error:', err);
-                    }
-                  }}
+                        const { totalAmount, totalOldAmount, isPromoApplied } = res.data.data;
+
+                        // Store the actual amount from backend (already calculated with discount)
+                        setBackendAmount(totalAmount);
+                        setTotalOldAmount(totalOldAmount);
+                        setPromoApplied(isPromoApplied);
+                        showToast('Promo applied!', 'success');
+                      } catch (err) {
+                        const msg = err.response?.data?.message || 'Invalid promo code';
+                        showToast(msg, 'error');
+                        console.error('Promo error:', err);
+                      }
+                    }}
                     className="bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-widest text-black"
                   >
                     {promoApplied ? 'Applied' : 'Apply'}
@@ -554,7 +604,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
                 </button>
               </div>
             </div>
-          </>
+          </div>
         )}
 
         {/* Current QR Code Modal */}
@@ -633,19 +683,13 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           href="https://forms.gle/Tn1dEaLDios2iGaF6"
           target="_blank"
           rel="noreferrer"
-          className="group flex items-center mt-10 gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
+          className="group mt-10 flex items-center gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
         >
           <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
-            <img
-                    src="./assets/form.png"
-                    alt="Instagram"
-                    className="h-6 w-6"
-                  />
+            <img src="./assets/form.png" alt="Instagram" className="h-6 w-6" />
           </div>
 
-          <span className="text-sm uppercase tracking-widest">
-            Accommodation Form
-          </span>
+          <span className="text-sm uppercase tracking-widest">Accommodation Form</span>
         </a>
         <TosButton />
       </div>

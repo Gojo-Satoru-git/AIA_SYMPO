@@ -4,7 +4,7 @@ export const passes = [
     id: 'pass-tech',
     title: 'Tech Pass',
     alt : 'AIA SYMPO TEKHORA26 TECH PASS',
-    price: 220,
+    price: 200,
     image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-tech-pass.webp?alt=media&token=e62ef20e-e002-4bc1-b6a5-1059ad11241b',
     includes: ['1', '2', '3', '4'],
   },
