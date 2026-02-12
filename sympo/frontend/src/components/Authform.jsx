@@ -22,7 +22,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import debounce from 'lodash/debounce';
-
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -103,7 +102,7 @@ const AuthForm = ({ mode }) => {
 
   const [loading, setLoading] = useState(false);
   const [year, setYear] = useState('');
-
+  const passwordInputRef = useRef(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -157,7 +156,20 @@ const AuthForm = ({ mode }) => {
     }
     return () => clearInterval(interval);
   }, [resendTimer]);
+  useEffect(() => {
+    if (passwordInputRef.current) {
+      const input = passwordInputRef.current;
 
+      // This ensures the cursor move happens AFTER the type change is complete
+      const timer = setTimeout(() => {
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+        input.focus();
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPassword]);
   useEffect(() => {
     setPassValid({
       upper: /[A-Z]/.test(password),
@@ -766,7 +778,9 @@ const AuthForm = ({ mode }) => {
         label="Password"
         type={showPassword ? 'text' : 'password'}
         required
+        inputProps={{ ref: passwordInputRef }}
         sx={inputStyle}
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
         onFocus={() => setPasswordFocused(true)}
         onBlur={() => setPasswordFocused(false)}
