@@ -3,7 +3,7 @@ import { useState } from 'react';
 const faqs = [
   {
     q: 'How do I register?',
-    a: 'First, select an event pass that gives access to regular events. If you want to attend workshops or signature events, add them individually to your cart. After payment, all your registrations will appear in “My Purchases.”',
+    a: 'First, select an event pass that gives access to regular events. If you want to attend workshops or signature events, add them individually to your registration. After payment, all your registrations will appear in “My Purchases.”',
   },
   {
     q: 'Is on-spot registration available?',
@@ -18,8 +18,8 @@ const faqs = [
     a:`You’ll definitely be taken care of refreshments are provided during signature events and workshops, so you won’t have to worry about going hungry or thirsty while participating`
   },
   {
-    q: 'For the hackathon, does each individual need to register',
-    a: 'No, for the hackathon, only one person from the team need to register',
+    q: 'For signature events, does each individual need to register',
+    a: 'No, for the signature event, only one person from the team need to register',
   },
   {
     q: 'Will  I receive a certificate?',

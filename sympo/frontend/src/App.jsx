@@ -53,8 +53,8 @@ const MainPage = () => {
       <div ref={EventsRef} id="Events">
         <Events />
       </div>
-      <div ref={RegisterRef}>
-        <Register />
+      <div>
+        <Register RegisterRef={RegisterRef} />
       </div>
       <div ref={FAQsRef}>
         <FAQs />
