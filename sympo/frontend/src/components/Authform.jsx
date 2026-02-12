@@ -104,7 +104,7 @@ const AuthForm = ({ mode }) => {
   const [year, setYear] = useState('');
   const passwordInputRef = useRef(null);
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
@@ -169,7 +169,7 @@ const AuthForm = ({ mode }) => {
 
       return () => clearTimeout(timer);
     }
-  }, [showPassword]);
+  }, [showPass]);
   useEffect(() => {
     setPassValid({
       upper: /[A-Z]/.test(password),
@@ -776,7 +776,7 @@ const AuthForm = ({ mode }) => {
       <TextField
         name="password"
         label="Password"
-        type={showPassword ? 'text' : 'password'}
+        type={showPass ? 'text' : 'password'}
         required
         inputProps={{ ref: passwordInputRef }}
         sx={inputStyle}
@@ -789,7 +789,7 @@ const AuthForm = ({ mode }) => {
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPass(!showPass)}
                 onMouseDown={(e) => e.preventDefault()} // Keeps focus on the input
                 edge="end"
                 sx={{
@@ -797,7 +797,7 @@ const AuthForm = ({ mode }) => {
                   '&:hover': { color: '#ff1a1a' },
                 }}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPass ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           ),
