@@ -444,7 +444,7 @@ Non-Tech Pass at ₹${passes[2].price} gives access to ALL Non-Tech events and s
           </div>
         ) : (
           <>
-            <p className="text-sm text-white/60 self-center">Review your selected events and workshops</p>
+            <p className="text-sm text-white/60 self-center">Review your selected events , workshops and passes</p>
             <div className="flex flex-col gap-4">
               {cart.map((item) => {
                 return (
