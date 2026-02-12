@@ -197,7 +197,7 @@ const Registration = ({ RegisterRef }) => {
       localStorage.setItem('lastFirestoreOrderId', firestoreOrderId);
 
       const cashfree = await load({
-        mode: 'sandbox',
+        mode: 'production',
       });
 
       const checkoutOptions = {
