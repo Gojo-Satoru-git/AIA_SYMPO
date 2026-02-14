@@ -186,6 +186,7 @@ const Registration = ({ RegisterRef }) => {
   setPaymentLocked(true);
   setPaymentLoading(true);
 
+  let currentFirestoreOrderId = null;
   try {
     const paymentData = await createPaymentOrder(cart, promoCode);
     const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
