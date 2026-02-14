@@ -144,7 +144,8 @@ function WorkshoProvider({ children }) {
       title: 'LLMS 101',
       alt: 'AIA SYMPO TEKHORA26 LLMS 101 WORKSHOP',
       id: '14',
-      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2FWORKSHOP%205.webp?alt=media&token=9477daea-e4d7-4f63-95cc-7b42a9cf23df',
+      image:
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2FWORKSHOP%205.webp?alt=media&token=9477daea-e4d7-4f63-95cc-7b42a9cf23df',
       backside: './assets/wheelers.webp',
       trainer: 'Bhuvaneshwari,K.Harshitha',
       description: [
@@ -176,7 +177,7 @@ function WorkshoProvider({ children }) {
       alt: 'AIA SYMPO TEKHORA26 DATA SCIENCE WORKSHOP',
       id: '15',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%206.webp?alt=media&token=97f0bfd9-5568-4fc5-8e81-cd0e2261fc13',
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2FWORKSHOP%205.webp?alt=media&token=031d6e56-58f0-404a-81ad-3cad4492efdf',
       backside: './assets/erica.webp',
       company: 'CTS',
       trainer: 'Balachandar Ganesan',
