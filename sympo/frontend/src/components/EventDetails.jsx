@@ -94,9 +94,11 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                       <span className="rounded-md border border-primary/30 bg-primary/20 px-3 py-1 text-sm font-semibold text-primary">
                         Trainer: {card.trainer}
                       </span>
-                      <span className="rounded-md border border-white/20 bg-white/10 px-3 py-1 text-sm font-semibold text-white">
-                        {card.company}
-                      </span>
+                      {card.company && (
+                        <span className="rounded-md border border-white/20 bg-white/10 px-3 py-1 text-sm font-semibold text-white">
+                          {card.company}
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}

@@ -147,8 +147,7 @@ function WorkshoProvider({ children }) {
       image:
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%205.webp?alt=media&token=c90589ef-9280-4dc3-974d-bc3fde8f1c4e',
       backside: './assets/wheelers.webp',
-      company: 'Societe Generale',
-      trainer: 'Bhuvaneshwari',
+      trainer: 'Bhuvaneshwari,K.Harshitha',
       description: [
         'Evolution of Language AI',
         'Transformer Architecture',
