@@ -1,20 +1,20 @@
-import { useState, useEffect  } from "react";
+import { useState, useEffect } from 'react';
 
 const Footer = () => {
   const [activePolicy, setActivePolicy] = useState(null); // "cancel" | "privacy" | null
 
   useEffect(() => {
-  if (activePolicy) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
+    if (activePolicy) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
 
-  // Cleanup (important)
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [activePolicy]);
+    // Cleanup (important)
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activePolicy]);
 
   return (
     <>
@@ -50,16 +50,10 @@ const Footer = () => {
                 className="group flex items-center gap-4 rounded-full border border-primary px-6 py-3 transition-all duration-300 hover:bg-primary/10 hover:shadow-stGlowStrong"
               >
                 <div className="animated-border flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110">
-                  <img
-                    src="./assets/instagramo.png"
-                    alt="Instagram"
-                    className="h-6 w-6"
-                  />
+                  <img src="./assets/instagramo.png" alt="Instagram" className="h-6 w-6" />
                 </div>
 
-                <span className="text-sm uppercase tracking-widest">
-                  Follow us
-                </span>
+                <span className="text-sm uppercase tracking-widest">Follow us</span>
               </a>
             </div>
 
@@ -80,26 +74,35 @@ const Footer = () => {
         </div>
 
         {/* ===== ADDED BOTTOM BAR ===== */}
-        <div className="mt-16 border-t border-white/10 pt-6 text-center text-xs text-white/70 flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-6">
-          <button
-            onClick={() => setActivePolicy("cancel")}
-            className="hover:text-primary transition"
-          >
-            Cancellation Policy
-          </button>
+        <div className="mt-16 flex flex-col items-center gap-4 border-t border-white/10 pt-8 text-center text-xs text-white/70">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <button
+              onClick={() => setActivePolicy('cancel')}
+              className="transition hover:text-primary"
+            >
+              Cancellation Policy
+            </button>
 
-          <span className="hidden sm:inline">|</span>
+            <span className="hidden sm:inline">|</span>
 
-          <span>© 2026 AIA. All rights reserved.</span>
+            <button
+              onClick={() => setActivePolicy('privacy')}
+              className="transition hover:text-primary"
+            >
+              Privacy Policy
+            </button>
+          </div>
 
-          <span className="hidden sm:inline">|</span>
+          {/* 🔥 LEGAL INFORMATION (KYC REQUIRED) */}
+          <div className="text-[11px] leading-relaxed tracking-wide text-white/60">
+            <p>
+              <strong>Business Legal Name & Account Holder:</strong> Rhithik S
+            </p>
+          </div>
 
-          <button
-            onClick={() => setActivePolicy("privacy")}
-            className="hover:text-primary transition"
-          >
-            Privacy Policy
-          </button>
+          <p className="text-[11px] text-white/50">
+            © 2026 AIA - A Student Organization. All rights reserved.
+          </p>
         </div>
       </footer>
 
@@ -107,107 +110,99 @@ const Footer = () => {
       {activePolicy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-black p-6 text-white shadow-xl sm:p-10">
-            {activePolicy === "cancel" && (
+            {activePolicy === 'cancel' && (
               <>
-                <h2 className="mb-4 text-2xl font-semibold text-primary">
-                  Cancellation Policy
-                </h2>
+                <h2 className="mb-4 text-2xl font-semibold text-primary">Cancellation Policy</h2>
 
                 <p className="text-sm leading-relaxed text-white/80">
-                  At Tekhora26, all purchases are final. We strictly do not allow
-                  cancellations, refunds, or exchanges under any circumstances.
+                  At Tekhora26, all purchases are final. We strictly do not allow cancellations,
+                  refunds, or exchanges under any circumstances.
                   <br />
                   <br />
-                  By making a purchase on our platform, you acknowledge and
-                  agree to this policy.
+                  By making a purchase on our platform, you acknowledge and agree to this policy.
                   <br />
                   <br />
-                  If you have any concerns regarding your order, please contact
-                  us at <strong>+91   91598 12736</strong>.
-                
-      <br />
-      Email: <strong>aia.mit.india@gmail.com</strong> 
+                  If you have any concerns regarding your order, please contact us at{' '}
+                  <strong>+91 91598 12736</strong>.
+                  <br />
+                  Email: <strong>aia.mit.india@gmail.com</strong>
                 </p>
               </>
             )}
 
-            {activePolicy === "privacy" && (
+            {activePolicy === 'privacy' && (
               <>
-                <h2 className="mb-2 text-2xl font-semibold text-primary">
-                  Privacy Policy
-                </h2>
+                <h2 className="mb-2 text-2xl font-semibold text-primary">Privacy Policy</h2>
 
-             <div className="space-y-6 text-sm text-white/80">
-  <p className="text-xs text-white/60">
-    Effective Date: 22/02/2026
-  </p>
+                <div className="space-y-6 text-sm text-white/80">
+                  <p className="text-xs text-white/60">Effective Date: 22/02/2026</p>
 
-  <div>
-    <strong className="text-white/60">1. Information We Collect</strong>
-    <ul className="mt-2 list-disc space-y-1 pl-5">
-      <li>Personal details (name, email, phone number)</li>
-      <li>Payment details (processed securely via third-party providers)</li>
-      <li>Usage data (website interactions, device info, cookies)</li>
-    </ul>
-  </div>
+                  <div>
+                    <strong className="text-white/60">1. Information We Collect</strong>
+                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                      <li>Personal details (name, email, phone number)</li>
+                      <li>Payment details (processed securely via third-party providers)</li>
+                      <li>Usage data (website interactions, device info, cookies)</li>
+                    </ul>
+                  </div>
 
-  <div>
-    <strong className="text-white/60">2. How We Use Your Information</strong>
-    <ul className="mt-2 list-disc space-y-1 pl-5">
-      <li>To process transactions and provide services</li>
-      <li>To improve our website and user experience</li>
-      <li>To respond to inquiries and provide support</li>
-      <li>To comply with legal and regulatory requirements</li>
-    </ul>
-    <p className="mt-2 text-white/60">
-      <strong>No Marketing Communications:</strong> We do not use your data for promotional or marketing purposes.
-    </p>
-  </div>
+                  <div>
+                    <strong className="text-white/60">2. How We Use Your Information</strong>
+                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                      <li>To process transactions and provide services</li>
+                      <li>To improve our website and user experience</li>
+                      <li>To respond to inquiries and provide support</li>
+                      <li>To comply with legal and regulatory requirements</li>
+                    </ul>
+                    <p className="mt-2 text-white/60">
+                      <strong>No Marketing Communications:</strong> We do not use your data for
+                      promotional or marketing purposes.
+                    </p>
+                  </div>
 
-  <div>
-    <strong className="text-white/60">3. Data Protection & Security</strong>
-    <p className="mt-2">
-      We implement strict security measures to protect your personal information
-      from unauthorized access, alteration, or misuse.
-    </p>
-  </div>
+                  <div>
+                    <strong className="text-white/60">3. Data Protection & Security</strong>
+                    <p className="mt-2">
+                      We implement strict security measures to protect your personal information
+                      from unauthorized access, alteration, or misuse.
+                    </p>
+                  </div>
 
-  <div>
-    <strong className="text-white/60">4. Third-Party Sharing</strong>
-    <p className="mt-2">
-      We do not sell, rent, or trade your personal information. Data is shared
-      only with trusted third-party service providers (such as payment processors)
-      to securely deliver our services.
-    </p>
-  </div>
+                  <div>
+                    <strong className="text-white/60">4. Third-Party Sharing</strong>
+                    <p className="mt-2">
+                      We do not sell, rent, or trade your personal information. Data is shared only
+                      with trusted third-party service providers (such as payment processors) to
+                      securely deliver our services.
+                    </p>
+                  </div>
 
-  <div>
-    <strong className="text-white/60">5. Your Rights</strong>
-    <ul className="mt-2 list-disc space-y-1 pl-5">
-      <li>Access and review your personal data</li>
-      <li>Request corrections or deletions</li>
-      <li>Opt out of non-essential data collection</li>
-    </ul>
-    <p className="mt-2">
-      Contact: <strong>+91  91598 12736</strong> 
-      <br />
-      Email: <strong>aia.mit.india@gmail.com</strong> 
-    </p>
-  </div>
+                  <div>
+                    <strong className="text-white/60">5. Your Rights</strong>
+                    <ul className="mt-2 list-disc space-y-1 pl-5">
+                      <li>Access and review your personal data</li>
+                      <li>Request corrections or deletions</li>
+                      <li>Opt out of non-essential data collection</li>
+                    </ul>
+                    <p className="mt-2">
+                      Contact: <strong>+91 91598 12736</strong>
+                      <br />
+                      Email: <strong>aia.mit.india@gmail.com</strong>
+                    </p>
+                  </div>
 
-  <div>
-    <strong className="text-white/60">6. Changes to This Policy</strong>
-    <p className="mt-2">
-      We may update this Privacy Policy as needed. Any changes will be posted on
-      this page with the updated effective date.
-    </p>
-  </div>
+                  <div>
+                    <strong className="text-white/60">6. Changes to This Policy</strong>
+                    <p className="mt-2">
+                      We may update this Privacy Policy as needed. Any changes will be posted on
+                      this page with the updated effective date.
+                    </p>
+                  </div>
 
-  <p className="pt-4 text-white/90">
-    By using Tekhora26, you agree to the terms outlined in this Privacy Policy.
-  </p>
-</div>
-
+                  <p className="pt-4 text-white/90">
+                    By using Tekhora26, you agree to the terms outlined in this Privacy Policy.
+                  </p>
+                </div>
               </>
             )}
 
