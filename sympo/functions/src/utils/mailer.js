@@ -5,7 +5,7 @@ import { RESEND_API_KEY, OTP_EXPIRY_MINUTES } from "../config/env1.js"; // chang
 
 const sendOtpEmail = async (email, otp) => {
 
-  const resend = new Resend(RESEND_API_KEY());
+  const resend = new Resend(RESEND_API_KE());
 
   const otpExpiry = OTP_EXPIRY_MINUTES() || "5";
 
