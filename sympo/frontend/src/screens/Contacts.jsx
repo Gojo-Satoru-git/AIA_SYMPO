@@ -7,6 +7,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { eventcontext } from '../context/event.context';
 import { useContext, useEffect, useRef, useState } from "react";
 import { workshopcontext } from '../context/workshop.context';
+import { Signeventscontext } from "../context/SEvents.context";
 
 
 
@@ -18,6 +19,8 @@ const Contacts = () => {
   const [Selected, SetSelected] = useState("All");
    const eventext = useContext(eventcontext);
   const Workshops = useContext(workshopcontext);
+  const SEvents = useContext(Signeventscontext);
+
   const normalizeEvents = (data) =>
   data.map(item => ({
     eventName: item.title,
@@ -31,6 +34,7 @@ const Contacts = () => {
 const formattedEvents =[
   ...normalizeEvents(Workshops),
   ...normalizeEvents(eventext),
+  ...normalizeEvents(SEvents),
 ];
 
   useEffect(() => {

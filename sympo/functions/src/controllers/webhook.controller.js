@@ -6,13 +6,17 @@ import { CASHFREE_SECRET_KEY } from "../config/env1.js";
 
 export const cashfreeWebhook = async (req, res) => {
   try {
-    // express.raw() gives us a Buffer — convert directly, no re-serialization
-    if (!Buffer.isBuffer(req.body)) {
-      console.error("❌ req.body is not a Buffer. Check express.raw() middleware.");
-      return res.status(400).send("Invalid body format");
+    let rawBody;
+    
+    if (Buffer.isBuffer(req.body)) {
+      rawBody = req.body.toString("utf8");
+    } else if (req.rawBody) {
+      rawBody = req.rawBody.toString("utf8");
+    } else if (typeof req.body === 'string') {
+      rawBody = req.body;
+    } else {
+      rawBody = JSON.stringify(req.body);
     }
-
-    const rawBody = req.body.toString("utf8");
     const signature = req.headers["x-webhook-signature"];
     const timestamp = req.headers["x-webhook-timestamp"];
 

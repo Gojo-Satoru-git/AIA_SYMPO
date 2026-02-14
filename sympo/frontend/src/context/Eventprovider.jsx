@@ -7,7 +7,7 @@ function Eventprovider({ children }) {
       title: 'IPL Auction',
       id: '6',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/ipl_auction.webp?alt=media&token=35d881d0-8af5-410f-8904-e3907d53d5bb',
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FIPL%20Auction.webp?alt=media&token=4c4c106d-0529-44c9-be9b-06e5af9f92ed',
       backside: './assets/Hopper.webp',
       description: `IPL Auction is a team-based strategic quiz and auction event inspired by the Indian Premier League auctions.
 Participants must answer quiz questions to qualify for the next round and then use the given budget wisely in a live player auction.
@@ -38,7 +38,7 @@ Success depends on cricket knowledge, smart bidding, team balance, and strategy 
       title: 'Call Of Query',
       id: '3',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Call%20of%20Query.webp?alt=media&token=ac11a7fd-7fa9-4baf-8a35-50cc75ef90dc',
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FCall%20of%20Query.webp?alt=media&token=22339612-b0ba-432b-bd47-2686bf56fa7d',
       backside: './assets/Eleven.webp',
       description: `Think fast, query smart! This event tests your proficiency in DBMS concepts including SQL, transaction management,
 and relational logic through multiple challenging rounds.`,
@@ -66,8 +66,7 @@ and relational logic through multiple challenging rounds.`,
     {
       title: 'Connextions',
       id: '8',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/connexions.webp?alt=media&token=6511287b-6f91-4931-acb5-d3aaaf928afe',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FConnexions.webp?alt=media&token=0e8abc92-bc40-45a0-bfa5-577f85535e1f',
       backside: './assets/steve.webp',
       teamSize: '2-3',
       description: `Participants are given sets of images and must identify a hidden connection or common theme linking them together.`,
@@ -96,7 +95,7 @@ and relational logic through multiple challenging rounds.`,
       title: 'Tournament of strategies',
       id: '1',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/TOS%20(1).webp?alt=media&token=db6719c5-0e5f-40fa-96f2-829aa2754938',
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FTOS.webp?alt=media&token=2538d9dc-1aae-4253-8f1b-8e63383fbba2',
       backside: './assets/Mike.webp',
       description: `A mind sport where strategy matters more than coding. Participants submit a game plan which competes in an
 organizer-designed game testing logic, creativity, and adaptability.`,
@@ -126,7 +125,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
       title: 'Treasure Hunt',
       id: '9',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/treasure_hunt.webp?alt=media&token=f96788da-66df-4d17-b387-16ad8aaf3225',
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FTreasure%20Hunt.webp?alt=media&token=30b3b823-ec66-43ff-b29e-fdba2c9950d3',
       backside: './assets/will.webp',
       teamSize: '2-3',
       description: `A thrilling clue-based hunt across the college campus involving puzzles, twists, and QR challenges.`,
@@ -154,7 +153,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
       title: 'Ninja Coding',
       id: '4',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Ninja%20Coding.webp?alt=media&token=0190689a-283e-4b59-91e9-02756bea1a14',
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FNinja%20Coding.webp?alt=media&token=684b6e9d-93a1-418a-9b16-c0fd1e52624f',
       backside: './assets/Dustin.webp',
       description: `A competitive coding event testing aptitude, problem-solving skills, and programming ability.`,
       teamSize: '2-3',
@@ -181,8 +180,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
     {
       title: 'ADZAP',
       id: '5',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/adzap.webp?alt=media&token=6bb6ec19-4fa6-4103-bf62-aa7bd89a08a0',
+      image:"https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FADZAP.webp?alt=media&token=62d256f8-9f32-4890-b7cb-e80eca661b7a",
       backside: './assets/Max.webp',
       description: `Teams create creative and humorous advertisements for imaginary or bizarre products within a limited time.`,
       category: 'Non-Technical',
@@ -210,8 +208,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
     {
       title: 'coding with AI',
       id: '2',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Coding%20with%20AI.webp?alt=media&token=41ec379d-9d3f-4c1f-9824-7a689ff8423f',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FCoding%20with%20AI.webp?alt=media&token=badc0e86-20fe-4ab1-9cfc-9118f14850c9',
       backside: './assets/vecna.webp',
       description: `Coding with AI is a two-round competition that tests AI knowledge, coding skills, and machine learning abilities. Participants solve logic questions and build ML models using datasets. Winners are decided based on ML performance.`,
       category: 'Technical',
@@ -238,8 +235,7 @@ organizer-designed game testing logic, creativity, and adaptability.`,
     {
       title: 'Fandom Quiz',
       id: '7',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/fandom_quiz.webp?alt=media&token=407abbd8-f32b-43ce-8533-374a937cf20c',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FEvents%2FFandom%20Quiz.webp?alt=media&token=938ce66f-ab51-441b-a0d3-a0fbf811b464',
       backside: './assets/Nancy.webp',
       teamSize: '2-3',
       description: `A quiz event covering movies, anime, TV shows, and pop culture to test true fandom knowledge.`,

@@ -19,17 +19,23 @@ const app = express();
 
 app.use(helmet());
 
-console.log(FRONTEND_URL());
+
 
 app.use(cors({
-  origin: FRONTEND_URL() || "http://localhost:5173",
+  origin: [ FRONTEND_URL() , 'https://tekhora-26.web.app' , 'https://tekhora-26.firebaseapp.com'],
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
 
 
-app.use("/payment/webhook", express.raw({ type: "application/json" }));
+app.use("/payment/webhook", express.raw({ 
+  type: "application/json",
+  limit: '10mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf; // Critical for Firebase Functions
+  }
+}));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(globalLimiter);
