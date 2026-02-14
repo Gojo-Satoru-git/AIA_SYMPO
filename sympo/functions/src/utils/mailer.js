@@ -1,10 +1,7 @@
 import { Resend } from "resend";
 import { RESEND_API_KEY, OTP_EXPIRY_MINUTES } from "../config/env1.js"; // change to env.js for Firebase
 
-
-
 const sendOtpEmail = async (email, otp) => {
-
   const resend = new Resend(RESEND_API_KEY());
 
   const otpExpiry = OTP_EXPIRY_MINUTES() || "5";
