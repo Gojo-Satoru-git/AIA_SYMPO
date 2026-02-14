@@ -26,12 +26,12 @@ const Home = () => {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6 md:px-10">
       <div
-        className={`absolute left-1 top-8 z-40 flex hidden items-center gap-2 transition-all duration-1000 ease-out lg:flex ${showLogos ? 'scale-100 opacity-100' : 'scale-90 opacity-0'} `}
+        className={`absolute left-2 top-8 z-40 flex hidden items-center gap-2 transition-all duration-1000 ease-out lg:flex ${showLogos ? 'scale-100 opacity-100' : 'scale-90 opacity-0'} `}
       >
         <img
           src="/tekhora.jpeg"
           alt="AIA Logo"
-          className="h-10 rounded-full object-contain sm:h-12 md:h-16"
+          className="h-10 rounded-full object-contain sm:h-10 md:h-10"
         />
         <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white transition-all duration-300 sm:text-sm sm:tracking-[0.15em] md:text-base md:tracking-[0.2em] lg:text-base lg:tracking-[0.1em]">
           TEKHORA
