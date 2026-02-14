@@ -47,24 +47,26 @@ const ContactCard = ({ eventName, coordinators }) => {
           {eventName}
         </Typography>
 
+        
         {/* COORDINATORS */}
         {coordinators.map((coord, index) => (
-          <Box
-            key={index}
-            className="flex flex-col items-center mt-2"
-          >
+          <Box key={index} className="flex flex-col items-center mt-2">
             <Typography className="text-white font-semibold text-center">
               {coord.name}
             </Typography>
 
-            <Box className="flex items-center justify-center gap-2 mt-1">
-              <LocalPhoneIcon className="text-red-600 text-sm" />
-              <Typography className="text-gray-400 text-sm">
-                {coord.phone}
-              </Typography>
-            </Box>
+            {coord.phone && (
+              <Box className="flex items-center justify-center gap-2 mt-1">
+                <LocalPhoneIcon className="text-red-600 text-sm" />
+                <Typography className="text-gray-400 text-sm">
+                  {coord.phone}
+                </Typography>
+              </Box>
+            )}
           </Box>
         ))}
+
+
       </CardContent>
     </Card>
   );

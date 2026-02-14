@@ -45,7 +45,7 @@ export const passes = [
     title: 'Global Pass + LLMS 101',
     price: 899,
     alt : 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + LLMS 101)',
-    image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/combo-3.webp?alt=media&token=6dbe6b6d-1fe1-47c7-b1b4-af50ed52f438',
+    image : 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FPass%2Fcombo-3.webp?alt=media&token=8b3fe9ec-b0ca-45d1-bdb4-34c57bf93ad1',
     includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9' , '14'],
   },
 ];

@@ -144,8 +144,7 @@ function WorkshoProvider({ children }) {
       title: 'LLMS 101',
       alt: 'AIA SYMPO TEKHORA26 LLMS 101 WORKSHOP',
       id: '14',
-      image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%205.webp?alt=media&token=c90589ef-9280-4dc3-974d-bc3fde8f1c4e',
+      image:'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2FWORKSHOP%205.webp?alt=media&token=9477daea-e4d7-4f63-95cc-7b42a9cf23df',
       backside: './assets/wheelers.webp',
       company: 'Societe Generale',
       trainer: 'Bhuvaneshwari',
