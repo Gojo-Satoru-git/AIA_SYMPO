@@ -3,49 +3,55 @@ export const passes = [
   {
     id: 'pass-tech',
     title: 'Tech Pass',
-    alt : 'AIA SYMPO TEKHORA26 TECH PASS',
+    alt: 'AIA SYMPO TEKHORA26 TECH PASS',
     price: 200,
-    image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-tech-pass.webp?alt=media&token=e62ef20e-e002-4bc1-b6a5-1059ad11241b',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-tech-pass.webp?alt=media&token=e62ef20e-e002-4bc1-b6a5-1059ad11241b',
     includes: ['1', '2', '3', '4'],
   },
   {
     id: 'pass-global',
     title: 'Global Pass',
-    alt : 'AIA SYMPO TEKHORA26 GLOBAL PASS',
+    alt: 'AIA SYMPO TEKHORA26 GLOBAL PASS',
     price: 330,
-    image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-global-pass.webp?alt=media&token=f9b80a88-ddaa-4f32-8c73-832643b60aad',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-global-pass.webp?alt=media&token=f9b80a88-ddaa-4f32-8c73-832643b60aad',
     includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
   },
   {
     id: 'pass-nontech',
     title: 'Non-Tech Pass',
     price: 180,
-    alt : 'AIA SYMPO TEKHORA26 NON-TECH PASS',
-    image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-non-tech-pass.webp?alt=media&token=dde25c62-a0fa-4c02-b292-19e9e0c9b314',
+    alt: 'AIA SYMPO TEKHORA26 NON-TECH PASS',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/aia-sympo-tekhora26-non-tech-pass.webp?alt=media&token=dde25c62-a0fa-4c02-b292-19e9e0c9b314',
     includes: ['5', '6', '7', '8', '9'],
   },
   {
     id: 'combo1',
     title: 'Global Pass + Big Data & Analytics',
-    alt : 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + BIG DATA AND ANALYTICS)',
+    alt: 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + BIG DATA AND ANALYTICS)',
     price: 899,
-    image: 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/combo-1.webp?alt=media&token=d436407b-9943-4133-80b2-1b9b0beea82b',
-    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9' , '10'],
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/combo-1.webp?alt=media&token=d436407b-9943-4133-80b2-1b9b0beea82b',
+    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
   },
   {
     id: 'combo2',
     title: 'Global Pass + LLM Stack',
-    alt : 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + LLM STACK)',
+    alt: 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + LLM STACK)',
     price: 899,
-    image :'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/combo-2.webp?alt=media&token=76d0ae12-c40e-4046-85f2-444a96eeb337',
-    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9' , '12'],
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/combo-2.webp?alt=media&token=76d0ae12-c40e-4046-85f2-444a96eeb337',
+    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '12'],
   },
   {
     id: 'combo3',
     title: 'Global Pass + LLMS 101',
     price: 899,
-    alt : 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + LLMS 101)',
-    image : 'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FPass%2Fcombo-3.webp?alt=media&token=8b3fe9ec-b0ca-45d1-bdb4-34c57bf93ad1',
-    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9' , '14'],
+    alt: 'AIA SYMPO TEKHORA26 COMBO PASS (GLOBAL PASS + LLMS 101)',
+    image:
+      'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FPass%2Fcombo-3.webp?alt=media&token=34617b0a-182e-4c7e-9ea1-c2ea583815bes://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FPass%2Fcombo-3.webp?alt=media&token=8b3fe9ec-b0ca-45d1-bdb4-34c57bf93ad1',
+    includes: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '14'],
   },
 ];
