@@ -183,14 +183,12 @@ const Registration = ({ RegisterRef }) => {
     if (!user) return showToast('Please login first', 'error');
     if (!validateCart()) return;
 
-    setPaymentLocked(true);
-    setPaymentLoading(true);
+  setPaymentLocked(true);
+  setPaymentLoading(true);
 
-    let currentFirestoreOrderId = null;
-
-    try {
-      const paymentData = await createPaymentOrder(cart, promoCode);
-      const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
+  try {
+    const paymentData = await createPaymentOrder(cart, promoCode);
+    const { firestoreOrderId, paymentSessionId, totalAmount } = paymentData;
 
       currentFirestoreOrderId = firestoreOrderId;
       setFirestoreOrderId(firestoreOrderId);

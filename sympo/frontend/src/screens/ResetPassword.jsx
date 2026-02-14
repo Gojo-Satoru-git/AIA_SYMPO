@@ -79,7 +79,7 @@ const ResetPassword = () => {
         setStatus('invalid');
     }
 
-  }, [oobCode, mode, navigate, showToast]);
+  }, [oobCode, mode]);
 
   useEffect(() => {
     setPassValid({
