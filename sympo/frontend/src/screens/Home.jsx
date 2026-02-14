@@ -88,7 +88,7 @@ const Home = () => {
           />
         </div>
       </div>
-      <div className="absolute left-1/2 top-[25%] z-30 -translate-x-1/2 sm:top-[35%] lg:top-[17%]">
+      {/* <div className="absolute left-1/2 top-[25%] z-30 -translate-x-1/2 sm:top-[35%] lg:top-[17%]">
         <AnimatePresence>
           {showCounter && (
             <motion.div
@@ -111,7 +111,7 @@ const Home = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </div> */}
 
       <div className="mt-[40px] flex w-full max-w-5xl flex-col items-center justify-center text-center sm:mt-12 md:mt-16 lg:mt-20">
         <div className="inline-block">
