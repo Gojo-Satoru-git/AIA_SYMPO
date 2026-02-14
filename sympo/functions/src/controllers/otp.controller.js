@@ -1,5 +1,7 @@
 import { generateOtp, storeOtp, verifyStoredOtp, canResendOtp, isEmailRegistered, checkEmailVerified } from '../service/otp.service.js';
 import { sendOtpEmail } from '../utils/mailer.js';
+import { db } from "../config/firebase.js";
+import admin from "firebase-admin";
 
 const sendOtp = async (req, res) => {
     try {
@@ -46,6 +48,12 @@ const verifyOtp = async (req, res) => {
         if(!email || !otp) return res.status(400).json({message: "Email and OTP required"});
 
         await verifyStoredOtp(email, otp);
+
+        await db.collection("verifiedEmails").doc(email).set({
+            email: email,
+            verified: true,
+            verifiedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
 
         res.json({message: "Email verified successfully"});
     } catch (error) {

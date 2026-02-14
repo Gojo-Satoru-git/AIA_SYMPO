@@ -11,15 +11,16 @@ const sanitizeInput = (input) => input ? String(input).trim() : "";
 
 export const signup = async (req, res) => {
   try {
-    const { uid, email } = req.user;
+    const { uid, email, email_verified } = req.user;
     console.log("Signup Request Body:", req.body);
     let { name, phone, institute, year } = req.body;
 
-    const verified = await db.collection("verifiedEmails").doc(email).get();
-
-    if (!verified.exists) {
-      return res.status(400).json({ message: "Email not verified" });
-    }
+    const verifiedDoc = await db.collection("verifiedEmails").doc(email).get();
+    const isCustomVerified = verifiedDoc.exists && verifiedDoc.data().verified;
+    
+    // if (!isCustomVerified && !email_verified) {
+    //   return res.status(400).json({ message: "Email not verified. Please verify your email first." });
+    // }
 
     // Sanitize inputs first
     name = sanitizeInput(name);
@@ -50,6 +51,10 @@ export const signup = async (req, res) => {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
+
+      if(isCustomVerified) {
+          t.delete(db.collection("verifiedEmails").doc(email));
+      }
     });
 
     return success(res, { uid }, "User registered successfully", 201);

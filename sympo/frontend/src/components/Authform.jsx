@@ -113,7 +113,6 @@ const AuthForm = ({ mode }) => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
-  const isOtpValid = true;
 
   const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -332,69 +331,68 @@ const AuthForm = ({ mode }) => {
           return;
         }
 
-        const cred = await createUserWithEmailAndPassword(auth, emailValue, data.password);
+        let cred;
+        try {
+          cred = await createUserWithEmailAndPassword(auth, emailValue, data.password);
+          await updateProfile(cred.user, { displayName: data.name });
+        } catch (authErr) {
+          throw authErr;
+        }
 
-        await updateProfile(cred.user, {
-          displayName: data.name,
-        });
-
-        if (backupMode) {
-          // 1. Send the Link
-          await sendEmailVerification(cred.user, {
-            url: `${window.location.origin}/auth-action?mode=verifyEmail`,
-            handleCodeInApp: true,
-          });
+        try{
           const token = await cred.user.getIdToken();
-
+          
           await registerUser(
-            {
-              uid: cred.user.uid,
-              email: emailValue,
-              name: data.name,
-              phone: data.phone,
-              institute: finalInstitute,
-              year: year,
-            },
-            token
+              {
+                uid: cred.user.uid,
+                email: emailValue,
+                name: data.name,
+                phone: data.phone,
+                institute: finalInstitute,
+                year: year,
+              },
+              token
           );
 
-          // 2. FORCE LOGOUT
-          await signOut(auth);
+          if (backupMode) {
+            // 1. Send the Link
+            await sendEmailVerification(cred.user, {
+              url: `${window.location.origin}/auth-action?mode=verifyEmail`,
+              handleCodeInApp: true,
+            });
 
-          // 3. Show Message
-          showToast('Account Created! Check email to verify and login.', 'success');
+            // 2. FORCE LOGOUT
+            await signOut(auth);
 
-          // 4. Send them to Sign In page
-          navigate('/signin');
-        } else {
-          // Standard Flow
-          const token = await cred.user.getIdToken();
-          await registerUser(
-            {
-              uid: cred.user.uid,
-              email: emailValue,
-              name: data.name,
-              phone: data.phone,
-              institute: finalInstitute,
-              year,
-            },
-            token
-          );
-          localStorage.setItem('authToken', token);
-          if (fetchProfile) await fetchProfile();
-          showToast('Account created!', 'success');
-          navigate('/', { replace: true });
+            // 3. Show Message
+            showToast('Account Created! Check email to verify and login.', 'success');
+              
+            // 4. Send them to Sign In page
+            navigate('/signin');
+          } 
+          else {
+            localStorage.setItem('authToken', token);
+            if (fetchProfile) await fetchProfile();
+            showToast('Account created!', 'success');
+            navigate('/', { replace: true });
+          }  
+        } catch (backendError) {
+             console.error("Backend Registration Failed:", backendError);
+             if (cred && cred.user) {
+                 await cred.user.delete().catch(delErr => console.error("Rollback failed:", delErr));
+             }
+             throw new Error(backendError.response?.data?.message || "Registration failed. Please try again.");
         }
       }
 
       if (mode === 'signin') {
         const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
 
-        const res = await api.post('/auth/verifyEmail', { email: data.email });
+        await cred.user.reload();
+        const res = await api.post('/auth/verifyEmail', { email: data.email }).catch(() => null);
+        const isBackendVerified = res?.data?.data?.isVerified;
 
-        const isVerified = res.data.data.isVerified;
-
-        if (!cred.user.emailVerified && !isVerified) {
+        if (!cred.user.emailVerified && !isBackendVerified) {
           // 1. Resend Link
           await sendEmailVerification(cred.user, {
             url: `${window.location.origin}/reset-password?mode=verifyEmail`,
@@ -426,6 +424,8 @@ const AuthForm = ({ mode }) => {
           : err.code === 'auth/too-many-requests'
             ? 'Too Many REquest Please Try Again !'
             : err.message;
+
+      
       showToast(msg || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
@@ -638,11 +638,39 @@ const AuthForm = ({ mode }) => {
               </Button>
             ) : backupMode ? (
               // --- BACKUP UI ---
-              <>
-                <Typography sx={{ color: '#aaa', fontSize: '0.75rem', px: 1 }}>
-                  Link will be sent after Signup
-                </Typography>
-              </>
+             <Box
+  sx={{
+    mt: 1,
+    p: 1.5,
+    bgcolor: 'rgba(255, 19, 7, 0.05)', // Very subtle yellow tint
+    borderLeft: '3px solid #ff3907',    // Warning indicator
+    borderRadius: '4px',
+    animation: 'fadeIn 0.4s ease-in-out',
+  }}
+>
+  <Typography sx={{ color: '#e0e0e0', fontSize: '0.75rem', lineHeight: 1.6 }}>
+    Limit reached. Link will be sent (check{' '}
+    <Box component="span" sx={{ color: '#e50914', fontWeight: 800 }}>
+      spam
+    </Box>
+    ).
+  </Typography>
+  
+  <Typography
+    sx={{ 
+      color: 'white', 
+      fontSize: '0.8rem', 
+      fontWeight: 600, 
+      mt: 0.5,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 0.5
+    }}
+  >
+    <Box component="span" sx={{ color: '#e50914', fontSize: '1rem' }}>➔</Box>
+    Set your password below first.
+  </Typography>
+</Box>
             ) : (
               <Button
                 type="button"
