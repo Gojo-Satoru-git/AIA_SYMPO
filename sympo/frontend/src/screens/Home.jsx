@@ -1,43 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import EventCounter from '../components/EventCounter';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Home = () => {
-  const TARGET_DATE = new Date('2026-02-21T09:30:00');
   const [showLine, setShowLine] = useState(false);
-  const [showCounter, setShowCounter] = useState(false);
   const [showLogos, setShowLogos] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const calculateSecondsLeft = () => {
-    const now = new Date();
-    const difference = TARGET_DATE.getTime() - now.getTime();
-    return Math.max(0, Math.floor(difference / 1000));
-  };
-
-  const [secondsLeft, setSecondsLeft] = useState(calculateSecondsLeft());
 
   // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
-  useEffect(() => {
-    // 1. Initial delay for the "Tekhora" zoom animation
-    const lineTimer = setTimeout(() => setShowLine(true), 1000);
-
-    // 2. Delay for the counter (Wait for title + line animation to finish)
-    // Adjust 2500ms based on your 'animate-zoom' duration
-    const counterTimer = setTimeout(() => setShowCounter(true), 2200);
-
-    return () => {
-      clearTimeout(lineTimer);
-      clearTimeout(counterTimer);
-    };
-  }, []);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowLine(true), 1000);
@@ -56,14 +26,14 @@ const Home = () => {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6 md:px-10">
       <div
-        className={`absolute left-6 top-8 z-40 flex hidden items-center gap-3 transition-all duration-1000 ease-out lg:flex ${showLogos ? 'scale-100 opacity-100' : 'scale-90 opacity-0'} `}
+        className={`absolute left-1 top-8 z-40 flex hidden items-center gap-2 transition-all duration-1000 ease-out lg:flex ${showLogos ? 'scale-100 opacity-100' : 'scale-90 opacity-0'} `}
       >
         <img
           src="/tekhora.jpeg"
           alt="AIA Logo"
           className="h-10 rounded-full object-contain sm:h-12 md:h-16"
         />
-        <span className="ml-2 text-sm font-bold uppercase tracking-[0.3em] text-white sm:text-base md:text-xl lg:text-3xl">
+        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white transition-all duration-300 sm:text-sm sm:tracking-[0.15em] md:text-base md:tracking-[0.2em] lg:text-base lg:tracking-[0.1em]">
           TEKHORA
         </span>
       </div>
@@ -88,56 +58,28 @@ const Home = () => {
           />
         </div>
       </div>
-      {/* <div className="absolute left-1/2 top-[25%] z-30 -translate-x-1/2 sm:top-[35%] lg:top-[17%]">
-        <AnimatePresence>
-          {showCounter && (
-            <motion.div
-              initial={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="relative rounded-xl border border-red-900/30 bg-black/40 p-3 shadow-[0_0_30px_rgba(122,0,0,0.15)] backdrop-blur-sm sm:p-4"
-            >
-              <EventCounter
-                value={secondsLeft}
-                fontSize={typeof window !== 'undefined' && window.innerWidth < 640 ? 32 : 32}
-                textColor="#ff6b6b"
-              />
-              <div className="mt-1 flex justify-between px-1 text-[8px] font-black uppercase tracking-[0.2em] text-red-500/60 sm:text-[10px]">
-                <span>Days</span>
-                <span>Hrs</span>
-                <span>Min</span>
-                <span>Sec</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div> */}
 
-      <div className="mt-[40px] flex w-full max-w-5xl flex-col items-center justify-center text-center sm:mt-12 md:mt-16 lg:mt-20">
+      <div className="mt-[44px] flex w-full max-w-5xl flex-col items-center justify-center text-center sm:mt-12 md:mt-16 lg:mt-24">
         <div className="inline-block">
           <h1
-            className="relative animate-zoom text-4xl font-bold uppercase tracking-[0.3em] sm:mt-5 sm:text-5xl sm:tracking-widest md:text-7xl lg:mt-12 lg:text-8xl"
+            className="relative animate-zoom text-4xl font-bold uppercase tracking-[0.3em] sm:mt-5 sm:text-5xl sm:tracking-widest md:text-7xl lg:mt-32 lg:text-8xl"
             style={{
               background: 'linear-gradient(180deg, #ff6b6b 0%, #e50914 40%, #7a0000 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               textShadow: `
-          0 0 6px rgba(0,3,0,0.9),
-          0 0 12px rgba(120,9,20,0.7),
-          0 0 20px rgba(220,9,20,0.5)
-        `,
-              WebkitTextStroke: '2px rgba(255,0,0,0.5)',
+                0 0 6px rgba(0,3,0,0.9),
+                0 0 12px rgba(120,9,20,0.7),
+                0 0 20px rgba(220,9,20,0.5)
+              `,
+              WebkitTextStroke: '2px red',
             }}
           >
             Tekhora'26
           </h1>
 
           <div
-            className={`mt-4 h-[3px] origin-center bg-red-600 transition-transform duration-1000 sm:h-1 ${
-              showLine
-                ? 'scale-x-100 shadow-[0_0_10px_rgba(229,9,20,0.8),0_0_20px_rgba(229,9,20,0.6)] delay-500'
-                : 'scale-x-0'
-            } `}
+            className={`mt-4 h-[3px] origin-center bg-red-600 transition-transform duration-1000 sm:h-1 ${showLine ? 'scale-x-100 shadow-[0_0_10px_rgba(229,9,20,0.8),0_0_20px_rgba(229,9,20,0.6)] delay-500' : 'scale-x-0'} `}
           />
         </div>
         <p
