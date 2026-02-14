@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { 
-  confirmPasswordReset, 
-  verifyPasswordResetCode, 
-  applyActionCode
-} from 'firebase/auth';
+import { confirmPasswordReset, verifyPasswordResetCode, applyActionCode } from 'firebase/auth';
 import { auth } from '../firebase';
-import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
+// Added InputAdornment and IconButton
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  CircularProgress,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+// Added Visibility Icons
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import useToast from '../context/useToast';
 
 const inputStyle = {
@@ -28,18 +36,25 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  
+
   const oobCode = searchParams.get('oobCode');
-  const mode = searchParams.get('mode'); 
+  const mode = searchParams.get('mode');
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  const [status, setStatus] = useState('loading'); 
-  
+  const [status, setStatus] = useState('loading');
+
+  // --- New State for Visibility ---
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [passValid, setPassValid] = useState({
-    upper: false, lower: false, num: false, special: false, length: false,
+    upper: false,
+    lower: false,
+    num: false,
+    special: false,
+    length: false,
   });
   const [match, setMatch] = useState(false);
 
@@ -57,29 +72,24 @@ const ResetPassword = () => {
           setTimeout(() => navigate('/signin'), 3000);
         })
         .catch((error) => {
-          console.error("Verification Error:", error);
+          console.error('Verification Error:', error);
           setStatus('invalid');
           showToast('Invalid or expired verification link.', 'error');
         });
-    }
-
-    else if (mode === 'resetPassword') {
+    } else if (mode === 'resetPassword') {
       verifyPasswordResetCode(auth, oobCode)
         .then(() => {
           setStatus('valid');
         })
         .catch((error) => {
-          console.error("Reset Code Error:", error);
+          console.error('Reset Code Error:', error);
           setStatus('invalid');
           showToast('Invalid or expired password reset link.', 'error');
         });
+    } else {
+      setStatus('invalid');
     }
-
-    else {
-        setStatus('invalid');
-    }
-
-  }, [oobCode, mode]);
+  }, [oobCode, mode, navigate, showToast]);
 
   useEffect(() => {
     setPassValid({
@@ -97,8 +107,8 @@ const ResetPassword = () => {
     if (loading) return;
 
     if (!match || !Object.values(passValid).every(Boolean)) {
-       showToast('Please fix password errors', 'error');
-       return;
+      showToast('Please fix password errors', 'error');
+      return;
     }
 
     setLoading(true);
@@ -116,32 +126,36 @@ const ResetPassword = () => {
 
   const ValidationItem = ({ valid, text }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-      {valid ? <CheckCircleIcon sx={{ color: '#e50914', fontSize: 16 }} /> : <CancelIcon sx={{ color: '#333', fontSize: 16 }} />}
-      <Typography sx={{ color: valid ? '#ffffff' : '#555', fontSize: '0.75rem', transition: 'all 0.3s ease' }}>
+      {valid ? (
+        <CheckCircleIcon sx={{ color: '#e50914', fontSize: 16 }} />
+      ) : (
+        <CancelIcon sx={{ color: '#333', fontSize: 16 }} />
+      )}
+      <Typography
+        sx={{ color: valid ? '#ffffff' : '#555', fontSize: '0.75rem', transition: 'all 0.3s ease' }}
+      >
         {text}
       </Typography>
     </Box>
   );
 
-  if (status === 'loading') {
+  // Status screens (Loading/Invalid/Success) remain unchanged...
+  if (status === 'loading')
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-            <CircularProgress sx={{ color: '#e50914' }} />
-            <Typography sx={{ color: '#aaa' }}>Processing request...</Typography>
-        </div>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <CircularProgress sx={{ color: '#e50914' }} />
+        <Typography sx={{ color: '#aaa' }}>Processing request...</Typography>
+      </div>
     );
-  }
-
-  if (status === 'invalid') {
+  if (status === 'invalid')
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <CancelIcon sx={{ color: '#e50914', fontSize: 60 }} />
-        <Typography variant="h5" sx={{ color: 'white', fontWeight: 700 }}>Invalid Link</Typography>
-        <Typography variant="body1" sx={{ color: '#aaa', textAlign: 'center' }}>
-            This link is expired, invalid, or has already been used.
+        <Typography variant="h5" sx={{ color: 'white', fontWeight: 700 }}>
+          Invalid Link
         </Typography>
-        <Button 
-          variant="outlined" 
+        <Button
+          variant="outlined"
           onClick={() => navigate('/signin')}
           sx={{ mt: 2, color: 'white', borderColor: '#444', '&:hover': { borderColor: '#e50914' } }}
         >
@@ -149,27 +163,25 @@ const ResetPassword = () => {
         </Button>
       </div>
     );
-  }
-
-  if (mode === 'verifyEmail' && status === 'success') {
+  if (mode === 'verifyEmail' && status === 'success')
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <CheckCircleIcon sx={{ color: '#00e676', fontSize: 80 }} />
-        <Typography variant="h4" sx={{ color: 'white', fontWeight: 700 }}>Email Verified!</Typography>
-        <Typography variant="body1" sx={{ color: '#aaa' }}>Redirecting to login...</Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate('/signin')} 
+        <Typography variant="h4" sx={{ color: 'white', fontWeight: 700 }}>
+          Email Verified!
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => navigate('/signin')}
           sx={{ mt: 2, bgcolor: '#e50914', '&:hover': { bgcolor: '#ff1a1a' } }}
         >
           Login Now
         </Button>
       </div>
     );
-  }
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-black/50 border border-white/10 rounded-2xl backdrop-blur-md">
+    <div className="mx-auto mt-20 max-w-md rounded-2xl border border-white/10 bg-black/50 p-6 backdrop-blur-md">
       <Typography variant="h5" sx={{ color: 'white', mb: 3, textAlign: 'center', fontWeight: 700 }}>
         Create New Password
       </Typography>
@@ -177,15 +189,37 @@ const ResetPassword = () => {
       <form onSubmit={handleResetPassword} className="flex flex-col gap-5">
         <TextField
           label="New Password"
-          type="password"
+          // Toggle type between password and text
+          type={showPassword ? 'text' : 'password'}
           required
           fullWidth
           sx={inputStyle}
           onChange={(e) => setPassword(e.target.value)}
+          // Added Eye Icon Logic
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                  sx={{ color: '#e50914' }}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
-        {(password.length > 0) && (
-          <Box sx={{ p: 2, bgcolor: 'rgba(229,9,20,0.05)', borderRadius: '12px', border: `1px solid rgba(229,9,20,0.4)` }}>
+        {password.length > 0 && (
+          <Box
+            sx={{
+              p: 2,
+              bgcolor: 'rgba(229,9,20,0.05)',
+              borderRadius: '12px',
+              border: `1px solid rgba(229,9,20,0.4)`,
+            }}
+          >
             <div className="grid grid-cols-2 gap-x-2">
               <ValidationItem valid={passValid.length} text="Min 8 Characters" />
               <ValidationItem valid={passValid.upper} text="1 Uppercase" />
@@ -198,17 +232,34 @@ const ResetPassword = () => {
 
         <TextField
           label="Confirm Password"
-          type="password"
+          // Toggle type between password and text
+          type={showConfirmPassword ? 'text' : 'password'}
           required
           fullWidth
           sx={inputStyle}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          // Added Eye Icon Logic
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  edge="end"
+                  sx={{ color: '#e50914' }}
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
-        
+
         {confirmPassword && (
-           <Typography sx={{ fontSize: '0.8rem', textAlign: 'right', color: match ? '#e50914' : '#555' }}>
-             {match ? 'Passwords Match' : 'Passwords do not match'}
-           </Typography>
+          <Typography
+            sx={{ fontSize: '0.8rem', textAlign: 'right', color: match ? '#e50914' : '#555' }}
+          >
+            {match ? 'Passwords Match' : 'Passwords do not match'}
+          </Typography>
         )}
 
         <Button

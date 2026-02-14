@@ -15,7 +15,7 @@ const Auth = ({ mode: initialMode }) => {
   }, [initialMode]);
 
   return (
-    <div className="min-h-screen  flex items-center justify-center px-2 sm:px-4">
+    <div className="flex min-h-screen items-center justify-center px-2 sm:px-4">
       <Container
         maxWidth="sm"
         sx={{
@@ -98,7 +98,7 @@ const Auth = ({ mode: initialMode }) => {
               color: '#aaa',
               textAlign: 'center',
               marginTop: '1rem',
-              fontSize: '0.8rem',
+              fontSize: '1rem',
             }}
           >
             {mode === 'signin' ? 'Don’t have an account?' : 'Already have an account?'}

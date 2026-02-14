@@ -103,8 +103,10 @@ const AuthForm = ({ mode }) => {
   const [loading, setLoading] = useState(false);
   const [year, setYear] = useState('');
   const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
@@ -142,6 +144,17 @@ const AuthForm = ({ mode }) => {
   const collegeCache = useRef({});
 
   const { clearCart } = useCart();
+
+  useEffect(() => {
+  // Handle Confirm Password
+  if (confirmPasswordInputRef.current) {
+    const input = confirmPasswordInputRef.current;
+    const len = input.value.length;
+    setTimeout(() => {
+      input.setSelectionRange(len, len);
+    }, 0);
+  }
+}, [showConfirmPass]);
 
   useEffect(() => {
     let interval;
@@ -339,19 +352,19 @@ const AuthForm = ({ mode }) => {
           throw authErr;
         }
 
-        try{
+        try {
           const token = await cred.user.getIdToken();
-          
+
           await registerUser(
-              {
-                uid: cred.user.uid,
-                email: emailValue,
-                name: data.name,
-                phone: data.phone,
-                institute: finalInstitute,
-                year: year,
-              },
-              token
+            {
+              uid: cred.user.uid,
+              email: emailValue,
+              name: data.name,
+              phone: data.phone,
+              institute: finalInstitute,
+              year: year,
+            },
+            token
           );
 
           if (backupMode) {
@@ -366,22 +379,23 @@ const AuthForm = ({ mode }) => {
 
             // 3. Show Message
             showToast('Account Created! Check email to verify and login.', 'success');
-              
+
             // 4. Send them to Sign In page
             navigate('/signin');
-          } 
-          else {
+          } else {
             localStorage.setItem('authToken', token);
             if (fetchProfile) await fetchProfile();
             showToast('Account created!', 'success');
             navigate('/', { replace: true });
-          }  
+          }
         } catch (backendError) {
-             console.error("Backend Registration Failed:", backendError);
-             if (cred && cred.user) {
-                 await cred.user.delete().catch(delErr => console.error("Rollback failed:", delErr));
-             }
-             throw new Error(backendError.response?.data?.message || "Registration failed. Please try again.");
+          console.error('Backend Registration Failed:', backendError);
+          if (cred && cred.user) {
+            await cred.user.delete().catch((delErr) => console.error('Rollback failed:', delErr));
+          }
+          throw new Error(
+            backendError.response?.data?.message || 'Registration failed. Please try again.'
+          );
         }
       }
 
@@ -425,7 +439,6 @@ const AuthForm = ({ mode }) => {
             ? 'Too Many REquest Please Try Again !'
             : err.message;
 
-      
       showToast(msg || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
@@ -638,39 +651,41 @@ const AuthForm = ({ mode }) => {
               </Button>
             ) : backupMode ? (
               // --- BACKUP UI ---
-             <Box
-  sx={{
-    mt: 1,
-    p: 1.5,
-    bgcolor: 'rgba(255, 19, 7, 0.05)', // Very subtle yellow tint
-    borderLeft: '3px solid #ff3907',    // Warning indicator
-    borderRadius: '4px',
-    animation: 'fadeIn 0.4s ease-in-out',
-  }}
->
-  <Typography sx={{ color: '#e0e0e0', fontSize: '0.75rem', lineHeight: 1.6 }}>
-    Limit reached. Link will be sent (check{' '}
-    <Box component="span" sx={{ color: '#e50914', fontWeight: 800 }}>
-      spam
-    </Box>
-    ).
-  </Typography>
-  
-  <Typography
-    sx={{ 
-      color: 'white', 
-      fontSize: '0.8rem', 
-      fontWeight: 600, 
-      mt: 0.5,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 0.5
-    }}
-  >
-    <Box component="span" sx={{ color: '#e50914', fontSize: '1rem' }}>➔</Box>
-    Set your password below first.
-  </Typography>
-</Box>
+              <Box
+                sx={{
+                  mt: 1,
+                  p: 1.5,
+                  bgcolor: 'rgba(255, 19, 7, 0.05)', // Very subtle yellow tint
+                  borderLeft: '3px solid #ff3907', // Warning indicator
+                  borderRadius: '4px',
+                  animation: 'fadeIn 0.4s ease-in-out',
+                }}
+              >
+                <Typography sx={{ color: '#e0e0e0', fontSize: '0.75rem', lineHeight: 1.6 }}>
+                  Limit reached. Link will be sent (check{' '}
+                  <Box component="span" sx={{ color: '#e50914', fontWeight: 800 }}>
+                    spam
+                  </Box>
+                  ).
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    mt: 0.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  <Box component="span" sx={{ color: '#e50914', fontSize: '1rem' }}>
+                    ➔
+                  </Box>
+                  Set your password below first.
+                </Typography>
+              </Box>
             ) : (
               <Button
                 type="button"
@@ -878,29 +893,31 @@ const AuthForm = ({ mode }) => {
 
       {/* CONFIRM PASSWORD */}
       {mode === 'signup' && (
-        <div className="flex flex-col gap-2">
-          <TextField
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            required
-            sx={inputStyle}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          {/* MATCH INDICATOR */}
-          {confirmPassword && (
-            <Typography
-              sx={{
-                fontSize: '0.8rem',
-                color: match ? '#e50914' : '#555',
-                letterSpacing: '1px',
-                transition: 'all 0.3s ease',
-              }}
-            >
-              {match ? 'Passwords Match' : 'Passwords do not match'}
-            </Typography>
-          )}
-        </div>
+        <TextField
+          name="confirmPassword"
+          label="Confirm Password"
+          type={showConfirmPass ? 'text' : 'password'}
+          required
+          inputProps={{ ref: confirmPasswordInputRef }}
+          sx={inputStyle}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={confirmPassword.length > 0 && !match}
+          helperText={confirmPassword.length > 0 && !match ? 'Passwords do not match' : ''}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowConfirmPass(!showConfirmPass)}
+                  edge="end"
+                  sx={{ color: '#e50914' }}
+                >
+                  {showConfirmPass ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
       )}
 
       {/* ================= SUBMIT ================= */}
