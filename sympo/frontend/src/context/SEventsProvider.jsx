@@ -9,7 +9,7 @@ const SignEventProvider = ({ children }) => {
         'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/hackathon.webp?alt=media&token=4040803f-61c6-4a45-b5e1-76779ffe3052',
       backside: './assets/Billy.webp',
       description:
-        ' Our Hackathon is an exciting innovation challenge that brings together creative minds to solve real-world problems using technology. Participants collaborate, build prototypes and present impactful solutions within a limited time\n\n🥇 Winner Team:\n₹5000 Cash Prize + ₹4000 worth 1-Month Internship Voucher\n🥈 Runner-Up Team:\n₹3000 Cash Prize + ₹2000 worth 2-Weeks Internship Voucher\n🎖️ Additional Benefits:\nParticipation Certificates Mentorship Opportunities Recognition',
+        ' Our Hackathon is an exciting innovation challenge that brings together creative minds to solve real-world problems using technology. Participants collaborate, build prototypes and present impactful solutions within a limited time\n\n🥇 Winner Team:\n₹5000 Cash Prize + ₹4000 worth 1-Month Internship Voucher by Edge Matrix Corporation\n🥈 Runner-Up Team:\n₹3000 Cash Prize + ₹2000 worth 2-Weeks Internship Voucher by Edge Matrix Corporation\n🎖️ Additional Benefits:\nParticipation Certificates Mentorship Opportunities Recognition',
       category: 'Technical',
       isSignature: true,
       miniTeamSize: '2',
