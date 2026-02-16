@@ -96,7 +96,7 @@ const Footer = () => {
           {/* 🔥 LEGAL INFORMATION (KYC REQUIRED) */}
           <div className="text-[11px] leading-relaxed tracking-wide text-white/60">
             <p>
-              <strong>Business Legal Name & Account Holder:</strong> Rhithik S
+              <strong>Business Legal Name & Account Holder:</strong> RHITHIK SATHISH
             </p>
           </div>
 
