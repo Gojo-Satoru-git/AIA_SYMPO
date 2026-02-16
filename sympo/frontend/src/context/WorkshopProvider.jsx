@@ -78,7 +78,7 @@ function WorkshoProvider({ children }) {
       alt: 'AIA SYMPO TEKHORA26 LLM STACK WORKSHOP',
       id: '12',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%203.webp?alt=media&token=8d2a9739-e7b9-479a-9199-ab9d4586082c',
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2Fstack.webp?alt=media&token=53dcd809-653e-4795-b58c-fb2776aff004',
       backside: './assets/branner.webp',
       company: 'Zenardy Technologies',
       trainer: 'Akash',
@@ -96,7 +96,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-22',
       time: '9:00 AM - 5:00 PM',
       rules: ['Rules'],
-      fees: 599,
+      fees: 450,
       wplink: 'https://chat.whatsapp.com/Fl2bctBwY785JCxCkqxZaQ',
       contact: {
         name1: 'Pragadeeshwaran',
@@ -145,7 +145,7 @@ function WorkshoProvider({ children }) {
       alt: 'AIA SYMPO TEKHORA26 LLMS 101 WORKSHOP',
       id: '14',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2FWORKSHOP%205.webp?alt=media&token=9477daea-e4d7-4f63-95cc-7b42a9cf23df',
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2F101%20llm.webp?alt=media&token=3b7328e3-436d-430c-be32-2e50b6d5f7c5',
       backside: './assets/wheelers.webp',
       trainer: 'Bhuvaneshwari,K.Harshitha',
       description: [
@@ -162,7 +162,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-22',
       time: '9:00 AM - 5:00 PM',
       rules: ['Rules'],
-      fees: 599,
+      fees: 450,
       wplink: 'https://chat.whatsapp.com/Hne1yl9WgCs3FY8XUddKHC',
       contact: {
         name1: 'Ithikash',
