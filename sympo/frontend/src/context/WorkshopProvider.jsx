@@ -111,7 +111,7 @@ function WorkshoProvider({ children }) {
       alt: 'AIA SYMPO TEKHORA26 PHYSICAL AI WORKSHOP',
       id: '13',
       image:
-        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/WORKSHOP%204.webp?alt=media&token=7ab40ab9-40ff-4e7d-9b16-884eab14fc78',
+        'https://firebasestorage.googleapis.com/v0/b/tekhora-26.firebasestorage.app/o/Posters%2FWorkShop%2Ftek.webp?alt=media&token=4d137bf3-162a-4a3f-985d-48b63b6bd3ca',
       backside: './assets/eddie.webp',
       company: 'Tekion',
       trainer: 'TBD',
@@ -130,7 +130,7 @@ function WorkshoProvider({ children }) {
       date: '2026-02-21',
       time: '9:00 AM - 5:00 PM',
       rules: ['Rules'],
-      fees: 599,
+      fees: 400,
       wplink: 'https://chat.whatsapp.com/JrHZ94hO3EslabJQg8CVGx',
       contact: {
         name1: 'Kamalnath',
