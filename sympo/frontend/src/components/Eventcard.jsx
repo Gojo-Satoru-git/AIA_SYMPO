@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { useSeatAval } from '../context/SeatAvalProvider';
+import useToast from '../context/useToast';
 
 function Eventcard({
   card,
@@ -15,10 +17,14 @@ function Eventcard({
   const cardRef = useRef(null);
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  const { checkSeatAval } = useSeatAval();
+
+  const stock = card.id >= 10 && checkSeatAval(card);
+
   // --- Original Button Logic ---
-  let buttonText = 'Add';
+  let buttonText = stock ? 'Add' : 'Sold Out';
   let buttonClass = 'bg-primary text-black hover:shadow-[0_0_10px_rgba(var(--primary-rgb),0.4)]';
-  let isDisabled = false;
+  let isDisabled = !stock;
 
   if (isPurchased) {
     buttonText = 'Sold';
@@ -111,9 +117,12 @@ function Eventcard({
               {card.id >= 10 && (
                 <button
                   disabled={isDisabled}
-                  className={`relative flex-1 overflow-hidden rounded-sm py-2.5 text-[10px] font-black uppercase transition-all ${buttonClass}`}
+                  className={`relative flex-1 overflow-hidden rounded-sm py-2.5 text-[10px] font-black uppercase transition-all ${buttonClass} ${stock ? '' : 'cursor-not-allowed opacity-50 '}`}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevents lightning strike on button click
+                    if (isPurchased || isInCart || !stock) return;
+
+                    // Only if it passes the guards, add to cart
                     addToCart(card, category);
                   }}
                 >
