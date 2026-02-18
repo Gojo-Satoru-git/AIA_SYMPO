@@ -14,8 +14,24 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.webp',
-      alt: 'toni&guy'
+      src: '/assets/slogos/kripya.webp',
+      alt: 'kripya',
+    },
+    {
+      src: '/assets/slogos/ed.webp',
+      alt: 'edgematrix',
+    },
+    {
+      src: '/assets/slogos/youthalic.webp',
+      alt: 'youthalic',
+    },
+    {
+      src: '/assets/slogos/bkt1.webp',
+      alt: 'bkt',
+    },
+    {
+      src: '/assets/slogos/thecreators.jpeg',
+      alt: 'Thecreators',
     },
     {
       src: '/assets/slogos/kripya.webp',
@@ -38,10 +54,6 @@ const About = () => {
       alt: 'Thecreators',
     },
     {
-      src: '/assets/slogos/t&g.webp',
-      alt: 'toni&guy',
-    },
-    {
       src: '/assets/slogos/kripya.webp',
       alt: 'kripya',
     },
@@ -60,34 +72,6 @@ const About = () => {
     {
       src: '/assets/slogos/thecreators.jpeg',
       alt: 'Thecreators',
-    },
-    {
-      src: '/assets/slogos/t&g.webp',
-      alt: 'toni&guy',
-    },
-    {
-      src: '/assets/slogos/kripya.webp',
-      alt: 'kripya',
-    },
-    {
-      src: '/assets/slogos/ed.webp',
-      alt: 'edgematrix',
-    },
-    {
-      src: '/assets/slogos/youthalic.webp',
-      alt: 'youthalic',
-    },
-    {
-      src: '/assets/slogos/bkt1.webp',
-      alt: 'bkt',
-    },
-    {
-      src: '/assets/slogos/thecreators.jpeg',
-      alt: 'Thecreators',
-    },
-    {
-      src: '/assets/slogos/t&g.webp',
-      alt: 'toni&guy',
     },
     {
       src: '/assets/slogos/kripya.webp',
