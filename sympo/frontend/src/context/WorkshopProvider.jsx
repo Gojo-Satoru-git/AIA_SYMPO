@@ -128,7 +128,7 @@ function WorkshoProvider({ children }) {
       category: 'workshop',
       isSignature: false,
       date: '2026-02-21',
-      time: '9:00 AM - 5:00 PM',
+      time: '9:00 AM - 1:00 PM',
       rules: ['Rules'],
       fees: 400,
       wplink: 'https://chat.whatsapp.com/JrHZ94hO3EslabJQg8CVGx',
