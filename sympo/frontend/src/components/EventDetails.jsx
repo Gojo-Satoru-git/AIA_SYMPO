@@ -3,6 +3,7 @@ import useCart from '../context/useCart';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { IconButton } from '@mui/material';
+import { useSeatAval } from '../context/SeatAvalProvider';
 
 function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory, countries }) {
   const [showArrow, SetshowArrow] = useState(false);
@@ -28,6 +29,10 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
       });
     });
   }, []);
+
+  const { checkSeatAval } = useSeatAval();
+
+  const stock = checkSeatAval(card);
 
   useEffect(() => {
     const checkInitialScroll = () => {
@@ -197,14 +202,15 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                         : !showAdd || checkCart(card)
                           ? 'cursor-not-allowed bg-primary text-black opacity-35'
                           : 'bg-primary text-black hover:scale-105'
-                    }`}
+                    }${stock ? '' : ' cursor-not-allowed opacity-35'}`}
                     onClick={() => {
+                      if (!stock) return;
                       if (isPurchased || (showAdd && !checkCart(card))) {
                         SetshowForm(true);
                       }
                     }}
                   >
-                    {isPurchased ? 'View Team' : 'Add Team Details'}
+                    {stock ? (isPurchased ? 'View Team' : 'Add Team Details') : 'Sold Out'}
                   </button>
                 ) : null}
               </div>
