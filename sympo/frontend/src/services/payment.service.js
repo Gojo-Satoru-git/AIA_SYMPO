@@ -80,7 +80,7 @@ export const verifyPaymentOrder = async (firestoreOrderIdOrCashfreeId, cart) => 
     payload = { ...firestoreOrderIdOrCashfreeId };
   } else if (typeof firestoreOrderIdOrCashfreeId === 'string') {
     const id = firestoreOrderIdOrCashfreeId;
-    if (id.startsWith('order_') || id.includes('-')) {
+    if (id.startsWith('cf_') || id.startsWith('order_') || id.includes('-')) {
       payload.cashfreeOrderId = id;
     } else {
       payload.firestoreOrderId = id;

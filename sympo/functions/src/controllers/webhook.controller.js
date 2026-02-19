@@ -84,16 +84,20 @@ async function processWebhook(rawBody, res) {
     return res.status(400).send("Missing order_id");
   }
 
-  const orderRef = db.collection("orders").doc(order_id);
-  const snap = await orderRef.get();
+  const ordersQuery = await db
+        .collection("orders")
+        .where("cashfree_order_id", "==", order_id)
+        .limit(1)
+        .get();
 
-  if (!snap.exists) {
-    console.error(`❌ Order not found in Firestore: ${order_id}`);
-    // Return 200 so Cashfree doesn't keep retrying for an unknown order
-    return res.status(200).json({ status: "ok", message: "Order not found, acknowledged" });
-  }
+      if (ordersQuery.empty) {
+        console.error(`❌ Order not found in Firestore for cashfree_order_id: ${order_id}`);
+        return res.status(200).json({ status: "ok", message: "Order not found, acknowledged" });
+      }
 
-  const order = snap.data();
+      const orderRef = ordersQuery.docs[0].ref;
+      const snap = ordersQuery.docs[0];
+      const order = snap.data();
 
   // ── SUCCESS ──────────────────────────────────────────────────────────────
   // Cashfree sends payment_status "SUCCESS" (not "PAID") in webhooks

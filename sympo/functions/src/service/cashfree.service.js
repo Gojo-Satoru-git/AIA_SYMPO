@@ -21,7 +21,7 @@ export const createCashfreeOrder = async ({ orderId, amount, customer }) => {
   if (amount <= 0) throw new Error("Invalid payment amount");
 
   const requestBody = {
-    order_id: String(orderId),
+    order_id: `cf_${orderId}_${Date.now()}`,
     order_amount: parseFloat(amount),
     order_currency: "INR",
     customer_details: {

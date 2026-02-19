@@ -39,27 +39,45 @@ export const createOrder = async (req, res) => {
 
     const finalAmount = Math.ceil(totalAmount + convenienceFee);
 
-    let cashfreeOrder;
+    // REPLACE your existing cashfreeOrder try/catch block with this:
+let cashfreeOrder;
+try {
+  cashfreeOrder = await createCashfreeOrder({
+    orderId,
+    amount: finalAmount,
+    customer: {
+      uid: req.user.uid,
+      email: userProfile.email,
+      phone: userProfile.phone,
+    },
+  });
+} catch (cashfreeErr) {
+  // If duplicate order_id conflict, fetch the existing Cashfree order
+  if (
+    cashfreeErr.message?.includes("already exists") ||
+    cashfreeErr.message?.includes("duplicate")
+  ) {
     try {
-      cashfreeOrder = await createCashfreeOrder({
-        orderId,
-        amount: finalAmount,
-        customer: {
-          uid: req.user.uid,
-          email: userProfile.email,
-          phone: userProfile.phone,
-        },
-      });
-    } catch (cashfreeErr) {
+      const existingCfOrderId = `cf_${orderId}_`; // won't match — cancel instead
       await cancelOrderAndReleaseSeats(orderId, "FAILED");
-      const errorMsg = cashfreeErr.message.includes("credentials")
-        ? "Payment credentials not configured."
-        : cashfreeErr.message.includes("unreachable")
-        ? "Payment gateway unreachable."
-        : cashfreeErr.message || "Payment service unavailable";
-
-      return res.status(400).json({ message: errorMsg });
+      return res.status(400).json({
+        message: "Duplicate payment order detected. Please try again.",
+      });
+    } catch {
+      await cancelOrderAndReleaseSeats(orderId, "FAILED");
+      return res.status(400).json({ message: "Payment order conflict." });
     }
+  }
+
+  await cancelOrderAndReleaseSeats(orderId, "FAILED");
+  const errorMsg = cashfreeErr.message.includes("credentials")
+    ? "Payment credentials not configured."
+    : cashfreeErr.message.includes("unreachable")
+    ? "Payment gateway unreachable."
+    : cashfreeErr.message || "Payment service unavailable";
+
+  return res.status(400).json({ message: errorMsg });
+}
 
     await db.collection("orders").doc(orderId).update({
       cashfree_order_id: cashfreeOrder.order_id,
@@ -85,6 +103,12 @@ export const verifyOrder = async (req, res) => {
   try {
     let { firestoreOrderId, cashfreeOrderId, teams } = req.body;
 
+    console.log('=== VERIFY ORDER DEBUG ===');
+    console.log('firestoreOrderId:', firestoreOrderId);
+    console.log('cashfreeOrderId:', cashfreeOrderId);
+    console.log('teams received:', JSON.stringify(teams, null, 2));
+    console.log('teams length:', teams?.length);
+
     if (!firestoreOrderId && !cashfreeOrderId)
       return res.status(400).json({ message: "Order ID required" });
 
@@ -107,6 +131,11 @@ export const verifyOrder = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
 
     if (order.status === "PAID"){
+      console.log('ℹ️ Order already verified');
+      
+      // Process teams even for already-verified orders
+      await processTeams(teams, firestoreOrderId, req.user.uid);
+      
       return res.json({ 
         success: true, 
         alreadyVerified: true,
@@ -138,20 +167,6 @@ export const verifyOrder = async (req, res) => {
       qrToken,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-
-    if (teams?.length) {
-      for (const team of teams) {
-        try {
-          const teamData = typeof team.teamData === "string" ? JSON.parse(team.teamData) : team.teamData;
-          await db.collection("teams").add({
-            teamData,
-            eventId: team.id,
-            uid: req.user.uid,
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          });
-        } catch {}
-      }
-    }
 
     res.json({ success: true, qrToken, amount: order.amount, items: order.items });
   } catch {
@@ -211,3 +226,58 @@ export const cleanupExpiredOrders = async () => {
   
   console.log(`🧹 Cleanup completed. Processed ${expiredOrders.size} expired orders.`);
 };
+
+
+async function processTeams(teams, orderId, userId) {
+  if (!teams?.length) {
+    console.log('⚠️ No teams data to process');
+    return;
+  }
+
+  console.log(`📋 Processing ${teams.length} team(s)...`);
+  
+  for (const team of teams) {
+    console.log(`\n🔍 Processing team for event ${team.id}`);
+    
+    try {
+      if (!team.teamData) {
+        console.log(`⚠️ No team data for event ${team.id}, skipping`);
+        continue;
+      }
+
+      const teamData = typeof team.teamData === "string" ? JSON.parse(team.teamData) : team.teamData;
+      
+      if (!teamData || Object.keys(teamData).length === 0) {
+        console.log(`⚠️ Team data is empty for event ${team.id}, skipping`);
+        continue;
+      }
+
+      // Check if team already exists
+      const existingTeam = await db.collection("teams")
+        .where("orderId", "==", orderId)
+        .where("eventId", "==", team.id)
+        .limit(1)
+        .get();
+
+      if (!existingTeam.empty) {
+        console.log(`ℹ️ Team already exists for event ${team.id}, skipping duplicate`);
+        continue;
+      }
+
+      const teamDoc = await db.collection("teams").add({
+        teamData,
+        eventId: team.id,
+        orderId: orderId,
+        uid: userId,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      
+      console.log(`✅ Team data saved for event ${team.id}, doc ID: ${teamDoc.id}`);
+    } catch (err) {
+      console.error(`❌ Failed to save team data for event ${team.id}:`, err);
+      console.error('Error details:', err.message);
+    }
+  }
+  
+  console.log('✅ Team processing completed\n');
+}
