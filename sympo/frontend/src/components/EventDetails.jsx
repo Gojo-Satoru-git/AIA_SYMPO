@@ -151,14 +151,7 @@ function EventDetails({ card, onClose, checkPurchase, isPurchased, itemCategory,
                   </div>
                 )}
               </div>
-              {card.id == '13' && (
-                <div className="flex gap-3">
-                  <span className="rounded-md border border-primary/30 bg-primary/20 px-3 py-1 text-sm font-semibold uppercase text-primary">
-                    <span className="font-bold text-white">Note: </span>
-                    Bring your own laptop
-                  </span>
-                </div>
-              )}
+
               {/* Info Bar */}
               <div className="flex w-full flex-wrap items-center justify-around rounded-lg border border-primary/30 bg-black/40 p-2 text-lg text-primary">
                 {itemCategory !== 'workshop' && (
