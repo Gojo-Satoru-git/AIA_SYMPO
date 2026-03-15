@@ -34,7 +34,7 @@ A full-stack event management and registration platform with secure payment proc
 
 ## 🎯 Project Overview
 
-**SYMPO** is a comprehensive event management platform designed to handle:
+**TEKHORA'26** is a comprehensive event management platform designed to handle:
 - **User Authentication** via Firebase with email verification
 - **Event Registration** with real-time seat availability
 - **Secure Payment Processing** through Cashfree Payment Gateway
