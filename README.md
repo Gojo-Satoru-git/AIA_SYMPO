@@ -1,4 +1,4 @@
-# SYMPO - Event Management & Registration Platform
+# TEKHORA'26 SYMPOSIUM - Event Management & Registration Platform
 
 A full-stack event management and registration platform with secure payment processing, real-time seat availability tracking, and admin event scanning capabilities. Built with React + Vite frontend and Node.js + Firebase backend.
 
